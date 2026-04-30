@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub 초보자 가이드 · Vantive-Kr</title>
+<style>
+:root {
+  --plum:#72256B; --plum-d:#5C1B56; --plum-light:rgba(114,37,107,0.09);
+  --cream:#FFFAEB; --pine:#105742; --pine-light:rgba(16,87,66,0.10);
+  --euca:#6CA07A; --euca-light:rgba(108,160,122,0.18);
+  --sage:#CDDFD7;
+  --amber:#D4700A; --amber-light:rgba(212,112,10,0.12);
+  --teal:#0A7A8F; --teal-light:rgba(10,122,143,0.12);
+  --white:#FFFFFF; --text:#1C1C1E; --text2:#52525B; --text3:#A1A1AA;
+  --border:rgba(0,0,0,0.07); --border-p:rgba(114,37,107,0.18);
+  --r:14px; --r-xs:5px;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:'Arial',sans-serif;
+  background:var(--cream); color:var(--text); font-size:17px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── PAGE HEADER ── */
+.page-hdr {
+  background: linear-gradient(105deg, #1E3A5F 0%, #2B6CB0 40%, #105742 68%, #1A7A58 100%);
+  padding:32px 32px 50px;
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column; align-items:center;
+}
+.page-hdr::before {
+  content:''; position:absolute; top:-60px; right:-60px;
+  width:280px; height:280px; border-radius:50%;
+  background:rgba(255,255,255,0.05); pointer-events:none;
+}
+.page-hdr::after {
+  content:''; position:absolute; bottom:-80px; left:-40px;
+  width:220px; height:220px; border-radius:50%;
+  background:rgba(255,255,255,0.04); pointer-events:none;
+}
+.hdr-gh-icon {
+  width:52px; height:52px; background:rgba(255,250,235,0.15);
+  border:2px solid rgba(255,250,235,0.3); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:16px; position:relative; z-index:2;
+  font-size:31px; color:rgba(255,250,235,0.9);
+}
+.page-hdr-logo {
+  font-size:13px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase;
+  color:rgba(255,250,235,0.5); margin-bottom:8px;
+  text-align:center; position:relative; z-index:2;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.page-hdr h1 {
+  font-size:36px; font-weight:800; color:#fff; margin-bottom:10px; line-height:1.25;
+  text-align:center; position:relative; z-index:2;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.page-hdr p {
+  font-size:16px; color:rgba(255,250,235,0.72); max-width:520px;
+  text-align:center; position:relative; z-index:2; line-height:1.65;
+}
+.guide-badge {
+  display:inline-block; margin-top:18px;
+  background:rgba(255,250,235,0.18); border:1px solid rgba(255,250,235,0.28);
+  color:var(--cream); font-size:13px; font-weight:700;
+  padding:5px 18px; border-radius:20px; letter-spacing:0.5px;
+  position:relative; z-index:2;
+}
+
+/* ── TOC ── */
+.toc {
+  background:var(--white); border-bottom:2px solid var(--sage);
+  padding:14px 24px; display:flex; gap:8px; flex-wrap:wrap;
+  position:sticky; top:0; z-index:100;
+  box-shadow:0 2px 10px rgba(0,0,0,0.07);
+}
+.toc-label {
+  font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--plum); display:flex; align-items:center; gap:4px;
+  font-family:'Arial Black','Arial',sans-serif; margin-right:4px;
+}
+.toc-item {
+  display:flex; align-items:center; gap:6px;
+  font-size:14px; font-weight:600; color:var(--text2);
+  padding:5px 12px; border-radius:20px;
+  background:rgba(0,0,0,0.04); text-decoration:none;
+  border:1.5px solid transparent; transition:all .15s;
+}
+.toc-item:hover { background:var(--plum-light); color:var(--plum); border-color:var(--border-p); }
+.toc-num {
+  width:17px; height:17px; border-radius:3px;
+  background:var(--plum); color:#fff;
+  font-size:11px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+
+/* ── CONTENT ── */
+.content { max-width:900px; margin:0 auto; padding:36px 20px 70px; }
+
+/* ── INTRO CARDS ── */
+.intro-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:40px;
+}
+.intro-card {
+  background:var(--white); border-radius:12px;
+  border:1px solid var(--border); border-top:4px solid var(--plum);
+  padding:20px 16px; text-align:center;
+  box-shadow:0 2px 12px rgba(0,0,0,0.06);
+}
+.intro-card .icon { font-size:34px; margin-bottom:10px; }
+.intro-card h3 { font-size:16px; font-weight:800; color:var(--text); margin-bottom:6px; font-family:'Arial Black','Arial',sans-serif; }
+.intro-card p { font-size:14px; color:var(--text2); line-height:1.6; }
+
+/* ── SECTION ── */
+.section { margin-bottom:52px; scroll-margin-top:70px; }
+.sec-label {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
+  color:var(--plum); margin-bottom:10px;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.sec-num {
+  width:20px; height:20px; border-radius:3px; background:var(--plum); color:#fff;
+  font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.section h2 {
+  font-size:26px; font-weight:800; color:var(--text); margin-bottom:6px; line-height:1.3;
+  font-family:'Arial Black','Arial',sans-serif;
+  display:flex; align-items:center; gap:10px;
+}
+.section h2::before {
+  content:">>>";
+  font-size:16px; color:var(--plum); letter-spacing:-2px;
+  font-family:'Arial Black','Arial',sans-serif;
+  flex-shrink:0; opacity:0.65;
+}
+.section > .desc {
+  font-size:16px; color:var(--text2); margin-bottom:22px; line-height:1.7;
+  border-left:3px solid var(--sage); padding-left:14px;
+}
+
+/* ── FRAME ── */
+.frame {
+  background:var(--white); border-radius:var(--r);
+  box-shadow:0 4px 24px rgba(0,0,0,0.10); border:1px solid var(--border);
+  overflow:hidden; margin-bottom:24px;
+}
+.frame-title {
+  background:rgba(0,0,0,0.025); border-bottom:1px solid var(--border);
+  padding:10px 16px; font-size:13px; font-weight:700; color:var(--text3);
+  letter-spacing:0.5px; display:flex; align-items:center; gap:6px;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.frame-title::before { content:'>>>'; font-size:8px; color:var(--plum); letter-spacing:-1px; }
+.frame-body { padding:20px; }
+
+/* ── MOCK GITHUB UI ── */
+.gh-navbar {
+  background:#161b22; border-radius:8px 8px 0 0;
+  padding:10px 16px; display:flex; align-items:center; gap:10px;
+}
+.gh-nav-brand {
+  font-size:14px; font-weight:700; color:#fff;
+  display:flex; align-items:center; gap:8px;
+}
+.gh-nav-brand span { opacity:0.5; font-size:13px; }
+.gh-tabbar {
+  background:#0d1117; border-bottom:1px solid #30363d;
+  padding:0 16px; display:flex; gap:0;
+}
+.gh-tab {
+  padding:10px 14px; font-size:14px; color:#848d97;
+  border-bottom:2px solid transparent;
+  display:flex; align-items:center; gap:6px; white-space:nowrap;
+}
+.gh-tab.active { color:#f0f6fc; border-bottom-color:#f78166; font-weight:700; }
+.gh-tab.pine { color:#f0f6fc; border-bottom-color:#6CA07A; font-weight:700; }
+.gh-tab-icon { font-size:16px; }
+.gh-body { background:#0d1117; padding:20px 16px; border-radius:0 0 8px 8px; min-height:80px; }
+.gh-body-light { background:#ffffff; padding:20px 16px; border-radius:0 0 8px 8px; }
+
+/* ── MENU ANNOTATION GRID ── */
+.menu-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px;
+}
+.menu-card {
+  background:var(--white); border-radius:10px;
+  border:1px solid var(--border);
+  padding:16px;
+  display:flex; gap:12px; align-items:flex-start;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  transition:box-shadow .15s;
+}
+.menu-card:hover { box-shadow:0 4px 16px rgba(114,37,107,0.12); }
+.menu-card-icon {
+  width:38px; height:38px; flex-shrink:0;
+  background:var(--plum-light); border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+}
+.menu-card-icon.pine { background:var(--pine-light); }
+.menu-card-icon.euca { background:var(--euca-light); }
+.menu-card-icon.teal { background:var(--teal-light); }
+.menu-card-icon.amber { background:var(--amber-light); }
+.menu-card h3 {
+  font-size:16px; font-weight:800; color:var(--text); margin-bottom:4px;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.menu-card p { font-size:14px; color:var(--text2); line-height:1.6; }
+.menu-card .tag {
+  display:inline-block; margin-top:6px;
+  background:var(--plum-light); color:var(--plum);
+  font-size:12px; font-weight:700; padding:2px 8px; border-radius:10px;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.menu-card .tag.pine { background:var(--pine-light); color:var(--pine); }
+.menu-card .tag.euca { background:var(--euca-light); color:#105742; }
+.menu-card .tag.teal { background:var(--teal-light); color:#0A7A8F; }
+.menu-card .tag.amber { background:var(--amber-light); color:#D4700A; }
+
+/* ── INFO CARDS ── */
+.info-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px;
+  margin-bottom:24px;
+}
+.info-card {
+  background:var(--white); border-radius:12px;
+  border:1px solid var(--border);
+  border-left:4px solid var(--plum);
+  padding:16px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+.info-card.pine { border-left-color:var(--pine); }
+.info-card.euca { border-left-color:var(--euca); }
+.info-card.teal { border-left-color:#0A7A8F; }
+.info-card.amber { border-left-color:#D4700A; }
+.info-icon { font-size:26px; margin-bottom:8px; }
+.info-card h3 {
+  font-size:14px; font-weight:800; color:var(--text); margin-bottom:5px;
+  font-family:'Arial Black','Arial',sans-serif;
+  display:flex; align-items:center; gap:5px;
+}
+.info-card h3::before { content:">>>"; font-size:11px; color:var(--plum); letter-spacing:-1px; opacity:0.65; }
+.info-card.pine h3::before { color:var(--pine); }
+.info-card.euca h3::before { color:var(--euca); }
+.info-card.teal h3::before { color:#0A7A8F; }
+.info-card.amber h3::before { color:#D4700A; }
+.info-card p { font-size:14px; color:var(--text2); line-height:1.6; }
+
+/* ── STEP CARDS ── */
+.steps { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+.step {
+  display:flex; gap:14px; align-items:flex-start;
+  background:var(--white); border-radius:12px;
+  border:1px solid var(--border); padding:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.step-num {
+  width:28px; height:28px; border-radius:3px; flex-shrink:0;
+  background:var(--plum); color:#fff;
+  font-size:16px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.step-num.pine { background:var(--pine); }
+.step-num.euca { background:var(--euca); }
+.step-body h3 { font-size:16px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.step-body p { font-size:14px; color:var(--text2); line-height:1.6; }
+.step-body code {
+  background:rgba(0,0,0,0.06); border-radius:4px;
+  padding:1px 6px; font-size:13px; font-family:monospace; color:var(--plum);
+}
+
+/* ── TIP BOX ── */
+.tip-box {
+  border-radius:10px; padding:14px 16px; margin-bottom:14px;
+  display:flex; gap:10px; align-items:flex-start;
+}
+.tip-box.info { background:var(--teal-light); border:1px solid rgba(10,122,143,0.2); }
+.tip-box.warn { background:var(--amber-light); border:1px solid rgba(212,112,10,0.2); }
+.tip-box.success { background:var(--euca-light); border:1px solid rgba(108,160,122,0.25); }
+.tip-box.plum { background:var(--plum-light); border:1px solid rgba(114,37,107,0.18); }
+.tip-ico { font-size:18px; flex-shrink:0; margin-top:1px; }
+.tip-box p { font-size:15px; color:var(--text); line-height:1.65; }
+.tip-box strong { font-weight:700; }
+
+/* ── DIVIDER ── */
+.divider {
+  height:1px; background:linear-gradient(90deg, var(--plum) 0%, transparent 100%);
+  margin:44px 0; position:relative;
+}
+.divider::before {
+  content:">>>";
+  position:absolute; left:0; top:-10px;
+  font-size:13px; font-weight:900; color:var(--plum);
+  letter-spacing:-2px; font-family:'Arial Black','Arial',sans-serif;
+  background:var(--cream); padding-right:8px;
+}
+
+/* ── MOCK SETTINGS PANEL ── */
+.settings-list { display:flex; flex-direction:column; gap:0; }
+.setting-item {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 16px; background:var(--white);
+  border:1px solid var(--border); border-bottom:none;
+  transition:background .1s;
+}
+.setting-item:first-child { border-radius:10px 10px 0 0; }
+.setting-item:last-child { border-radius:0 0 10px 10px; border-bottom:1px solid var(--border); }
+.setting-item:hover { background:var(--plum-light); }
+.setting-label h4 { font-size:16px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.setting-label p { font-size:14px; color:var(--text2); }
+.setting-badge {
+  font-size:12px; font-weight:700; padding:3px 10px; border-radius:10px;
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.badge-disabled { background:#f3f3f3; color:var(--text3); border:1px solid #e0e0e0; }
+.badge-enabled { background:var(--euca-light); color:var(--pine); border:1px solid rgba(108,160,122,0.3); }
+.badge-setup { background:var(--amber-light); color:#D4700A; border:1px solid rgba(212,112,10,0.2); }
+
+/* ── WORKFLOW MOCK ── */
+.workflow-row {
+  display:flex; gap:10px; align-items:center; margin-bottom:8px;
+}
+.wf-check {
+  width:22px; height:22px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700;
+}
+.wf-check.ok { background:#2da44e; color:#fff; }
+.wf-check.fail { background:#cf222e; color:#fff; }
+.wf-check.run { background:#dbab09; color:#fff; }
+.wf-name { font-size:15px; font-weight:600; color:#f0f6fc; flex:1; }
+.wf-branch {
+  font-size:13px; background:rgba(108,160,122,0.2); color:#6CA07A;
+  border:1px solid rgba(108,160,122,0.3); border-radius:10px;
+  padding:2px 8px; font-weight:600;
+}
+.wf-time { font-size:13px; color:#8b949e; }
+
+/* ── SECURITY OVERVIEW MOCK ── */
+.sec-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:12px 16px; border-bottom:1px solid rgba(48,54,61,0.5);
+}
+.sec-row:last-child { border-bottom:none; }
+.sec-name { font-size:15px; color:#f0f6fc; font-weight:600; }
+.sec-desc { font-size:13px; color:#8b949e; margin-top:2px; }
+.sec-status {
+  font-size:13px; font-weight:700; padding:3px 10px; border-radius:10px;
+  flex-shrink:0;
+}
+.sec-on { background:rgba(63,185,80,0.15); color:#3fb950; border:1px solid rgba(63,185,80,0.3); }
+.sec-off { background:rgba(139,148,158,0.12); color:#8b949e; border:1px solid rgba(139,148,158,0.2); }
+.sec-need { background:rgba(210,153,34,0.15); color:#e3b341; border:1px solid rgba(210,153,34,0.2); }
+
+/* ── REPO FILE LIST MOCK ── */
+.repo-file {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-bottom:1px solid rgba(48,54,61,0.5); color:#c9d1d9;
+}
+.repo-file:last-child { border-bottom:none; }
+.file-icon { font-size:17px; }
+.file-name { font-size:15px; flex:1; }
+.file-commit { font-size:13px; color:#8b949e; }
+.file-date { font-size:13px; color:#8b949e; }
+
+/* ── INSIGHTS STATS ── */
+.insight-stat-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px;
+}
+.insight-stat {
+  background:var(--white); border-radius:10px;
+  border:1px solid var(--border); padding:16px 12px; text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+.insight-stat .val {
+  font-size:31px; font-weight:800; color:var(--plum);
+  font-family:'Arial Black','Arial',sans-serif;
+}
+.insight-stat .lbl { font-size:13px; color:var(--text2); margin-top:4px; }
+
+/* ── PULL REQUEST MOCK ── */
+.pr-item {
+  display:flex; gap:12px; align-items:flex-start;
+  padding:14px 16px; border-bottom:1px solid rgba(48,54,61,0.5);
+}
+.pr-item:last-child { border-bottom:none; }
+.pr-icon { font-size:18px; flex-shrink:0; margin-top:2px; }
+.pr-title { font-size:15px; font-weight:600; color:#f0f6fc; margin-bottom:4px; }
+.pr-meta { font-size:13px; color:#8b949e; }
+.pr-tag {
+  display:inline-block; font-size:12px; font-weight:600;
+  padding:1px 8px; border-radius:10px; border:1px solid;
+  margin-left:6px;
+}
+.pr-tag.open { color:#3fb950; border-color:rgba(63,185,80,0.4); background:rgba(63,185,80,0.1); }
+.pr-tag.merged { color:#a371f7; border-color:rgba(163,113,247,0.4); background:rgba(163,113,247,0.1); }
+
+/* ── ISSUE MOCK ── */
+.issue-item {
+  display:flex; gap:12px; align-items:flex-start;
+  padding:14px 16px; border-bottom:1px solid rgba(48,54,61,0.5);
+}
+.issue-item:last-child { border-bottom:none; }
+.issue-dot {
+  width:16px; height:16px; border-radius:50%; flex-shrink:0;
+  border:2px solid; margin-top:3px;
+}
+.issue-dot.open { border-color:#3fb950; background:rgba(63,185,80,0.2); }
+.issue-dot.closed { border-color:#8b949e; background:rgba(139,148,158,0.15); }
+.issue-title { font-size:15px; font-weight:600; color:#f0f6fc; margin-bottom:4px; }
+.issue-meta { font-size:13px; color:#8b949e; }
+.issue-label {
+  display:inline-block; font-size:12px; font-weight:600;
+  padding:1px 8px; border-radius:10px;
+  margin-left:6px;
+}
+
+/* ── PROJECT KANBAN MOCK ── */
+.kanban {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+}
+.kanban-col {
+  background:rgba(22,27,34,0.8); border-radius:8px;
+  border:1px solid rgba(48,54,61,0.5); padding:12px;
+}
+.kanban-header {
+  font-size:14px; font-weight:700; color:#f0f6fc; margin-bottom:10px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.kanban-count {
+  background:rgba(139,148,158,0.2); color:#8b949e;
+  font-size:12px; padding:1px 6px; border-radius:10px;
+}
+.kanban-card {
+  background:#161b22; border:1px solid rgba(48,54,61,0.8);
+  border-radius:6px; padding:10px; margin-bottom:8px;
+  font-size:14px; color:#c9d1d9; line-height:1.5;
+}
+.kanban-card-tag {
+  display:inline-block; font-size:11px; font-weight:600;
+  padding:1px 7px; border-radius:8px; margin-bottom:6px;
+}
+
+/* ── WIKI MOCK ── */
+.wiki-page {
+  background:#0d1117; border-radius:8px; padding:20px;
+}
+.wiki-sidebar {
+  background:rgba(22,27,34,0.6); border-radius:6px;
+  padding:12px; font-size:14px; color:#8b949e;
+}
+.wiki-sidebar h4 { color:#f0f6fc; font-size:14px; font-weight:700; margin-bottom:8px; }
+.wiki-link { display:block; padding:4px 0; color:#58a6ff; text-decoration:none; font-size:14px; }
+.wiki-content h2 { font-size:19px; color:#f0f6fc; font-weight:700; margin-bottom:8px; }
+.wiki-content p { font-size:14px; color:#8b949e; line-height:1.6; }
+
+/* ── FOOTER ── */
+.footer {
+  background:var(--plum-d); color:rgba(255,250,235,0.5);
+  text-align:center; padding:20px;
+  font-size:14px; letter-spacing:0.3px;
+}
+.footer strong { color:rgba(255,250,235,0.8); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════ -->
+<header class="page-hdr">
+  <div style="position:absolute;top:22px;left:28px;z-index:10;"><img style="height:32px;width:auto;display:block;opacity:0.95;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABJAAAAEQCAYAAADvWI5WAABztUlEQVR42u3ddXhU17o/8O+KuxEhWPAgCcHd3YMUq3tLe+o9bU/hnhq01KhSp9QgwaNAILgHh6CBBALE3WcyM+v3Bz3319PbhmEyuuf7eZ7z9D69zey93rXX3mu/e4mY3+VJEBERERERERER/R0HhoCIiIiIiIiIiBrCBBIRERERERERETWICSQiIiIiIiIiImoQE0hERERERERERNQgJpCIiIiIiIiIiKhBTCAREREREREREVGDmEAiIiIiIiIiIqIGMYFEREREREREREQNYgKJiIiIiIiIiIgaxAQSERERERERERE1iAkkIiIiIiIiIiJqEBNIRERERERERETUICaQiIiIiIiIiIioQUwgERERERERERFRg5hAIiIiIiIiIiKiBjGBREREREREREREDWICiYiIiIiIiIiIGsQEEhERERERERERNYgJJCIiIiIiIiIiahATSERERERERERE1CAmkIiIiIiIiIiIqEFODAERERERkXI1aeaPbsM7y65DwhHUMgC+QT5wdv3r14D6unqUF1WiMLsY6Xsv4vSu86Ikt4xBJCIiiPldnmQUiIiIiIgUpGmboEm9xnVL6jaiM1p0DAWEgT8kgesXc3F65zkc23pmTH5WYSqjS0Rkn5hAIiIiIiJSiICmfpj89GjZd1J3CAdh1N+WOonDiSeQ9FWqKM0vZ7CJiOwME0hERERERDbOw8cd4x4ZJofNHfC309OMpV6lwa5VB7H1x92iprKWwScishNMIBERERER2bCoEV3kvW/NgIePu1mPW11ei1//vQ5ndl8QrAUiIuXjLmxERERERLZIAOMeHS4f+/husyePAMDT1x1PfHIvxj40VLIyiIiUj7uwERERERHZGGdXZ9z75gzZe0I3i56HcBCIfm4cmrVvKle+vUHUqzSsHCIihbK6BJKXvycGz+wj20S1gk8TbwgjDYiVev9LU9H/YDqtDuVFlbh87CrSkk6IqrIaXql21yl0Qs+x3WSXge0REOoPJ2fHv+ixmbQ7aPSfMeQXaypqceNiLvatSwspyC4u4JVBREQEuHu74ZlvHpZhXZtbzTn1mRSFoFZN5BfzV4i6qjpWEhGRAlnVGkjterSWjy+9G17+nqyZ36lq1Nj4yWbsXZvGueV2olP/9vLe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r6pn4OiOObs6oWmb4MPNOoT0bdY+BM3aN0Wz9iHwC/Zp9GwuqZMozilDXmYBcq8UIDczH3mZBarczEI3dS1HexMR6cvT1x1tu7eWvkHe8A3yhk+gN3wD////7RPgBQcnw6aYauq1KM0tQ3FOGYpzSpGTkYfsczdx41Ke4L2a7E2nfu3k4Fl90bl/B7h5/f9F7jVqDTKOXcXB+GNG31WQ7K3v7YygVk2WBrdq8kJwWCCCwwIR3KoJPH3d4erhClcPF7h6uMLxNvd0KYF6VT3UtfVQ16mhrvv//3d5QQWKbpai+GYpim+WoOhmqSjNK+cGS6Z6d2cCiayJTxMvtOnWSoa0DoSnnwfqqlQoulmCq2eui8LrXPmeTMPd2w3e/p7Bbl5up929XEPcvNzg5ukGdy9XuHnd+qeTixNUNWrUVdWhrlqFumoVaqtUqKuuQ01F7YrC7OKH1XVMbBIRmbzz6iDg5e8J30DvJJ9A70m+QbcSTN4BXtBqtFDVqqGurf/9n2qoatWoKKpEcU6ZKC+sABcAJvpTmxIC/k194e7t9qO6Vv1wSW4ZuAYMmZOzq9MfE0pLdRrtdnVdffJ/EkX1qnpwBL+V3C+YQCIiIiIiIiIiooY4MARERERERERERNQQJpCIiIiIiIiIiKhBTCAREREREREREVGDmEAiIiIiIiIiIqIGMYFEREREREREREQNYgKJiIiIiIiIiIgaxAQSERERERERERE1iAkkIiIiIiIiIiJqEBNIRERERERERETUICaQiIiIiIiIiIioQUwgERERERERERFRg5hAIiIiIiIiIiKiBjGBREREREREREREDWICiYiIiIiIiIiIGsQEEhERERERERERNYgJJCIiIiIiIiIiahATSERERERERERE1CAmkIiIiIiIiIiIqEFMIBERERERERERUYOYQCIiIiIiIiIiogYxgURERERERERERA1iAomIiIiIiIiIiBrEBBIRERERERERETWICSQiIiIiIiIiImoQE0hERERERERERNQgJpCIiIiIiIiIiKhBTCAREREREREREVGDmEAiIiIiIiIiIqIGMYFEREREREREREQNYgKJiIiIiIiIiIgaxAQSERERERERERE1iAkkIiIiIiIiIiJq0P8Dtwh/n4IOYogAAAAASUVORK5CYII=" alt="Vantive"></div>
+  <div class="hdr-gh-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></div>
+  <div class="page-hdr-logo">VANTIVE-KR · TECH GUIDE</div>
+  <h1>GitHub 초보자 완전 가이드</h1>
+  <p>GitHub의 모든 메뉴와 기능을 한눈에 이해하는 시각적 매뉴얼.<br>
+     코드 저장부터 팀 협업까지, 단계별로 알아봅니다.</p>
+  <span class="guide-badge">BEGINNER'S VISUAL MANUAL · 2026</span>
+</header>
+
+<!-- ══════════════════════════════════════
+     TABLE OF CONTENTS
+══════════════════════════════════════ -->
+<nav class="toc">
+  <span class="toc-label">&gt;&gt;&gt; 목차</span>
+  <a class="toc-item" href="#overview"><span class="toc-num">0</span>GitHub란?</a>
+  <a class="toc-item" href="#code"><span class="toc-num">1</span>Code</a>
+  <a class="toc-item" href="#issues"><span class="toc-num">2</span>Issues</a>
+  <a class="toc-item" href="#pullreq"><span class="toc-num">3</span>Pull Requests</a>
+  <a class="toc-item" href="#actions"><span class="toc-num">4</span>Actions</a>
+  <a class="toc-item" href="#projects"><span class="toc-num">5</span>Projects</a>
+  <a class="toc-item" href="#wiki"><span class="toc-num">6</span>Wiki</a>
+  <a class="toc-item" href="#security"><span class="toc-num">7</span>Security</a>
+  <a class="toc-item" href="#insights"><span class="toc-num">8</span>Insights</a>
+  <a class="toc-item" href="#settings"><span class="toc-num">9</span>Settings</a>
+</nav>
+
+<main class="content">
+
+<!-- ══════════════════════════════════════
+     0. GitHub 개요
+══════════════════════════════════════ -->
+<section class="section" id="overview">
+  <div class="sec-label">
+    <div class="sec-num">0</div>
+    OVERVIEW
+  </div>
+  <h2>GitHub란 무엇인가?</h2>
+  <p class="desc">
+    GitHub는 코드를 저장하고, 팀과 함께 협업하며, 프로젝트를 관리하는 플랫폼입니다.
+    Git 버전 관리 시스템을 기반으로 하며, 전 세계 수백만 명의 개발자가 사용합니다.
+    Vantive-Kr 팀은 <strong>techwiki</strong> 저장소를 통해 기술 문서와 도구를 관리합니다.
+  </p>
+
+  <div class="intro-grid">
+    <div class="intro-card">
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+      <h3>저장소 (Repository)</h3>
+      <p>프로젝트의 모든 파일과 변경 이력이 저장되는 공간. "Repo"라고도 불림.</p>
+    </div>
+    <div class="intro-card">
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div>
+      <h3>브랜치 (Branch)</h3>
+      <p>기존 코드에 영향 없이 새로운 기능을 개발하거나 실험할 수 있는 독립된 작업 공간.</p>
+    </div>
+    <div class="intro-card">
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17.01" y1="12" x2="22.96" y2="12"/></svg></div>
+      <h3>커밋 (Commit)</h3>
+      <p>파일의 변경 사항을 저장하는 행위. 각 커밋에는 변경 내용과 날짜/작성자 정보가 기록됨.</p>
+    </div>
+  </div>
+
+  <!-- GitHub 상단 탭 전체 개요 -->
+  <div class="frame">
+    <div class="frame-title">GitHub 저장소 메뉴 전체 구조</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr</strong> <span>/</span> <strong style="color:#fff;">techwiki</strong></div>
+        <div style="margin-left:auto;display:flex;gap:8px;">
+          <span style="background:rgba(255,255,255,0.1);color:#fff;font-size:13px;padding:4px 10px;border-radius:6px;">Public</span>
+        </div>
+      </div>
+      <div class="gh-tabbar">
+        <div class="gh-tab active"><span class="gh-tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span> Code</div>
+        <div class="gh-tab"><span class="gh-tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span> Issues</div>
+        <div class="gh-tab"><span class="gh-tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></span> Pull requests</div>
+        <div class="gh-tab"><span class="gh-tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="5 3 19 12 5 21 5 3"/></svg></span> Actions</div>
+        <div class="gh-tab"><span class="gh-tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> Projects</div>
+        <div class="gh-tab"><span class="gh-tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> Wiki</div>
+        <div class="gh-tab"><span class="gh-tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> Security</div>
+        <div class="gh-tab"><span class="gh-tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Insights</div>
+        <div class="gh-tab"><span class="gh-tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</div>
+      </div>
+      <div class="gh-body">
+        <div style="color:#8b949e;font-size:14px;text-align:center;padding:16px 0;">
+          ↑ 각 탭을 클릭하면 해당 기능으로 이동합니다. 아래에서 각 탭의 기능을 자세히 설명합니다.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="menu-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div>
+        <h3>Code</h3>
+        <p>저장소의 파일 탐색, 브랜치 관리, 커밋 이력 확인</p>
+        <span class="tag">핵심 기능</span>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon euca"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div>
+        <h3>Issues</h3>
+        <p>버그 신고, 기능 요청, 작업 항목 추적 관리</p>
+        <span class="tag euca">협업 도구</span>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon pine"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></div>
+      <div>
+        <h3>Pull Requests</h3>
+        <p>코드 변경 사항 검토 및 병합 요청 관리</p>
+        <span class="tag pine">코드 리뷰</span>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon teal"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+      <div>
+        <h3>Actions</h3>
+        <p>자동화 워크플로우, CI/CD 파이프라인 실행</p>
+        <span class="tag teal">자동화</span>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon amber"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
+      <div>
+        <h3>Projects</h3>
+        <p>칸반 보드 및 로드맵으로 프로젝트 진행 관리</p>
+        <span class="tag amber">프로젝트 관리</span>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+      <div>
+        <h3>Wiki</h3>
+        <p>프로젝트 문서화, 매뉴얼, 가이드 작성</p>
+        <span class="tag">문서화</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     1. CODE
+══════════════════════════════════════ -->
+<section class="section" id="code">
+  <div class="sec-label">
+    <div class="sec-num">1</div>
+    CODE TAB
+  </div>
+  <h2>Code · 코드 저장소</h2>
+  <p class="desc">
+    저장소의 모든 파일을 탐색하고, 브랜치를 관리하며, 커밋 이력을 확인하는 핵심 탭입니다.
+    GitHub에 접속하면 처음 보이는 화면이 바로 이 Code 탭입니다.
+  </p>
+
+  <!-- Mock UI: Code Tab -->
+  <div class="frame">
+    <div class="frame-title">Code 탭 화면 구조</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr / techwiki</strong></div>
+      </div>
+      <div class="gh-tabbar">
+        <div class="gh-tab active"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Code</div>
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Issues</div>
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg> Pull requests</div>
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="5 3 19 12 5 21 5 3"/></svg> Actions</div>
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</div>
+      </div>
+      <div class="gh-body">
+        <!-- Branch bar -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+          <div style="background:#21262d;border:1px solid #30363d;color:#f0f6fc;border-radius:6px;padding:6px 12px;font-size:14px;display:flex;align-items:center;gap:6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg> <strong>main</strong> <span style="color:#8b949e;font-size:12px;">▼</span>
+          </div>
+          <div style="background:#21262d;border:1px solid #30363d;color:#8b949e;border-radius:6px;padding:6px 12px;font-size:14px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg> 1 Branch &nbsp;|&nbsp; <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> 0 Tags
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <div style="background:#21262d;border:1px solid #30363d;color:#f0f6fc;border-radius:6px;padding:6px 14px;font-size:14px;">Add file ▼</div>
+            <div style="background:#238636;color:#fff;border-radius:6px;padding:6px 14px;font-size:14px;font-weight:700;">&lt;&gt; Code ▼</div>
+          </div>
+        </div>
+        <!-- Latest commit -->
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+          <div style="width:26px;height:26px;background:#6CA07A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;font-weight:700;flex-shrink:0;">V</div>
+          <div style="font-size:14px;color:#f0f6fc;flex:1;">Add files via upload</div>
+          <div style="font-size:13px;color:#8b949e;">6302d39 · 2 weeks ago</div>
+          <div style="font-size:13px;color:#58a6ff;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 15 Commits</div>
+        </div>
+        <!-- File list -->
+        <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;overflow:hidden;">
+          <div class="repo-file"><span class="file-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="file-name">Artis_BBOX_Guide.html</span><span class="file-commit" style="flex:1;">Add files via upload</span><span class="file-date">2 weeks ago</span></div>
+          <div class="repo-file"><span class="file-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="file-name">CRRT_inspection.html</span><span class="file-commit" style="flex:1;">Add files via upload</span><span class="file-date">2 weeks ago</span></div>
+          <div class="repo-file"><span class="file-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="file-name">Vantive_Equipment_Viewer.html</span><span class="file-commit" style="flex:1;">Add files via upload</span><span class="file-date">last week</span></div>
+          <div class="repo-file"><span class="file-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="file-name">Vantive_Techwiki_index_pw.html</span><span class="file-commit" style="flex:1;">Update Vantive_Techwiki_index_pw.html</span><span class="file-date">last week</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div>
+      <h3>브랜치 선택기</h3>
+      <p>현재 보고 있는 브랜치를 선택합니다. 기본값은 <strong>main</strong> 브랜치입니다. 다른 브랜치로 전환하여 해당 브랜치의 파일을 탐색할 수 있습니다.</p>
+    </div>
+    <div class="info-card euca">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+      <h3>파일 목록</h3>
+      <p>저장소에 있는 모든 파일과 폴더가 표시됩니다. 파일을 클릭하면 내용을 확인하고 편집할 수 있습니다.</p>
+    </div>
+    <div class="info-card pine">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <h3>커밋 이력</h3>
+      <p>몇 번의 변경이 있었는지 확인합니다. <strong>"15 Commits"</strong>를 클릭하면 전체 변경 이력을 시간순으로 볼 수 있습니다.</p>
+    </div>
+    <div class="info-card teal">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      <h3>Add file / Code 버튼</h3>
+      <p><strong>Add file</strong>로 새 파일 업로드, <strong>Code</strong> 버튼으로 저장소를 다운로드(Clone)하거나 ZIP으로 내려받을 수 있습니다.</p>
+    </div>
+  </div>
+
+  <div class="tip-box info">
+    <div class="tip-ico"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></div>
+    <p><strong>초보자 팁:</strong> 파일을 직접 GitHub 웹에서 편집하려면 파일 클릭 후 오른쪽 상단 연필(<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>) 아이콘을 클릭하세요. 간단한 수정은 로컬 설치 없이도 웹에서 바로 가능합니다.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     2. ISSUES
+══════════════════════════════════════ -->
+<section class="section" id="issues">
+  <div class="sec-label">
+    <div class="sec-num">2</div>
+    ISSUES TAB
+  </div>
+  <h2>Issues · 이슈 트래커</h2>
+  <p class="desc">
+    버그 신고, 기능 요청, 개선 아이디어를 기록하고 팀과 공유하는 공간입니다.
+    각 이슈에는 담당자 지정, 라벨 부여, 마일스톤 설정이 가능합니다.
+  </p>
+
+  <!-- Mock UI: Issues -->
+  <div class="frame">
+    <div class="frame-title">Issues 탭 화면 구조</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr / techwiki</strong></div>
+      </div>
+      <div class="gh-tabbar">
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Code</div>
+        <div class="gh-tab active"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Issues</div>
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg> Pull requests</div>
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</div>
+      </div>
+      <div class="gh-body">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="flex:1;background:#21262d;border:1px solid #30363d;border-radius:6px;padding:8px 12px;font-size:14px;color:#8b949e;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> is:issue state:open
+          </div>
+          <div style="background:#21262d;border:1px solid #30363d;color:#f0f6fc;border-radius:6px;padding:6px 12px;font-size:14px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> Labels</div>
+          <div style="background:#238636;color:#fff;border-radius:6px;padding:6px 14px;font-size:14px;font-weight:700;">New issue</div>
+        </div>
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;overflow:hidden;">
+          <div style="padding:10px 14px;display:flex;gap:16px;border-bottom:1px solid rgba(48,54,61,0.5);">
+            <span style="color:#f0f6fc;font-size:15px;font-weight:700;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Open 2</span>
+            <span style="color:#8b949e;font-size:15px;">✓ Closed 5</span>
+          </div>
+          <div class="issue-item">
+            <div class="issue-dot open"></div>
+            <div style="flex:1;">
+              <div class="issue-title"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="4" r="2"/><path d="M10.5 6.5l-3 2.5-2.5-1"/><path d="M13.5 6.5l3 2.5 2.5-1"/><path d="M6 12h12"/><rect x="6" y="9" width="12" height="10" rx="2"/><path d="M5 13H2"/><path d="M22 13h-3"/><path d="M5 17H2"/><path d="M22 17h-3"/></svg> BBOX 분석 도구 한글 파일명 오류<span class="issue-label" style="background:rgba(207,34,46,0.12);color:#ff7b72;border:1px solid rgba(207,34,46,0.3);">bug</span></div>
+              <div class="issue-meta">#12 · 3일 전 by Vantive-Kr · 댓글 2개</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <div class="issue-dot open"></div>
+            <div style="flex:1;">
+              <div class="issue-title"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 장비 검색 기능에 필터 추가 요청<span class="issue-label" style="background:rgba(31,111,235,0.12);color:#79c0ff;border:1px solid rgba(31,111,235,0.3);">enhancement</span></div>
+              <div class="issue-meta">#11 · 5일 전 by Vantive-Kr · 댓글 0개</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="menu-card-icon euca"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div>
+        <h3>Open / Closed 필터</h3>
+        <p>현재 처리 중(Open)인 이슈와 완료(Closed)된 이슈를 구분해서 볼 수 있습니다.</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+      <div>
+        <h3>라벨 (Labels)</h3>
+        <p>bug, enhancement, documentation 등의 라벨로 이슈를 분류합니다. 커스텀 라벨도 만들 수 있습니다.</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon pine"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div>
+        <h3>담당자 (Assignees)</h3>
+        <p>이슈를 처리할 팀원을 지정합니다. 담당자로 지정된 사람에게 알림이 전송됩니다.</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon amber"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+      <div>
+        <h3>마일스톤 (Milestones)</h3>
+        <p>버전 출시, 분기 목표 등의 마일스톤에 이슈를 연결하여 진행률을 추적합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>New issue 클릭</h3>
+        <p>오른쪽 상단 녹색 버튼을 클릭하여 새 이슈를 작성합니다.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>제목과 내용 작성</h3>
+        <p>이슈 제목은 명확하게, 본문에는 재현 방법·스크린샷·기대 동작을 포함하면 좋습니다.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num euca">3</div>
+      <div class="step-body">
+        <h3>라벨·담당자 지정 후 Submit</h3>
+        <p>오른쪽 패널에서 라벨과 담당자를 설정한 뒤 <code>Submit new issue</code>를 클릭합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     3. PULL REQUESTS
+══════════════════════════════════════ -->
+<section class="section" id="pullreq">
+  <div class="sec-label">
+    <div class="sec-num">3</div>
+    PULL REQUESTS TAB
+  </div>
+  <h2>Pull Requests · 코드 검토</h2>
+  <p class="desc">
+    코드 변경 사항을 메인 브랜치에 합치기(Merge) 전에 팀원이 검토하고 승인하는 프로세스입니다.
+    "PR"이라고도 부르며, 협업 개발의 핵심 워크플로우입니다.
+  </p>
+
+  <!-- Mock UI: Pull Requests -->
+  <div class="frame">
+    <div class="frame-title">Pull Requests 탭 화면 구조</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr / techwiki</strong></div>
+      </div>
+      <div class="gh-tabbar">
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Code</div>
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Issues</div>
+        <div class="gh-tab active"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg> Pull requests</div>
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</div>
+      </div>
+      <div class="gh-body">
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;overflow:hidden;">
+          <div style="padding:10px 14px;display:flex;gap:16px;border-bottom:1px solid rgba(48,54,61,0.5);">
+            <span style="color:#f0f6fc;font-size:15px;font-weight:700;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg> Open 1</span>
+            <span style="color:#8b949e;font-size:15px;">✓ Closed 3</span>
+          </div>
+          <div class="pr-item">
+            <div class="pr-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="#2da44e" stroke="none"/></svg></div>
+            <div style="flex:1;">
+              <div class="pr-title">장비 뷰어 v2 업데이트 - 검색 기능 추가<span class="pr-tag open">Open</span></div>
+              <div class="pr-meta">#8 · feature/equipment-viewer → main · by Vantive-Kr · 2일 전</div>
+            </div>
+            <div style="font-size:13px;color:#8b949e;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 1 review</div>
+          </div>
+          <div class="pr-item" style="opacity:0.65;">
+            <div class="pr-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="#a371f7" stroke="none"/></svg></div>
+            <div style="flex:1;">
+              <div class="pr-title">BBOX 가이드 초기 업로드<span class="pr-tag merged">Merged</span></div>
+              <div class="pr-meta">#5 · 2주 전 병합됨</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PR Workflow -->
+  <div class="frame">
+    <div class="frame-title">Pull Request 워크플로우</div>
+    <div class="frame-body">
+      <div style="display:flex;gap:0;align-items:stretch;overflow-x:auto;">
+        <div style="flex:1;text-align:center;padding:16px 12px;background:var(--plum-light);border-radius:10px 0 0 10px;border:1px solid var(--border-p);">
+          <div style="font-size:29px;margin-bottom:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div>
+          <div style="font-size:14px;font-weight:800;color:var(--plum);font-family:'Arial Black',Arial,sans-serif;margin-bottom:4px;">1. 브랜치 생성</div>
+          <div style="font-size:13px;color:var(--text2);">새 기능을 위한 별도 브랜치 생성</div>
+        </div>
+        <div style="display:flex;align-items:center;padding:0 6px;color:var(--plum);font-size:19px;font-weight:900;">›</div>
+        <div style="flex:1;text-align:center;padding:16px 12px;background:var(--euca-light);border-radius:0;border:1px solid rgba(108,160,122,0.25);">
+          <div style="font-size:29px;margin-bottom:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17.01" y1="12" x2="22.96" y2="12"/></svg></div>
+          <div style="font-size:14px;font-weight:800;color:var(--pine);font-family:'Arial Black',Arial,sans-serif;margin-bottom:4px;">2. 코드 작성·커밋</div>
+          <div style="font-size:13px;color:var(--text2);">변경 사항을 커밋으로 저장</div>
+        </div>
+        <div style="display:flex;align-items:center;padding:0 6px;color:var(--pine);font-size:19px;font-weight:900;">›</div>
+        <div style="flex:1;text-align:center;padding:16px 12px;background:var(--teal-light);border-radius:0;border:1px solid rgba(10,122,143,0.2);">
+          <div style="font-size:29px;margin-bottom:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></div>
+          <div style="font-size:14px;font-weight:800;color:#0A7A8F;font-family:'Arial Black',Arial,sans-serif;margin-bottom:4px;">3. PR 생성</div>
+          <div style="font-size:13px;color:var(--text2);">팀원에게 검토 요청 전송</div>
+        </div>
+        <div style="display:flex;align-items:center;padding:0 6px;color:#0A7A8F;font-size:19px;font-weight:900;">›</div>
+        <div style="flex:1;text-align:center;padding:16px 12px;background:var(--amber-light);border-radius:0;border:1px solid rgba(212,112,10,0.2);">
+          <div style="font-size:29px;margin-bottom:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <div style="font-size:14px;font-weight:800;color:#D4700A;font-family:'Arial Black',Arial,sans-serif;margin-bottom:4px;">4. 코드 리뷰</div>
+          <div style="font-size:13px;color:var(--text2);">팀원이 댓글로 피드백 제공</div>
+        </div>
+        <div style="display:flex;align-items:center;padding:0 6px;color:#D4700A;font-size:19px;font-weight:900;">›</div>
+        <div style="flex:1;text-align:center;padding:16px 12px;background:var(--pine-light);border-radius:0 10px 10px 0;border:1px solid rgba(16,87,66,0.2);">
+          <div style="font-size:29px;margin-bottom:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <div style="font-size:14px;font-weight:800;color:var(--pine);font-family:'Arial Black',Arial,sans-serif;margin-bottom:4px;">5. 병합 (Merge)</div>
+          <div style="font-size:13px;color:var(--text2);">승인 후 main 브랜치에 합침</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box success">
+    <div class="tip-ico"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+    <p><strong>핵심 포인트:</strong> PR은 혼자 작업할 때도 유용합니다. 변경 전후 차이(diff)를 시각적으로 확인하고, 이력을 남길 수 있어 나중에 문제 발생 시 롤백하기 쉽습니다.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     4. ACTIONS
+══════════════════════════════════════ -->
+<section class="section" id="actions">
+  <div class="sec-label">
+    <div class="sec-num">4</div>
+    ACTIONS TAB
+  </div>
+  <h2>Actions · 자동화 워크플로우</h2>
+  <p class="desc">
+    코드 변경 시 자동으로 실행되는 작업(빌드, 테스트, 배포 등)을 설정합니다.
+    Vantive-Kr/techwiki 저장소는 현재 <strong>GitHub Pages 자동 배포</strong>에 Actions를 사용하고 있습니다.
+    코드를 Push하면 자동으로 웹사이트가 업데이트됩니다.
+  </p>
+
+  <!-- Mock UI: Actions -->
+  <div class="frame">
+    <div class="frame-title">Actions 탭 · 워크플로우 실행 이력</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr / techwiki</strong></div>
+      </div>
+      <div class="gh-tabbar">
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Code</div>
+        <div class="gh-tab active"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="5 3 19 12 5 21 5 3"/></svg> Actions</div>
+        <div class="gh-tab"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</div>
+      </div>
+      <div class="gh-body">
+        <div style="display:flex;gap:12px;">
+          <!-- Sidebar -->
+          <div style="width:160px;flex-shrink:0;">
+            <div style="font-size:13px;color:#8b949e;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Workflows</div>
+            <div style="background:#21262d;border:1px solid #6CA07A;border-radius:6px;padding:7px 10px;font-size:14px;color:#f0f6fc;font-weight:600;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> pages-build-deployment
+            </div>
+          </div>
+          <!-- Workflow runs -->
+          <div style="flex:1;">
+            <div style="font-size:14px;color:#f0f6fc;font-weight:700;margin-bottom:10px;">15 workflow runs</div>
+            <div class="workflow-row">
+              <div class="wf-check ok">✓</div>
+              <div class="wf-name">pages build and deployment · #15</div>
+              <div class="wf-branch">main</div>
+              <div class="wf-time">Apr 16 · 39s</div>
+            </div>
+            <div class="workflow-row">
+              <div class="wf-check ok">✓</div>
+              <div class="wf-name">pages build and deployment · #14</div>
+              <div class="wf-branch">main</div>
+              <div class="wf-time">Apr 14 · 36s</div>
+            </div>
+            <div class="workflow-row">
+              <div class="wf-check ok">✓</div>
+              <div class="wf-name">pages build and deployment · #13</div>
+              <div class="wf-branch">main</div>
+              <div class="wf-time">Apr 14 · 42s</div>
+            </div>
+            <div class="workflow-row" style="opacity:0.5;">
+              <div class="wf-check ok">✓</div>
+              <div class="wf-name">pages build and deployment · #12</div>
+              <div class="wf-branch">main</div>
+              <div class="wf-time">Apr 14 · 43s</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card pine">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <h3>성공 (초록 체크)</h3>
+      <p>워크플로우가 오류 없이 완료된 상태. GitHub Pages가 정상 업데이트됩니다.</p>
+    </div>
+    <div class="info-card amber">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+      <h3>실패 (빨간 X)</h3>
+      <p>워크플로우 실행 중 오류 발생. 클릭하면 상세 로그를 확인하여 원인을 파악합니다.</p>
+    </div>
+    <div class="info-card teal">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+      <h3>실행 중 (노란 점)</h3>
+      <p>현재 워크플로우가 진행 중. 파일 Push 직후 약 30~60초간 이 상태가 표시됩니다.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <h3>pages-build-deployment</h3>
+      <p>HTML 파일을 GitHub Pages로 자동 배포하는 워크플로우. 코드 Push 시 자동 실행됩니다.</p>
+    </div>
+  </div>
+
+  <div class="tip-box plum">
+    <div class="tip-ico"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg></div>
+    <p><strong>Vantive-Kr 활용 방법:</strong> techwiki 저장소에 HTML 파일을 업로드하면 Actions가 자동으로 실행되어 GitHub Pages에 배포합니다. 파일 업로드 후 1분 내에 웹에서 확인 가능합니다.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     5. PROJECTS
+══════════════════════════════════════ -->
+<section class="section" id="projects">
+  <div class="sec-label">
+    <div class="sec-num">5</div>
+    PROJECTS TAB
+  </div>
+  <h2>Projects · 프로젝트 관리</h2>
+  <p class="desc">
+    칸반 보드, 테이블, 로드맵 형태로 이슈와 Pull Request를 시각적으로 관리합니다.
+    스프린트 계획, 작업 우선순위 설정, 진행 현황 추적에 활용합니다.
+  </p>
+
+  <!-- Mock: Kanban Board -->
+  <div class="frame">
+    <div class="frame-title">Projects · 칸반 보드 예시</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr · Sprint Board</strong></div>
+      </div>
+      <div class="gh-body" style="padding:16px;">
+        <div class="kanban">
+          <div class="kanban-col">
+            <div class="kanban-header"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> Todo <span class="kanban-count">3</span></div>
+            <div class="kanban-card">
+              <span class="kanban-card-tag" style="background:rgba(31,111,235,0.15);color:#79c0ff;">feature</span>
+              <div>CRRT 점검 항목 업데이트</div>
+            </div>
+            <div class="kanban-card">
+              <span class="kanban-card-tag" style="background:rgba(207,34,46,0.12);color:#ff7b72;">bug</span>
+              <div>PDF 출력 레이아웃 수정</div>
+            </div>
+            <div class="kanban-card" style="opacity:0.7;">
+              <span class="kanban-card-tag" style="background:rgba(139,148,158,0.15);color:#8b949e;">docs</span>
+              <div>사용자 가이드 번역</div>
+            </div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-header"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> In Progress <span class="kanban-count">2</span></div>
+            <div class="kanban-card" style="border-color:#6CA07A;">
+              <span class="kanban-card-tag" style="background:rgba(108,160,122,0.2);color:#6CA07A;">active</span>
+              <div>장비 검색 v3 개발</div>
+            </div>
+            <div class="kanban-card" style="border-color:#6CA07A;opacity:0.8;">
+              <span class="kanban-card-tag" style="background:rgba(108,160,122,0.2);color:#6CA07A;">active</span>
+              <div>GitHub 가이드 작성</div>
+            </div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-header"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Done <span class="kanban-count">5</span></div>
+            <div class="kanban-card" style="opacity:0.55;">
+              <span class="kanban-card-tag" style="background:rgba(63,185,80,0.12);color:#3fb950;">done</span>
+              <div>BBOX 가이드 배포</div>
+            </div>
+            <div class="kanban-card" style="opacity:0.55;">
+              <span class="kanban-card-tag" style="background:rgba(63,185,80,0.12);color:#3fb950;">done</span>
+              <div>Techwiki 인덱스 업데이트</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="menu-card-icon amber"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
+      <div>
+        <h3>Board View (칸반)</h3>
+        <p>할 일(Todo), 진행 중(In Progress), 완료(Done) 컬럼으로 작업 상태를 시각화합니다.</p>
+        <span class="tag amber">가장 많이 사용</span>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon teal"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+      <div>
+        <h3>Table View (표)</h3>
+        <p>스프레드시트 형태로 이슈를 표시하며 우선순위, 담당자, 기한 등을 한눈에 관리합니다.</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon pine"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></div>
+      <div>
+        <h3>Roadmap View (로드맵)</h3>
+        <p>시간 축(타임라인)에 작업을 배치하여 프로젝트 일정을 Gantt 차트처럼 관리합니다.</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+      <div>
+        <h3>이슈 연동</h3>
+        <p>Projects의 아이템은 Issues와 자동 연동됩니다. 이슈 상태가 바뀌면 보드도 업데이트됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     6. WIKI
+══════════════════════════════════════ -->
+<section class="section" id="wiki">
+  <div class="sec-label">
+    <div class="sec-num">6</div>
+    WIKI TAB
+  </div>
+  <h2>Wiki · 문서 저장소</h2>
+  <p class="desc">
+    프로젝트 관련 문서, 사용 가이드, API 레퍼런스 등을 마크다운 형식으로 작성하고 관리합니다.
+    여러 페이지로 구성된 위키 사이트를 만들 수 있으며, 팀 내부 지식 저장소로 활용됩니다.
+  </p>
+
+  <div class="frame">
+    <div class="frame-title">Wiki 탭 · 빈 상태 및 문서 작성 예시</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr / techwiki · Wiki</strong></div>
+      </div>
+      <div class="gh-body" style="padding:20px;">
+        <!-- Empty state -->
+        <div style="text-align:center;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:32px 20px;margin-bottom:16px;">
+          <div style="font-size:38px;margin-bottom:12px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+          <div style="font-size:18px;font-weight:700;color:#f0f6fc;margin-bottom:8px;">Welcome to the techwiki wiki!</div>
+          <div style="font-size:14px;color:#8b949e;margin-bottom:16px;">Wikis provide a place in your repository to document software.</div>
+          <div style="background:#238636;color:#fff;border-radius:6px;padding:8px 20px;font-size:16px;font-weight:700;display:inline-block;">Create the first page</div>
+        </div>
+        <!-- What to write -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;">
+            <div style="font-size:13px;font-weight:700;color:#58a6ff;margin-bottom:6px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> Wiki에 작성하면 좋은 내용</div>
+            <div style="font-size:14px;color:#8b949e;line-height:1.7;">
+              • 프로젝트 소개 및 목적<br>
+              • 설치/설정 방법<br>
+              • 주요 기능 사용법<br>
+              • 자주 묻는 질문 (FAQ)<br>
+              • 변경 이력 (Changelog)
+            </div>
+          </div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;">
+            <div style="font-size:13px;font-weight:700;color:#3fb950;margin-bottom:6px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> 마크다운 문법 예시</div>
+            <div style="font-size:13px;color:#8b949e;font-family:monospace;line-height:1.8;">
+              # 제목 1<br>
+              ## 제목 2<br>
+              **굵게** / *기울임*<br>
+              - 목록 항목<br>
+              [링크](URL)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box info">
+    <div class="tip-ico"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+    <p><strong>Vantive-Kr 활용 제안:</strong> techwiki 저장소의 Wiki를 사용하여 각 HTML 도구의 사용 가이드, 업데이트 이력, 팀 협업 규칙 등을 문서화하면 신규 팀원 교육 시간을 단축할 수 있습니다.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     7. SECURITY AND QUALITY
+══════════════════════════════════════ -->
+<section class="section" id="security">
+  <div class="sec-label">
+    <div class="sec-num">7</div>
+    SECURITY & QUALITY
+  </div>
+  <h2>Security and Quality · 보안 관리</h2>
+  <p class="desc">
+    저장소의 보안 정책 설정, 취약점 스캔, 비밀 정보 감지 등 보안 관련 기능을 관리합니다.
+    현재 techwiki 저장소는 <strong>Security advisories</strong>와 <strong>Secret scanning</strong>이 활성화되어 있습니다.
+  </p>
+
+  <!-- Mock UI: Security -->
+  <div class="frame">
+    <div class="frame-title">Security and Quality · 현재 techwiki 보안 상태</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr / techwiki · Security</strong></div>
+      </div>
+      <div class="gh-body" style="padding:0;">
+        <div style="background:#161b22;border-radius:0 0 8px 8px;overflow:hidden;">
+          <div class="sec-row">
+            <div>
+              <div class="sec-name"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Security policy</div>
+              <div class="sec-desc">보안 취약점 신고 방법 정의</div>
+            </div>
+            <span class="sec-status sec-off">Disabled</span>
+          </div>
+          <div class="sec-row">
+            <div>
+              <div class="sec-name"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Security advisories</div>
+              <div class="sec-desc">보안 권고사항 공개/비공개 관리</div>
+            </div>
+            <span class="sec-status sec-on">Enabled</span>
+          </div>
+          <div class="sec-row">
+            <div>
+              <div class="sec-name"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg> Private vulnerability reporting</div>
+              <div class="sec-desc">비공개 취약점 신고 허용</div>
+            </div>
+            <span class="sec-status sec-off">Disabled</span>
+          </div>
+          <div class="sec-row">
+            <div>
+              <div class="sec-name"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><line x1="12" y1="7" x2="12" y2="11"/><line x1="8" y1="15" x2="8" y2="17"/><line x1="16" y1="15" x2="16" y2="17"/></svg> Dependabot alerts</div>
+              <div class="sec-desc">의존성 라이브러리 취약점 알림</div>
+            </div>
+            <span class="sec-status sec-off">Disabled</span>
+          </div>
+          <div class="sec-row">
+            <div>
+              <div class="sec-name"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Code scanning alerts</div>
+              <div class="sec-desc">코드 취약점 자동 탐지</div>
+            </div>
+            <span class="sec-status sec-need">Needs setup</span>
+          </div>
+          <div class="sec-row">
+            <div>
+              <div class="sec-name"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Secret scanning alerts</div>
+              <div class="sec-desc">API 키, 비밀번호 등 노출 감지</div>
+            </div>
+            <span class="sec-status sec-on">Enabled</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card pine">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
+      <h3>Secret Scanning (활성화됨)</h3>
+      <p>GitHub API 키, 비밀번호, 토큰 등이 실수로 코드에 포함되면 즉시 알림. techwiki에 활성화되어 있어 보안 위협으로부터 보호됩니다.</p>
+    </div>
+    <div class="info-card euca">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div>
+      <h3>Security Advisories (활성화됨)</h3>
+      <p>저장소의 보안 취약점을 공개 전 비공개로 처리하고 패치 후 공개하는 관리 도구입니다.</p>
+    </div>
+    <div class="info-card teal">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><line x1="12" y1="7" x2="12" y2="11"/><line x1="8" y1="15" x2="8" y2="17"/><line x1="16" y1="15" x2="16" y2="17"/></svg></div>
+      <h3>Dependabot</h3>
+      <p>사용 중인 외부 라이브러리에 보안 취약점이 발견되면 자동으로 업데이트 PR을 생성합니다. HTML 파일만 있는 경우 불필요합니다.</p>
+    </div>
+    <div class="info-card amber">
+      <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <h3>Code Scanning</h3>
+      <p>JavaScript, Python 등 코드에서 보안 취약점을 자동 탐지합니다. 순수 HTML 저장소에는 선택적으로 활성화합니다.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     8. INSIGHTS
+══════════════════════════════════════ -->
+<section class="section" id="insights">
+  <div class="sec-label">
+    <div class="sec-num">8</div>
+    INSIGHTS TAB
+  </div>
+  <h2>Insights · 저장소 분석</h2>
+  <p class="desc">
+    저장소의 활동 통계, 기여자 현황, 트래픽(방문자 수), 코드 변경 빈도 등을 시각적으로 분석합니다.
+    프로젝트가 얼마나 활발하게 관리되는지 파악하는 데 유용합니다.
+  </p>
+
+  <div class="insight-stat-grid">
+    <div class="insight-stat">
+      <div class="val">15</div>
+      <div class="lbl">총 커밋 수</div>
+    </div>
+    <div class="insight-stat">
+      <div class="val" style="color:var(--pine);">1</div>
+      <div class="lbl">기여자 (Contributors)</div>
+    </div>
+    <div class="insight-stat">
+      <div class="val" style="color:#0A7A8F;">0</div>
+      <div class="lbl">오픈 PR</div>
+    </div>
+    <div class="insight-stat">
+      <div class="val" style="color:#D4700A;">0</div>
+      <div class="lbl">오픈 이슈</div>
+    </div>
+  </div>
+
+  <!-- Mock UI: Insights -->
+  <div class="frame">
+    <div class="frame-title">Insights · 하위 메뉴 설명</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr / techwiki · Insights</strong></div>
+      </div>
+      <div class="gh-body" style="padding:0;display:flex;">
+        <div style="width:160px;flex-shrink:0;padding:16px 12px;background:#161b22;border-right:1px solid rgba(48,54,61,0.5);">
+          <div style="font-size:15px;color:#f0f6fc;font-weight:700;padding:6px 8px;background:rgba(114,37,107,0.2);border-radius:6px;margin-bottom:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Pulse</div>
+          <div style="font-size:14px;color:#8b949e;padding:6px 8px;margin-bottom:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Contributors</div>
+          <div style="font-size:14px;color:#8b949e;padding:6px 8px;margin-bottom:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Traffic</div>
+          <div style="font-size:14px;color:#8b949e;padding:6px 8px;margin-bottom:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17.01" y1="12" x2="22.96" y2="12"/></svg> Commits</div>
+          <div style="font-size:14px;color:#8b949e;padding:6px 8px;margin-bottom:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Code frequency</div>
+          <div style="font-size:14px;color:#8b949e;padding:6px 8px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg> Network</div>
+        </div>
+        <div style="flex:1;padding:16px;">
+          <div style="font-size:16px;color:#f0f6fc;font-weight:700;margin-bottom:12px;">April 15 – April 22, 2026</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;text-align:center;">
+              <div style="font-size:24px;font-weight:800;color:#8b949e;">0</div>
+              <div style="font-size:13px;color:#8b949e;">Active pull requests</div>
+            </div>
+            <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;text-align:center;">
+              <div style="font-size:24px;font-weight:800;color:#8b949e;">0</div>
+              <div style="font-size:13px;color:#8b949e;">Active issues</div>
+            </div>
+          </div>
+          <div style="font-size:14px;color:#8b949e;text-align:center;margin-top:16px;padding:12px;background:#161b22;border-radius:6px;border:1px solid #30363d;">
+            지난 1주일간 커밋 활동이 없었습니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="menu-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <div>
+        <h3>Pulse</h3>
+        <p>선택 기간 동안의 PR, 이슈, 커밋 활동 요약. 프로젝트 건강 상태를 한눈에 파악합니다.</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon euca"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+      <div>
+        <h3>Traffic</h3>
+        <p>저장소 방문자 수(Unique visitors)와 페이지뷰를 추적합니다. GitHub Pages 인기도를 확인하는 데 유용합니다.</p>
+        <span class="tag euca">GitHub Pages 필수</span>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon pine"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div>
+        <h3>Contributors</h3>
+        <p>저장소에 기여한 팀원별 커밋 수와 추가/삭제된 코드 라인 수를 비교합니다.</p>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-icon teal"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div>
+      <div>
+        <h3>Network</h3>
+        <p>브랜치와 Fork의 관계를 시각적 그래프로 표시합니다. 브랜치 분기 현황을 파악합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     9. SETTINGS
+══════════════════════════════════════ -->
+<section class="section" id="settings">
+  <div class="sec-label">
+    <div class="sec-num">9</div>
+    SETTINGS TAB
+  </div>
+  <h2>Settings · 저장소 설정</h2>
+  <p class="desc">
+    저장소 이름 변경, 공개/비공개 설정, 협업자 추가, GitHub Pages 설정 등
+    저장소 전체를 관리하는 관리자 메뉴입니다. Owner(소유자)만 접근 가능합니다.
+  </p>
+
+  <!-- Mock UI: Settings -->
+  <div class="frame">
+    <div class="frame-title">Settings · 주요 설정 항목</div>
+    <div class="frame-body" style="padding:0;">
+      <div class="gh-navbar">
+        <div class="gh-nav-brand"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> <strong style="color:#fff;">Vantive-Kr / techwiki · Settings</strong></div>
+      </div>
+      <div class="gh-body" style="padding:0;display:flex;">
+        <!-- Left nav -->
+        <div style="width:180px;flex-shrink:0;padding:16px 12px;background:#161b22;border-right:1px solid rgba(48,54,61,0.5);">
+          <div style="font-size:15px;color:#f0f6fc;font-weight:700;padding:6px 8px;background:rgba(114,37,107,0.2);border-radius:6px;margin-bottom:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> General</div>
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8b949e;font-weight:700;margin:12px 8px 6px;">Access</div>
+          <div style="font-size:14px;color:#8b949e;padding:5px 8px;margin-bottom:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Collaborators</div>
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8b949e;font-weight:700;margin:12px 8px 6px;">Code & automation</div>
+          <div style="font-size:14px;color:#8b949e;padding:5px 8px;margin-bottom:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg> Branches</div>
+          <div style="font-size:14px;color:#8b949e;padding:5px 8px;margin-bottom:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="5 3 19 12 5 21 5 3"/></svg> Actions</div>
+          <div style="font-size:14px;color:#8b949e;padding:5px 8px;margin-bottom:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Webhooks</div>
+          <div style="font-size:14px;color:#8b949e;padding:5px 8px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Pages</div>
+        </div>
+        <!-- Right content -->
+        <div style="flex:1;padding:16px;">
+          <div style="font-size:17px;font-weight:700;color:#f0f6fc;margin-bottom:14px;">General</div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px;margin-bottom:10px;">
+            <div style="font-size:14px;font-weight:700;color:#f0f6fc;margin-bottom:8px;">Repository name</div>
+            <div style="display:flex;gap:8px;">
+              <div style="flex:1;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:7px 12px;font-size:14px;color:#f0f6fc;">techwiki</div>
+              <div style="background:#21262d;border:1px solid #30363d;color:#f0f6fc;border-radius:6px;padding:7px 14px;font-size:14px;">Rename</div>
+            </div>
+          </div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px;">
+            <div style="font-size:14px;font-weight:700;color:#f0f6fc;margin-bottom:4px;">Default branch</div>
+            <div style="font-size:14px;color:#8b949e;margin-bottom:8px;">모든 PR이 기본적으로 병합되는 브랜치</div>
+            <div style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:7px 12px;font-size:14px;color:#8b949e;">main</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-list">
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> General</h4>
+        <p>저장소 이름, 설명, 공개/비공개, 기능 활성화 등 기본 설정</p>
+      </div>
+      <span class="setting-badge badge-enabled">필수 확인</span>
+    </div>
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Collaborators (협업자)</h4>
+        <p>저장소 접근 권한을 팀원에게 부여합니다. 역할: Read / Write / Admin</p>
+      </div>
+      <span class="setting-badge badge-setup">팀 추가 시</span>
+    </div>
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg> Branches</h4>
+        <p>브랜치 보호 규칙 설정. main 브랜치에 직접 Push를 막고 PR 필수화 가능</p>
+      </div>
+      <span class="setting-badge badge-disabled">선택적</span>
+    </div>
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Pages (GitHub Pages)</h4>
+        <p>저장소의 HTML 파일을 웹사이트로 배포. 현재 techwiki에서 사용 중</p>
+      </div>
+      <span class="setting-badge badge-enabled">사용 중</span>
+    </div>
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Danger Zone</h4>
+        <p>저장소 삭제, Private 전환, Archive 등 되돌리기 어려운 작업. 신중하게 사용</p>
+      </div>
+      <span class="setting-badge badge-disabled"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> 주의 필요</span>
+    </div>
+  </div>
+
+  <div class="tip-box warn">
+    <div class="tip-ico"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+    <p><strong>주의:</strong> Settings 탭은 저장소 Owner만 접근할 수 있습니다. Danger Zone의 삭제 기능은 취소가 불가능하므로 반드시 확인 후 진행하세요.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     QUICK REFERENCE
+══════════════════════════════════════ -->
+<section class="section" id="quickref">
+  <div class="sec-label">
+    <div class="sec-num" style="background:var(--pine);">✓</div>
+    QUICK REFERENCE
+  </div>
+  <h2>자주 하는 작업 · 빠른 참조</h2>
+  <p class="desc">
+    GitHub에서 가장 자주 수행하는 작업들을 목적별로 정리했습니다.
+    어떤 메뉴를 사용해야 할지 모를 때 아래 표를 참고하세요.
+  </p>
+
+  <div style="background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+    <div style="background:var(--plum);padding:12px 16px;display:grid;grid-template-columns:1fr 120px 1fr;gap:16px;">
+      <div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:1px;text-transform:uppercase;font-family:'Arial Black',Arial,sans-serif;">하고 싶은 것</div>
+      <div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:1px;text-transform:uppercase;text-align:center;font-family:'Arial Black',Arial,sans-serif;">사용할 탭</div>
+      <div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:1px;text-transform:uppercase;font-family:'Arial Black',Arial,sans-serif;">방법</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border);align-items:center;">
+      <div style="font-size:15px;color:var(--text);">파일 업로드하기</div>
+      <div style="text-align:center;"><span style="background:var(--plum-light);color:var(--plum);font-size:13px;font-weight:700;padding:3px 10px;border-radius:10px;">Code</span></div>
+      <div style="font-size:14px;color:var(--text2);">Code 탭 → Add file → Upload files</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.015);align-items:center;">
+      <div style="font-size:15px;color:var(--text);">버그/문제 신고하기</div>
+      <div style="text-align:center;"><span style="background:var(--euca-light);color:var(--pine);font-size:13px;font-weight:700;padding:3px 10px;border-radius:10px;">Issues</span></div>
+      <div style="font-size:14px;color:var(--text2);">Issues 탭 → New issue → 내용 작성</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border);align-items:center;">
+      <div style="font-size:15px;color:var(--text);">배포 성공 여부 확인</div>
+      <div style="text-align:center;"><span style="background:var(--teal-light);color:#0A7A8F;font-size:13px;font-weight:700;padding:3px 10px;border-radius:10px;">Actions</span></div>
+      <div style="font-size:14px;color:var(--text2);">Actions 탭 → 최근 실행 상태 확인 (✓/✗)</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.015);align-items:center;">
+      <div style="font-size:15px;color:var(--text);">팀원 접근 권한 부여</div>
+      <div style="text-align:center;"><span style="background:var(--plum-light);color:var(--plum);font-size:13px;font-weight:700;padding:3px 10px;border-radius:10px;">Settings</span></div>
+      <div style="font-size:14px;color:var(--text2);">Settings → Collaborators → Add people</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border);align-items:center;">
+      <div style="font-size:15px;color:var(--text);">방문자 수 확인</div>
+      <div style="text-align:center;"><span style="background:rgba(205,223,215,0.4);color:#105742;font-size:13px;font-weight:700;padding:3px 10px;border-radius:10px;">Insights</span></div>
+      <div style="font-size:14px;color:var(--text2);">Insights → Traffic → Views</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.015);align-items:center;">
+      <div style="font-size:15px;color:var(--text);">작업 목록 관리</div>
+      <div style="text-align:center;"><span style="background:var(--amber-light);color:#D4700A;font-size:13px;font-weight:700;padding:3px 10px;border-radius:10px;">Projects</span></div>
+      <div style="font-size:14px;color:var(--text2);">Projects → New project → Board/Table 선택</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:16px;padding:14px 16px;align-items:center;">
+      <div style="font-size:15px;color:var(--text);">사용 가이드 문서 작성</div>
+      <div style="text-align:center;"><span style="background:var(--plum-light);color:var(--plum);font-size:13px;font-weight:700;padding:3px 10px;border-radius:10px;">Wiki</span></div>
+      <div style="font-size:14px;color:var(--text2);">Wiki → Create the first page → 마크다운 작성</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer class="footer">
+  <strong>GitHub 초보자 가이드</strong> · Vantive-Kr / techwiki<br>
+  <span style="margin-top:4px;display:block;">본 가이드는 <strong>Vantive-Kr</strong> 팀의 GitHub 사용을 돕기 위해 제작되었습니다 · 2026</span>
+</footer>
+
+</body>
+</html>

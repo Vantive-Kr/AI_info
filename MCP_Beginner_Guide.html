@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP 완전 초보 가이드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --plum: #72256B; --plum-dark: #561a51; --plum-light: rgba(114,37,107,0.09);
+      --pine: #105742; --pine-dark: #0b3e2f; --pine-light: rgba(16,87,66,0.09);
+      --cream: #FFFAEB; --cream-dark: #F5EFD6;
+      --euca: #6CA07A; --euca-light: rgba(108,160,122,0.12);
+      --sage: #CDDFD7;
+      --amber: #D4700A; --amber-light: rgba(212,112,10,0.10);
+      --mcp: #7C3AED; --mcp-dark: #5B21B6; --mcp-light: rgba(124,58,237,0.09);
+    }
+    html.theme-light {
+      --bg: #FFFAEB; --bg-alt: #F5EFD6;
+      --surface: #FFFFFF; --surface-hover: #F9F4E3;
+      --border: rgba(16,87,66,0.12); --border-strong: rgba(16,87,66,0.25);
+      --text: #1a1a2e; --text-secondary: #3d4a6b; --text-muted: #6b7280;
+      --accent: #7C3AED; --accent-secondary: #105742;
+      --positive: #105742; --negative: #b91c1c; --warning: #92400e;
+    }
+    html.theme-dark {
+      --bg: #0f0a1e; --bg-alt: #160d2a;
+      --surface: #1e1535; --surface-hover: #261a40;
+      --border: rgba(205,223,215,0.08); --border-strong: rgba(205,223,215,0.18);
+      --text: #FFFAEB; --text-secondary: #CDDFD7; --text-muted: #8b949e;
+      --accent: #a78bfa; --accent-secondary: #6CA07A;
+      --positive: #6CA07A; --negative: #f87171; --warning: #fbbf24;
+    }
+
+    body {
+      font-family: 'DM Sans', 'Noto Sans KR', sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.65; -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.01em; transition: background 0.3s, color 0.3s;
+    }
+    h1,h2,h3,h4 { font-family: 'DM Sans','Noto Sans KR',sans-serif; color: var(--text); line-height: 1.15; letter-spacing: -0.03em; }
+    h1 { font-weight: 800; font-size: clamp(2.2rem, 5vw, 3.2rem); }
+    h2 { font-weight: 700; font-size: clamp(1.6rem, 3vw, 2.2rem); }
+    h3 { font-weight: 700; font-size: 1.3rem; }
+    h4 { font-weight: 600; font-size: 1.05rem; }
+    p, li { color: var(--text-secondary); font-size: 0.95rem; }
+
+    .wrap { width: min(calc(100% - 40px), 1060px); margin: 0 auto; }
+    .section { padding: 64px 0; }
+
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    @keyframes flowDot  { 0%{transform:translateX(-8px);opacity:0} 50%{opacity:1} 100%{transform:translateX(8px);opacity:0} }
+    @keyframes spin     { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    @keyframes shimmer  { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+
+    .animate  { animation: fadeInUp 0.65s ease-out both; }
+    .delay-1  { animation-delay:0.1s; } .delay-2 { animation-delay:0.2s; }
+    .delay-3  { animation-delay:0.3s; } .delay-4 { animation-delay:0.4s; }
+    .delay-5  { animation-delay:0.5s; }
+    .reveal   { opacity:0; transform:translateY(24px); transition:opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } .reveal { opacity:1; transform:none; } }
+
+    .skip-link { position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden; }
+    .skip-link:focus { left:16px; top:16px; width:auto; height:auto; padding:8px 16px; background:var(--mcp); color:#fff; border-radius:8px; z-index:9999; }
+
+    /* Menu */
+    .viz-menu { position:fixed; top:16px; right:16px; z-index:9000; }
+    .viz-menu-toggle { width:40px;height:40px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:box-shadow 0.2s; }
+    .viz-menu-toggle:hover { box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+    .viz-menu-dropdown { position:absolute;top:48px;right:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:none;flex-direction:column;gap:2px; }
+    .viz-menu-dropdown.open { display:flex; }
+    .viz-menu-btn { padding:10px 14px;border-radius:8px;border:none;background:transparent;color:var(--text);cursor:pointer;font-size:13px;font-weight:500;text-align:left;display:flex;align-items:center;gap:8px;transition:background 0.15s; }
+    .viz-menu-btn:hover { background:var(--surface-hover); }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(145deg, var(--mcp-dark) 0%, var(--mcp) 60%, #9333EA 100%);
+      padding: 56px 0 64px; position:relative; overflow:hidden;
+    }
+    .page-header::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 80% 30%, rgba(255,255,255,0.07) 0%, transparent 60%); }
+    .page-header::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:48px; background:var(--bg); clip-path:ellipse(55% 100% at 50% 100%); }
+    /* floating bg circles */
+    .hdr-bg-circle { position:absolute; border-radius:50%; opacity:0.06; }
+    .hdr-bc1 { width:320px; height:320px; background:#fff; top:-80px; right:-60px; }
+    .hdr-bc2 { width:180px; height:180px; background:#fff; bottom:20px; left:40px; }
+
+    .hdr-inner { display:flex; flex-direction:column; gap:16px; position:relative; z-index:1; }
+    .hdr-eyebrow { display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.92);font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;padding:5px 14px;border-radius:20px;width:fit-content; }
+    .hdr-title { color:#FFFFFF; }
+    .hdr-sub { color:rgba(255,255,255,0.78); font-size:1.05rem; max-width:640px; line-height:1.7; }
+    .hdr-pills { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+    .hdr-pill { padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25); }
+
+    /* Section label */
+    .sec-label { display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:10px; }
+    .sec-title { margin-bottom:8px; }
+    .sec-desc  { color:var(--text-secondary);font-size:0.92rem;margin-bottom:30px;max-width:700px;line-height:1.7; }
+
+    /* Card */
+    .card { background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;transition:box-shadow 0.2s; }
+    .card:hover { box-shadow:0 8px 28px rgba(0,0,0,0.09); }
+
+    /* Grid */
+    .three-col { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+    .two-col   { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .four-col  { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+
+    /* ── Big Analogy Block ── */
+    .analogy-wrap { background:var(--surface);border:1px solid var(--border);border-radius:24px;overflow:hidden; }
+    .analogy-head { padding:20px 28px;background:linear-gradient(135deg,var(--mcp-light),rgba(124,58,237,0.04)); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; }
+    .analogy-icon { width:44px;height:44px;border-radius:14px;background:var(--mcp-light);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .analogy-body { padding:24px 28px; }
+
+    /* ── Flow Diagram (how MCP works) ── */
+    .flow-diagram { display:flex; align-items:stretch; gap:0; background:var(--surface); border:1px solid var(--border); border-radius:20px; overflow:hidden; }
+    .flow-node { flex:1; padding:24px 20px; text-align:center; position:relative; }
+    .flow-node:not(:last-child)::after {
+      content:''; position:absolute; right:-1px; top:0; bottom:0; width:1px;
+      background: linear-gradient(to bottom, transparent, var(--border), transparent);
+    }
+    .flow-arrow { display:flex; align-items:center; justify-content:center; padding:0 4px; color:var(--text-muted); flex-shrink:0; }
+    .flow-icon { width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px; }
+    .flow-label { font-size:14px;font-weight:800;margin-bottom:4px; }
+    .flow-sub   { font-size:11px;color:var(--text-muted);line-height:1.5; }
+
+    /* ── Connector-style dot animation ── */
+    .dot-line { display:flex; align-items:center; gap:4px; justify-content:center; margin:8px 0; }
+    .dot-line span { width:6px;height:6px;border-radius:50%;background:var(--mcp);opacity:0.3;animation:pulse 1.6s ease-in-out infinite; }
+    .dot-line span:nth-child(2) { animation-delay:0.3s; }
+    .dot-line span:nth-child(3) { animation-delay:0.6s; }
+
+    /* ── What MCP Can Do grid ── */
+    .capability-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    .cap-item { background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;transition:box-shadow 0.2s; }
+    .cap-item:hover { box-shadow:0 6px 20px rgba(0,0,0,0.08); }
+    .cap-icon { width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .cap-title { font-size:13px;font-weight:700;margin-bottom:3px; }
+    .cap-desc  { font-size:0.83rem;color:var(--text-muted);line-height:1.55; }
+
+    /* ── Without/With MCP comparison ── */
+    .before-after { display:grid; grid-template-columns:1fr 60px 1fr; gap:0; align-items:center; }
+    .ba-col { background:var(--surface); border:1px solid var(--border); border-radius:20px; overflow:hidden; }
+    .ba-head { padding:18px 22px; border-bottom:1px solid var(--border); }
+    .ba-head-tag { font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px; }
+    .ba-head-title { font-size:16px;font-weight:800; }
+    .ba-body { padding:20px 22px; display:flex; flex-direction:column; gap:10px; }
+    .ba-row { display:flex; gap:10px; align-items:flex-start; }
+    .ba-dot { width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px; }
+    .ba-text { font-size:0.87rem; line-height:1.55; color:var(--text-secondary); }
+    .ba-center { display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px; }
+    .ba-center-arrow { font-size:28px;color:var(--mcp); }
+
+    /* ── Step flow ── */
+    .step-flow { display:flex; flex-direction:column; }
+    .step-item { display:flex; gap:20px; position:relative; }
+    .step-item:not(:last-child)::after { content:''; position:absolute; left:21px; top:50px; width:2px; height:calc(100% - 22px); background:var(--border); }
+    .step-num { flex-shrink:0;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;position:relative;z-index:1; }
+    .step-content { padding:10px 0 34px; flex:1; }
+    .step-title { font-size:15px;font-weight:700;margin-bottom:4px; }
+    .step-desc  { font-size:0.88rem;color:var(--text-secondary);line-height:1.6;margin-bottom:10px; }
+
+    /* Code block */
+    .code-block { background:var(--bg-alt);border:1px solid var(--border);border-radius:12px;overflow:hidden; }
+    .code-bar { padding:8px 14px;background:rgba(0,0,0,0.04);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+    .code-bar-dots { display:flex;gap:6px; }
+    .code-bar-dot  { width:10px;height:10px;border-radius:50%; }
+    .code-bar-lang { font-size:11px;color:var(--text-muted);font-weight:600; }
+    .code-body { padding:14px 18px;font-family:monospace;font-size:12.5px;line-height:1.85;white-space:pre-wrap; }
+    .kw { color:var(--mcp); font-weight:700; }
+    .st { color:var(--pine); }
+    .cm { color:var(--text-muted); font-style:italic; }
+
+    /* MCP server tiles */
+    .server-tile { background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;transition:box-shadow 0.2s; }
+    .server-tile:hover { box-shadow:0 6px 20px rgba(0,0,0,0.09); }
+    .server-tile-icon { width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:12px; }
+    .server-tile-name { font-size:14px;font-weight:700;margin-bottom:3px; }
+    .server-tile-desc { font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:10px; }
+    .server-tile-tag  { display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700; }
+
+    /* Tip box */
+    .tip-box { display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px; }
+    .tip-box-icon { width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center; }
+    .tip-box-title { font-size:13px;font-weight:700;margin-bottom:4px; }
+    .tip-box-desc  { font-size:0.83rem;color:var(--text-muted);line-height:1.55; }
+
+    /* ── Big visual: MCP as USB hub ── */
+    .hub-visual { background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px;text-align:center; }
+    .hub-center { display:inline-flex;align-items:center;justify-content:center;width:90px;height:90px;border-radius:28px;background:linear-gradient(135deg,var(--mcp-dark),var(--mcp));box-shadow:0 8px 32px rgba(124,58,237,0.35);margin-bottom:4px; }
+    .hub-row { display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;margin-top:16px; }
+    .hub-item { display:flex;flex-direction:column;align-items:center;gap:6px; }
+    .hub-item-icon { width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center; }
+    .hub-item-name { font-size:12px;font-weight:700;color:var(--text-muted); }
+    .hub-connector { display:flex;flex-direction:column;align-items:center;gap:3px; }
+    .hub-line { width:2px;height:28px;background:linear-gradient(to bottom,var(--mcp),var(--border)); }
+    .hub-dot  { width:7px;height:7px;border-radius:50%;background:var(--mcp);animation:pulse 2s ease-in-out infinite; }
+
+    /* FAQ */
+    .faq-list { display:flex;flex-direction:column;gap:12px; }
+    .faq-item { background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden; }
+    .faq-q { padding:18px 20px;font-size:14px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background 0.15s; }
+    .faq-q:hover { background:var(--surface-hover); }
+    .faq-a { padding:0 20px 16px;font-size:0.88rem;color:var(--text-secondary);line-height:1.7; }
+
+    @media (max-width:768px) { .three-col,.four-col { grid-template-columns:1fr; } .two-col,.capability-grid { grid-template-columns:1fr; } .before-after { grid-template-columns:1fr; } .ba-center { display:none; } .flow-diagram { flex-direction:column; } .hub-row { gap:12px; } }
+    @media (max-width:375px) { body { overflow-x:hidden; } .wrap { width:calc(100% - 24px); } }
+    @media print { .viz-menu { display:none; } body { background:#fff; color:#000; } .card,.server-tile,.faq-item { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
+
+<nav class="viz-menu" role="complementary" aria-label="메뉴">
+  <button class="viz-menu-toggle" onclick="toggleMenu()" aria-label="메뉴 열기">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
+  </button>
+  <div class="viz-menu-dropdown" id="vizMenuDropdown" role="menu">
+    <button class="viz-menu-btn" onclick="cycleTheme()" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
+      테마 전환
+    </button>
+    <button class="viz-menu-btn" onclick="downloadImage()" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      PNG 저장
+    </button>
+    <button class="viz-menu-btn" onclick="window.print()" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      인쇄
+    </button>
+  </div>
+</nav>
+
+<main id="main-content">
+
+  <!-- ── HEADER ── -->
+  <header class="page-header" role="banner">
+    <div class="hdr-bg-circle hdr-bc1"></div>
+    <div class="hdr-bg-circle hdr-bc2"></div>
+    <div class="wrap">
+      <div class="hdr-inner">
+        <span class="hdr-eyebrow animate">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+          완전 초보를 위한 MCP 가이드
+        </span>
+        <h1 class="hdr-title animate delay-1">MCP란 무엇인가?</h1>
+        <p class="hdr-sub animate delay-2">Model Context Protocol — AI가 외부 세계와 소통하는 표준 언어입니다.<br>코딩 지식 없이도 이해할 수 있도록, 비유와 그림으로 설명합니다.</p>
+        <div class="hdr-pills animate delay-3">
+          <span class="hdr-pill">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            AI ↔ 외부 서비스 연결
+          </span>
+          <span class="hdr-pill">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Anthropic 오픈 표준
+          </span>
+          <span class="hdr-pill">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+            플러그 앤 플레이
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── SECTION 1: 한 문장 정의 + 비유 ── -->
+  <section class="section" aria-labelledby="what-title">
+    <div class="wrap">
+      <span class="sec-label animate" style="background:var(--mcp-light); color:var(--mcp);">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        개념 이해
+      </span>
+      <h2 class="sec-title animate delay-1" id="what-title">MCP를 한마디로?</h2>
+      <p class="sec-desc animate delay-2">MCP(Model Context Protocol)는 <strong>AI가 이메일·파일·데이터베이스 등 외부 도구를 사용할 수 있게 해주는 표준 규격</strong>입니다.<br>Anthropic이 2024년 발표했으며, Claude뿐 아니라 모든 AI가 사용할 수 있는 오픈 표준입니다.</p>
+
+      <!-- 비유 3종 세트 -->
+      <div class="three-col">
+        <div class="analogy-wrap animate delay-2">
+          <div class="analogy-head">
+            <div class="analogy-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+            </div>
+            <div>
+              <div style="font-size:12px; font-weight:800; color:var(--mcp); letter-spacing:1px; text-transform:uppercase;">비유 ①</div>
+              <div style="font-size:15px; font-weight:800;">USB 허브</div>
+            </div>
+          </div>
+          <div class="analogy-body">
+            <p style="font-size:0.9rem; line-height:1.7; color:var(--text-secondary);">USB 포트 하나의 규격을 따르면 마우스·키보드·저장소 모두 연결되듯, MCP 표준 하나로 Gmail·Slack·Notion 등 어떤 서비스든 AI와 연결됩니다.</p>
+          </div>
+        </div>
+        <div class="analogy-wrap animate delay-3">
+          <div class="analogy-head">
+            <div class="analogy-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div style="font-size:12px; font-weight:800; color:var(--mcp); letter-spacing:1px; text-transform:uppercase;">비유 ②</div>
+              <div style="font-size:15px; font-weight:800;">통역사</div>
+            </div>
+          </div>
+          <div class="analogy-body">
+            <p style="font-size:0.9rem; line-height:1.7; color:var(--text-secondary);">Claude(AI)는 한국어만 하고, Gmail은 영어만 하는 상황. MCP는 이 둘 사이에서 서로 통할 수 있도록 표준화된 말을 번역해주는 통역사 역할을 합니다.</p>
+          </div>
+        </div>
+        <div class="analogy-wrap animate delay-4">
+          <div class="analogy-head">
+            <div class="analogy-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+            </div>
+            <div>
+              <div style="font-size:12px; font-weight:800; color:var(--mcp); letter-spacing:1px; text-transform:uppercase;">비유 ③</div>
+              <div style="font-size:15px; font-weight:800;">표준 콘센트</div>
+            </div>
+          </div>
+          <div class="analogy-body">
+            <p style="font-size:0.9rem; line-height:1.7; color:var(--text-secondary);">220V 콘센트 규격이 있으면 어떤 가전이든 꽂아 쓸 수 있듯, MCP라는 표준이 있으면 어떤 서비스든 AI에 "꽂아서" 바로 사용할 수 있습니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 2: MCP 없을 때 vs 있을 때 ── -->
+  <section class="section" style="padding-top:0;" aria-labelledby="before-after-title">
+    <div class="wrap">
+      <span class="sec-label reveal" style="background:var(--pine-light); color:var(--pine);">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        비교
+      </span>
+      <h2 class="sec-title reveal" id="before-after-title">MCP 이전 vs 이후</h2>
+      <p class="sec-desc reveal">MCP가 없으면 AI는 대화만 할 수 있습니다. MCP가 있으면 AI가 실제로 움직입니다.</p>
+
+      <div class="before-after reveal">
+        <div class="ba-col">
+          <div class="ba-head" style="background:rgba(185,28,28,0.06);">
+            <div class="ba-head-tag" style="color:#b91c1c;">❌ MCP 없을 때</div>
+            <div class="ba-head-title">AI는 대화 상자에 갇혀 있음</div>
+          </div>
+          <div class="ba-body">
+            <div class="ba-row">
+              <div class="ba-dot" style="background:rgba(185,28,28,0.1);">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </div>
+              <span class="ba-text">"이메일 보내줘" → <strong>불가능</strong>. 대신 본문을 알려줄 뿐, 실제 발송은 사용자가 직접</span>
+            </div>
+            <div class="ba-row">
+              <div class="ba-dot" style="background:rgba(185,28,28,0.1);">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </div>
+              <span class="ba-text">"이번 주 캘린더 확인해줘" → <strong>불가능</strong>. AI는 사용자 일정을 볼 수 없음</span>
+            </div>
+            <div class="ba-row">
+              <div class="ba-dot" style="background:rgba(185,28,28,0.1);">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </div>
+              <span class="ba-text">"Notion에 정리해줘" → <strong>불가능</strong>. AI는 외부 앱에 접근 불가</span>
+            </div>
+            <div class="ba-row">
+              <div class="ba-dot" style="background:rgba(185,28,28,0.1);">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </div>
+              <span class="ba-text">모든 실제 행동은 사용자가 복사-붙여넣기로 직접 처리</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ba-center">
+          <div class="ba-center-arrow">→</div>
+          <div style="font-size:11px; font-weight:700; color:var(--mcp); letter-spacing:1px; text-transform:uppercase;">MCP<br>연결</div>
+        </div>
+
+        <div class="ba-col">
+          <div class="ba-head" style="background:var(--pine-light);">
+            <div class="ba-head-tag" style="color:var(--pine);">✅ MCP 있을 때</div>
+            <div class="ba-head-title">AI가 직접 행동</div>
+          </div>
+          <div class="ba-body">
+            <div class="ba-row">
+              <div class="ba-dot" style="background:var(--pine-light);">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#105742" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <span class="ba-text">"이메일 보내줘" → <strong>바로 발송 완료</strong>. Claude가 Outlook에 직접 접속해 전송</span>
+            </div>
+            <div class="ba-row">
+              <div class="ba-dot" style="background:var(--pine-light);">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#105742" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <span class="ba-text">"이번 주 캘린더 확인해줘" → <strong>일정 읽어서 요약</strong>. 오늘 미팅 3개 있다고 바로 알려줌</span>
+            </div>
+            <div class="ba-row">
+              <div class="ba-dot" style="background:var(--pine-light);">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#105742" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <span class="ba-text">"Notion에 정리해줘" → <strong>직접 작성 완료</strong>. 새 페이지 생성 후 내용 입력까지</span>
+            </div>
+            <div class="ba-row">
+              <div class="ba-dot" style="background:var(--pine-light);">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#105742" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <span class="ba-text">사람이 복사-붙여넣기 없이 <strong>자연어 명령만으로</strong> 모든 업무 처리</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 3: 작동 원리 시각화 ── -->
+  <section class="section" style="padding-top:0;" aria-labelledby="how-title">
+    <div class="wrap">
+      <span class="sec-label reveal" style="background:var(--mcp-light); color:var(--mcp);">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        작동 원리
+      </span>
+      <h2 class="sec-title reveal" id="how-title">MCP는 어떻게 작동하나요?</h2>
+      <p class="sec-desc reveal">세 가지 구성 요소가 협력합니다. 마치 전화 통화처럼 — 발신자(AI), 교환기(MCP), 수신자(서비스)입니다.</p>
+
+      <!-- 흐름 다이어그램 -->
+      <div class="flow-diagram reveal">
+        <div class="flow-node" style="background:var(--mcp-light);">
+          <div class="flow-icon" style="background:linear-gradient(135deg,var(--mcp-dark),var(--mcp)); box-shadow:0 4px 16px rgba(124,58,237,0.3);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div class="flow-label" style="color:var(--mcp);">① MCP 클라이언트</div>
+          <div class="flow-sub">Claude, Copilot 등<br>AI 앱 자체</div>
+          <div class="dot-line" style="margin-top:10px;"><span></span><span></span><span></span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">"이메일 보내줘"<br>라고 명령하면</div>
+        </div>
+        <div class="flow-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="flow-node">
+          <div class="flow-icon" style="background:var(--amber-light);border:2px solid rgba(212,112,10,0.25);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D4700A" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+          </div>
+          <div class="flow-label" style="color:var(--amber);">② MCP 서버</div>
+          <div class="flow-sub">중간 다리<br>표준 변환기</div>
+          <div class="dot-line" style="margin-top:10px;"><span style="background:var(--amber);"></span><span style="background:var(--amber);"></span><span style="background:var(--amber);"></span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">명령을 서비스가<br>이해하는 형식으로 변환</div>
+        </div>
+        <div class="flow-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="flow-node" style="background:var(--pine-light);">
+          <div class="flow-icon" style="background:var(--pine-light);border:2px solid rgba(16,87,66,0.2);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#105742" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="flow-label" style="color:var(--pine);">③ 외부 서비스</div>
+          <div class="flow-sub">Gmail, Slack<br>Notion, DB 등</div>
+          <div class="dot-line" style="margin-top:10px;"><span style="background:var(--pine);"></span><span style="background:var(--pine);"></span><span style="background:var(--pine);"></span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">실제 이메일이<br>발송됨</div>
+        </div>
+      </div>
+
+      <!-- 핵심 포인트 -->
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:16px;">
+        <div class="card reveal" style="padding:18px; border-top:3px solid var(--mcp);">
+          <div style="font-size:22px; margin-bottom:8px;">🗣️</div>
+          <h4 style="font-size:13px; margin-bottom:4px; color:var(--mcp);">Tools (도구)</h4>
+          <p style="font-size:0.83rem;">AI가 실행할 수 있는 동작. 예: send_email(), create_event(), query_database()</p>
+        </div>
+        <div class="card reveal" style="padding:18px; border-top:3px solid var(--amber);">
+          <div style="font-size:22px; margin-bottom:8px;">📄</div>
+          <h4 style="font-size:13px; margin-bottom:4px; color:var(--amber);">Resources (자원)</h4>
+          <p style="font-size:0.83rem;">AI가 읽을 수 있는 데이터. 예: 이메일 목록, 파일 내용, DB 테이블</p>
+        </div>
+        <div class="card reveal" style="padding:18px; border-top:3px solid var(--pine);">
+          <div style="font-size:22px; margin-bottom:8px;">💬</div>
+          <h4 style="font-size:13px; margin-bottom:4px; color:var(--pine);">Prompts (프롬프트)</h4>
+          <p style="font-size:0.83rem;">미리 정의된 작업 템플릿. 자주 쓰는 작업을 재사용 가능하게 패키징</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 4: MCP 허브 시각화 ── -->
+  <section class="section" style="padding-top:0;" aria-labelledby="hub-title">
+    <div class="wrap">
+      <span class="sec-label reveal" style="background:var(--amber-light); color:var(--amber);">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+        연결 지도
+      </span>
+      <h2 class="sec-title reveal" id="hub-title">MCP 하나로 연결되는 세계</h2>
+      <p class="sec-desc reveal">MCP 표준 하나를 따르면 AI가 수십 개의 서비스와 연결됩니다. 마치 USB 허브처럼.</p>
+
+      <div class="hub-visual reveal">
+        <div style="margin-bottom:16px;">
+          <div class="hub-center" style="animation:float 4s ease-in-out infinite;">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+          </div>
+          <div style="font-size:14px; font-weight:800; color:var(--mcp); margin-top:8px;">Claude AI</div>
+          <div style="font-size:11px; color:var(--text-muted);">MCP 클라이언트</div>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:32px; flex-wrap:wrap;">
+          <!-- 이메일 -->
+          <div class="hub-item">
+            <div class="hub-connector"><div class="hub-line"></div><div class="hub-dot" style="animation-delay:0s;"></div><div class="hub-line"></div></div>
+            <div class="hub-item-icon" style="background:#EA4335; box-shadow:0 4px 12px rgba(234,67,53,0.3);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="hub-item-name">Gmail</div>
+          </div>
+          <!-- 캘린더 -->
+          <div class="hub-item">
+            <div class="hub-connector"><div class="hub-line"></div><div class="hub-dot" style="animation-delay:0.4s;"></div><div class="hub-line"></div></div>
+            <div class="hub-item-icon" style="background:#1E88E5; box-shadow:0 4px 12px rgba(30,136,229,0.3);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="hub-item-name">Calendar</div>
+          </div>
+          <!-- Slack -->
+          <div class="hub-item">
+            <div class="hub-connector"><div class="hub-line"></div><div class="hub-dot" style="animation-delay:0.8s;"></div><div class="hub-line"></div></div>
+            <div class="hub-item-icon" style="background:#4A154B; box-shadow:0 4px 12px rgba(74,21,75,0.3);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/><path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"/></svg>
+            </div>
+            <div class="hub-item-name">Slack</div>
+          </div>
+          <!-- Notion -->
+          <div class="hub-item">
+            <div class="hub-connector"><div class="hub-line"></div><div class="hub-dot" style="animation-delay:1.2s;"></div><div class="hub-line"></div></div>
+            <div class="hub-item-icon" style="background:#000; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="hub-item-name">Notion</div>
+          </div>
+          <!-- DB -->
+          <div class="hub-item">
+            <div class="hub-connector"><div class="hub-line"></div><div class="hub-dot" style="animation-delay:1.6s;"></div><div class="hub-line"></div></div>
+            <div class="hub-item-icon" style="background:#336791; box-shadow:0 4px 12px rgba(51,103,145,0.3);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            </div>
+            <div class="hub-item-name">Database</div>
+          </div>
+          <!-- GitHub -->
+          <div class="hub-item">
+            <div class="hub-connector"><div class="hub-line"></div><div class="hub-dot" style="animation-delay:2.0s;"></div><div class="hub-line"></div></div>
+            <div class="hub-item-icon" style="background:#24292F; box-shadow:0 4px 12px rgba(36,41,47,0.3);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            </div>
+            <div class="hub-item-name">GitHub</div>
+          </div>
+          <!-- 파일 시스템 -->
+          <div class="hub-item">
+            <div class="hub-connector"><div class="hub-line"></div><div class="hub-dot" style="animation-delay:2.4s;"></div><div class="hub-line"></div></div>
+            <div class="hub-item-icon" style="background:var(--amber); box-shadow:0 4px 12px rgba(212,112,10,0.3);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+            </div>
+            <div class="hub-item-name">파일 시스템</div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px; padding:14px 20px; background:var(--mcp-light); border-radius:12px; display:inline-block;">
+          <span style="font-size:13px; color:var(--mcp); font-weight:700;">+ 수백 개의 MCP 서버가 계속 추가되고 있습니다</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 5: 주요 MCP 서버 카탈로그 ── -->
+  <section class="section" style="padding-top:0;" aria-labelledby="catalog-title">
+    <div class="wrap">
+      <span class="sec-label reveal" style="background:var(--pine-light); color:var(--pine);">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        주요 서버
+      </span>
+      <h2 class="sec-title reveal" id="catalog-title">자주 쓰이는 MCP 서버들</h2>
+      <p class="sec-desc reveal">Anthropic 공식 제공 서버부터 커뮤니티 서버까지, 대표적인 MCP 서버들입니다.</p>
+
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;" class="reveal">
+        <div class="server-tile">
+          <div class="server-tile-icon" style="background:#EA4335;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="server-tile-name">Gmail MCP</div>
+          <div class="server-tile-desc">이메일 읽기, 작성, 발송, 검색, 레이블 관리</div>
+          <span class="server-tile-tag" style="background:var(--pine-light); color:var(--pine);">Anthropic 공식</span>
+        </div>
+
+        <div class="server-tile">
+          <div class="server-tile-icon" style="background:#0078D4;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="server-tile-name">Outlook MCP</div>
+          <div class="server-tile-desc">Microsoft 365 메일·캘린더·연락처 통합</div>
+          <span class="server-tile-tag" style="background:var(--mcp-light); color:var(--mcp);">커뮤니티</span>
+        </div>
+
+        <div class="server-tile">
+          <div class="server-tile-icon" style="background:#4A154B;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/><path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"/></svg>
+          </div>
+          <div class="server-tile-name">Slack MCP</div>
+          <div class="server-tile-desc">채널 메시지 읽기·전송, 멤버 조회, 알림 관리</div>
+          <span class="server-tile-tag" style="background:var(--pine-light); color:var(--pine);">Anthropic 공식</span>
+        </div>
+
+        <div class="server-tile">
+          <div class="server-tile-icon" style="background:#000000;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="server-tile-name">Notion MCP</div>
+          <div class="server-tile-desc">페이지 생성·수정, 데이터베이스 쿼리, 블록 관리</div>
+          <span class="server-tile-tag" style="background:var(--mcp-light); color:var(--mcp);">커뮤니티</span>
+        </div>
+
+        <div class="server-tile">
+          <div class="server-tile-icon" style="background:#336791;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <div class="server-tile-name">Filesystem MCP</div>
+          <div class="server-tile-desc">로컬 파일·폴더 읽기·쓰기·이동·검색</div>
+          <span class="server-tile-tag" style="background:var(--pine-light); color:var(--pine);">Anthropic 공식</span>
+        </div>
+
+        <div class="server-tile">
+          <div class="server-tile-icon" style="background:#1E88E5;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="server-tile-name">Brave Search MCP</div>
+          <div class="server-tile-desc">실시간 웹 검색 — AI가 직접 최신 정보를 검색</div>
+          <span class="server-tile-tag" style="background:var(--pine-light); color:var(--pine);">Anthropic 공식</span>
+        </div>
+      </div>
+
+      <div class="card reveal" style="margin-top:16px; display:flex; gap:14px; align-items:center;">
+        <div style="font-size:28px; flex-shrink:0;">🌐</div>
+        <div>
+          <h4 style="margin-bottom:4px;">더 많은 MCP 서버 찾기</h4>
+          <p style="font-size:0.88rem;">공식 MCP 서버 목록: <strong style="color:var(--mcp);">github.com/modelcontextprotocol/servers</strong><br>커뮤니티 서버 목록: <strong style="color:var(--mcp);">mcp.so</strong> — 수백 개의 서버를 검색·설치 가능</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 6: Claude Cowork에서 MCP 사용하기 ── -->
+  <section class="section" style="padding-top:0;" aria-labelledby="usage-title">
+    <div class="wrap">
+      <span class="sec-label reveal" style="background:var(--mcp-light); color:var(--mcp);">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        실전 사용
+      </span>
+      <h2 class="sec-title reveal" id="usage-title">Claude에서 MCP 연결하기</h2>
+      <p class="sec-desc reveal">Claude Cowork에서는 GUI로 간단하게 MCP를 연결합니다. 코딩 없이 몇 번의 클릭으로 완료됩니다.</p>
+
+      <div class="two-col">
+        <div class="step-flow">
+          <div class="step-item reveal">
+            <div class="step-num" style="background:var(--mcp-light); color:var(--mcp);">1</div>
+            <div class="step-content">
+              <div class="step-title">Cowork 설정 열기</div>
+              <div class="step-desc">Claude Cowork 앱 → 상단 톱니바퀴(⚙️) 클릭 → Connectors 탭 선택</div>
+            </div>
+          </div>
+          <div class="step-item reveal">
+            <div class="step-num" style="background:var(--mcp-light); color:var(--mcp);">2</div>
+            <div class="step-content">
+              <div class="step-title">원하는 서비스 선택</div>
+              <div class="step-desc">Gmail, Outlook, Slack, Notion 등 연결할 서비스를 목록에서 클릭</div>
+            </div>
+          </div>
+          <div class="step-item reveal">
+            <div class="step-num" style="background:var(--mcp-light); color:var(--mcp);">3</div>
+            <div class="step-content">
+              <div class="step-title">OAuth 로그인으로 인증</div>
+              <div class="step-desc">브라우저가 열리면 해당 서비스 계정으로 로그인 → "허용" 버튼 클릭</div>
+            </div>
+          </div>
+          <div class="step-item reveal">
+            <div class="step-num" style="background:var(--mcp-light); color:var(--mcp);">4</div>
+            <div class="step-content" style="padding-bottom:0;">
+              <div class="step-title">Claude에게 명령하기</div>
+              <div class="step-desc">이제 "Gmail에서 오늘 받은 이메일 요약해줘"처럼 자연어로 사용 가능</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="card reveal" style="background:var(--mcp-light); border-color:rgba(124,58,237,0.2); padding:20px;">
+            <h4 style="color:var(--mcp); margin-bottom:12px;">💬 연결 후 사용 예시</h4>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="padding:10px 14px; background:rgba(255,255,255,0.6); border-radius:10px; font-size:12.5px; line-height:1.7; color:var(--text-secondary); border:1px solid rgba(124,58,237,0.1);">
+                "오늘 Gmail 미읽은 메일 중에 중요한 거 3개만 요약해줘"
+              </div>
+              <div style="padding:10px 14px; background:rgba(255,255,255,0.6); border-radius:10px; font-size:12.5px; line-height:1.7; color:var(--text-secondary); border:1px solid rgba(124,58,237,0.1);">
+                "이번 주 월요일 오전 10시에 팀 미팅 캘린더에 추가해줘"
+              </div>
+              <div style="padding:10px 14px; background:rgba(255,255,255,0.6); border-radius:10px; font-size:12.5px; line-height:1.7; color:var(--text-secondary); border:1px solid rgba(124,58,237,0.1);">
+                "Slack #general 채널에 오늘 회의 결과 요약 메시지 보내줘"
+              </div>
+            </div>
+          </div>
+
+          <div class="tip-box reveal">
+            <div class="tip-box-icon" style="background:var(--amber-light);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4700A" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div class="tip-box-title" style="color:var(--amber);">보안 걱정되시나요?</div>
+              <div class="tip-box-desc">MCP는 OAuth 2.0 표준 인증을 사용합니다. Claude가 비밀번호를 저장하지 않으며, 언제든지 연결을 해제할 수 있습니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 7: plugin.json으로 직접 설정 ── -->
+  <section class="section" style="padding-top:0;" aria-labelledby="config-title">
+    <div class="wrap">
+      <span class="sec-label reveal" style="background:var(--pine-light); color:var(--pine);">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        고급 설정
+      </span>
+      <h2 class="sec-title reveal" id="config-title">직접 설정하려면? (선택 사항)</h2>
+      <p class="sec-desc reveal">GUI로 안 되는 사내 시스템 등을 연결할 때는 JSON 설정 파일로 MCP 서버를 추가합니다. 처음에는 복사-붙여넣기만 해도 됩니다.</p>
+
+      <div class="two-col">
+        <div>
+          <div class="code-block reveal">
+            <div class="code-bar">
+              <div class="code-bar-dots">
+                <div class="code-bar-dot" style="background:#ff5f57;"></div>
+                <div class="code-bar-dot" style="background:#febc2e;"></div>
+                <div class="code-bar-dot" style="background:#28c840;"></div>
+              </div>
+              <span class="code-bar-lang">plugin.json — MCP 서버 추가</span>
+            </div>
+            <div class="code-body"><span class="cm">// plugin.json 파일 내 mcpServers 항목</span>
+<span class="kw">"mcpServers"</span>: {
+
+  <span class="cm">// Gmail 연결 예시</span>
+  <span class="kw">"gmail"</span>: {
+    <span class="st">"command"</span>: <span class="st">"npx"</span>,
+    <span class="st">"args"</span>: [<span class="st">"-y"</span>, <span class="st">"@anthropic/mcp-server-gmail"</span>],
+    <span class="st">"env"</span>: {
+      <span class="st">"GMAIL_OAUTH_TOKEN"</span>: <span class="st">"발급받은_토큰"</span>
+    }
+  },
+
+  <span class="cm">// 파일 시스템 연결 예시</span>
+  <span class="kw">"filesystem"</span>: {
+    <span class="st">"command"</span>: <span class="st">"npx"</span>,
+    <span class="st">"args"</span>: [
+      <span class="st">"-y"</span>, <span class="st">"@anthropic/mcp-server-filesystem"</span>,
+      <span class="st">"/Users/내이름/Documents"</span>  <span class="cm">// 접근 허용 폴더</span>
+    ]
+  }
+
+}</div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="card reveal">
+            <h4 style="margin-bottom:12px;">📋 설정 순서</h4>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.88rem;color:var(--text-secondary);">
+                <span style="font-weight:800;color:var(--mcp);flex-shrink:0;">1.</span>
+                Node.js 설치 (nodejs.org — 무료)
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.88rem;color:var(--text-secondary);">
+                <span style="font-weight:800;color:var(--mcp);flex-shrink:0;">2.</span>
+                MCP 서버 패키지 이름 확인 (GitHub 페이지 참조)
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.88rem;color:var(--text-secondary);">
+                <span style="font-weight:800;color:var(--mcp);flex-shrink:0;">3.</span>
+                plugin.json에 위 형식으로 복사-붙여넣기
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.88rem;color:var(--text-secondary);">
+                <span style="font-weight:800;color:var(--mcp);flex-shrink:0;">4.</span>
+                Claude 재시작 → 연결 확인
+              </div>
+            </div>
+          </div>
+
+          <div class="tip-box reveal" style="background:var(--pine-light); border-color:rgba(16,87,66,0.2);">
+            <div class="tip-box-icon" style="background:rgba(16,87,66,0.15);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#105742" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div>
+              <div class="tip-box-title" style="color:var(--pine);">초보자 팁</div>
+              <div class="tip-box-desc">처음에는 GitHub에서 공식 서버의 README를 찾아 예시 설정을 그대로 복사하세요. Claude에게 "이 MCP 서버 설정 방법 알려줘"라고 물어봐도 됩니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 8: FAQ ── -->
+  <section class="section" style="padding-top:0; padding-bottom:80px;" aria-labelledby="faq-title">
+    <div class="wrap">
+      <span class="sec-label reveal" style="background:var(--amber-light); color:var(--amber);">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        자주 묻는 질문
+      </span>
+      <h2 class="sec-title reveal" id="faq-title">초보자 FAQ</h2>
+
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>🤔 MCP와 API는 다른 건가요?</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="faq-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-a" style="display:none;">API는 서비스마다 규격이 달라 개발자가 각각 코드를 짜야 했습니다. MCP는 그 위에 공통 표준 레이어를 씌운 것입니다. AI 관점에서 보면 API는 서비스마다 다른 방언, MCP는 모두가 쓰는 표준어라고 볼 수 있습니다.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>💰 MCP 사용이 유료인가요?</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="faq-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-a" style="display:none;">MCP 표준 자체는 완전 무료 오픈소스입니다. 단, MCP를 통해 연결하는 서비스(Gmail, Slack 등)의 API 사용량에 따라 해당 서비스 요금이 발생할 수 있습니다. 대부분의 일반적인 사용량에서는 무료 범위 내에 들어옵니다.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>🔐 내 이메일이나 파일이 유출되지 않나요?</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="faq-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-a" style="display:none;">MCP는 AI가 요청한 작업에 필요한 데이터만 가져오는 구조입니다. 사용자가 명령하지 않은 데이터에 임의로 접근하지 않습니다. 또한 OAuth 인증을 통해 허용한 범위 내에서만 동작하며, 언제든지 연결을 끊을 수 있습니다.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>🛠️ MCP 서버를 직접 만들 수 있나요?</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="faq-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-a" style="display:none;">네, 가능합니다. Python 또는 TypeScript/Node.js로 만들 수 있습니다. Anthropic이 공식 SDK를 제공하며, 기존 MCP 서버 코드를 참고하면 초보자도 도전해볼 수 있습니다. 사내 전용 시스템(ERP, 사내망 DB 등)을 연결하려면 직접 제작이 필요합니다.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>🌍 Claude 말고 다른 AI도 MCP를 쓸 수 있나요?</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="faq-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="faq-a" style="display:none;">네! MCP는 오픈 표준이라 어떤 AI도 사용할 수 있습니다. 현재 GitHub Copilot(VS Code), Cursor, Windsurf 등 주요 AI 코딩 도구들도 MCP를 지원하기 시작했습니다. 한 번 만든 MCP 서버를 여러 AI 앱에서 재사용할 수 있습니다.</div>
+        </div>
+      </div>
+
+      <!-- 최종 요약 -->
+      <div class="card reveal" style="margin-top:28px; background:linear-gradient(135deg, var(--mcp-dark) 0%, var(--mcp) 100%); border:none; padding:36px;">
+        <div style="display:grid; grid-template-columns:1fr auto; gap:24px; align-items:center; flex-wrap:wrap;">
+          <div>
+            <h3 style="color:#fff; margin-bottom:12px;">MCP 한 줄 요약</h3>
+            <p style="color:rgba(255,255,255,0.82); font-size:0.95rem; line-height:1.8;">
+              <strong style="color:#fff;">MCP = AI의 팔과 눈</strong><br>
+              AI는 원래 말만 할 수 있었습니다.<br>
+              MCP를 연결하면 이메일을 보내고, 파일을 읽고, 캘린더를 수정하고,<br>
+              데이터베이스를 조회하는 <strong style="color:#fff;">실제 행동</strong>이 가능해집니다.<br><br>
+              표준 규격이기 때문에 <strong style="color:#fff;">한 번 배우면 어디서든 적용</strong>됩니다.
+            </p>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; flex-shrink:0;">
+            <div style="text-align:center;padding:14px 16px;background:rgba(255,255,255,0.12);border-radius:12px;border:1px solid rgba(255,255,255,0.2);">
+              <div style="font-size:24px;margin-bottom:6px;">🤖</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.75);font-weight:700;">AI<br>(클라이언트)</div>
+            </div>
+            <div style="text-align:center;padding:14px 16px;background:rgba(255,255,255,0.12);border-radius:12px;border:1px solid rgba(255,255,255,0.2);">
+              <div style="font-size:24px;margin-bottom:6px;">🌐</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.75);font-weight:700;">MCP<br>(표준 다리)</div>
+            </div>
+            <div style="text-align:center;padding:14px 16px;background:rgba(255,255,255,0.12);border-radius:12px;border:1px solid rgba(255,255,255,0.2);">
+              <div style="font-size:24px;margin-bottom:6px;">📧</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.75);font-weight:700;">이메일<br>발송</div>
+            </div>
+            <div style="text-align:center;padding:14px 16px;background:rgba(255,255,255,0.2);border-radius:12px;border:1px solid rgba(255,255,255,0.3);">
+              <div style="font-size:24px;margin-bottom:6px;">✅</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.75);font-weight:700;">실제<br>행동 완료</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer style="background:var(--mcp-dark); padding:32px 0; text-align:center;" role="contentinfo">
+  <div class="wrap">
+    <p style="color:rgba(255,255,255,0.55); font-size:13px;">MCP 완전 초보 가이드 · Model Context Protocol · Anthropic 오픈 표준 · Vantive</p>
+  </div>
+</footer>
+
+<script>
+  var currentTheme = 'light';
+  var menuOpen = false;
+
+  function applyTheme(t) { document.documentElement.className = 'theme-' + t; currentTheme = t; }
+  function cycleTheme() { applyTheme(currentTheme === 'light' ? 'dark' : 'light'); toggleMenu(); }
+
+  function toggleMenu() {
+    menuOpen = !menuOpen;
+    var dd = document.getElementById('vizMenuDropdown');
+    if (menuOpen) { dd.classList.add('open'); } else { dd.classList.remove('open'); }
+  }
+
+  function downloadImage() {
+    if (typeof htmlToImage === 'undefined') { alert('이미지 저장 기능을 사용할 수 없습니다.'); return; }
+    htmlToImage.toPng(document.body, { quality: 0.95 }).then(function(dataUrl) {
+      var a = document.createElement('a');
+      a.download = 'mcp-beginner-guide.png';
+      a.href = dataUrl;
+      a.click();
+    });
+    toggleMenu();
+  }
+
+  function toggleFaq(el) {
+    var answer = el.nextElementSibling;
+    var chevron = el.querySelector('.faq-chevron');
+    var isOpen = answer.style.display !== 'none';
+    answer.style.display = isOpen ? 'none' : 'block';
+    if (chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  }
+
+  document.addEventListener('click', function(e) {
+    if (menuOpen && !e.target.closest('.viz-menu')) {
+      menuOpen = false;
+      document.getElementById('vizMenuDropdown').classList.remove('open');
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && menuOpen) {
+      menuOpen = false;
+      document.getElementById('vizMenuDropdown').classList.remove('open');
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+  });
+</script>
+</body>
+</html>

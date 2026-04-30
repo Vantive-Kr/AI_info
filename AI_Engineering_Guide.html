@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 엔지니어링 3단계 가이드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { interpolate-size: allow-keywords; }
+
+    /* ── Brand Tokens ── */
+    :root {
+      --plum:        #72256B;
+      --plum-dark:   #561a51;
+      --plum-light:  rgba(114,37,107,0.09);
+      --pine:        #105742;
+      --pine-dark:   #0b3e2f;
+      --pine-light:  rgba(16,87,66,0.09);
+      --cream:       #FFFAEB;
+      --cream-dark:  #F5EFD6;
+      --euca:        #6CA07A;
+      --euca-light:  rgba(108,160,122,0.12);
+      --sage:        #CDDFD7;
+      --sage-light:  rgba(205,223,215,0.4);
+      --amber:       #D4700A;
+      --amber-light: rgba(212,112,10,0.10);
+    }
+
+    html.theme-light {
+      --bg: #FFFAEB; --bg-alt: #F5EFD6;
+      --surface: #FFFFFF; --surface-hover: #F9F4E3;
+      --border: rgba(16,87,66,0.12); --border-strong: rgba(16,87,66,0.22);
+      --text: #105742; --text-secondary: #3d6b57; --text-muted: #6b8f80;
+      --accent: #72256B; --accent-secondary: #105742;
+      --positive: #105742; --negative: #b91c1c; --warning: #92400e;
+    }
+    html.theme-dark {
+      --bg: #160e14; --bg-alt: #1f1420;
+      --surface: #241a22; --surface-hover: #2e2030;
+      --border: rgba(205,223,215,0.08); --border-strong: rgba(205,223,215,0.15);
+      --text: #FFFAEB; --text-secondary: #CDDFD7; --text-muted: #8fb09f;
+      --accent: #c47fbe; --accent-secondary: #6CA07A;
+      --positive: #6CA07A; --negative: #f87171; --warning: #fbbf24;
+    }
+
+    body {
+      font-family: 'DM Sans', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.65; -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.01em; transition: background 0.3s, color 0.3s;
+    }
+    h1,h2,h3,h4,h5 {
+      font-family: 'DM Sans', 'Noto Sans KR', sans-serif;
+      color: var(--text); line-height: 1.15; letter-spacing: -0.03em;
+    }
+    h1 { font-weight: 800; font-size: clamp(2.2rem, 5vw, 3.2rem); }
+    h2 { font-weight: 700; font-size: clamp(1.6rem, 3vw, 2.2rem); }
+    h3 { font-weight: 700; font-size: 1.3rem; }
+    h4 { font-weight: 600; font-size: 1.05rem; }
+    p, li { color: var(--text-secondary); font-size: 0.95rem; }
+
+    /* ── Layout ── */
+    .wrap { width: min(calc(100% - 40px), 1000px); margin: 0 auto; }
+    .section { padding: 60px 0; }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+    @keyframes pulse    { 0%,100% { transform:scale(1); } 50% { transform:scale(1.04); } }
+    @keyframes float    { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
+    .animate   { animation: fadeInUp 0.65s ease-out both; }
+    .delay-1   { animation-delay: 0.1s; }
+    .delay-2   { animation-delay: 0.2s; }
+    .delay-3   { animation-delay: 0.3s; }
+    .delay-4   { animation-delay: 0.4s; }
+    .delay-5   { animation-delay: 0.5s; }
+    .delay-6   { animation-delay: 0.6s; }
+    .reveal    { opacity:0; transform:translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity:1; transform:none; }
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
+
+    /* ── Header ── */
+    .page-header {
+      background: linear-gradient(145deg, var(--plum-dark) 0%, var(--plum) 55%, #8B3080 100%);
+      padding: 56px 0 48px; position: relative; overflow: hidden;
+    }
+    .page-header::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 80% 50%, rgba(255,250,235,0.06) 0%, transparent 60%);
+    }
+    .hdr-inner { display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 1; }
+    .hdr-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,250,235,0.15); border: 1px solid rgba(255,250,235,0.22);
+      color: rgba(255,250,235,0.9); font-size: 11px; font-weight: 700;
+      letter-spacing: 1.8px; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 20px; width: fit-content;
+    }
+    .hdr-title { color: #FFFAEB; text-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+    .hdr-sub { color: rgba(255,250,235,0.7); font-size: 1.05rem; max-width: 560px; }
+    .hdr-pills { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    .hdr-pill {
+      padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pill-p { background: rgba(255,250,235,0.2); color: #FFFAEB; border: 1px solid rgba(255,250,235,0.3); }
+    .pill-c { background: rgba(108,160,122,0.3); color: #a8dfc0; border: 1px solid rgba(108,160,122,0.4); }
+    .pill-h { background: rgba(212,112,10,0.3); color: #f5c07a; border: 1px solid rgba(212,112,10,0.4); }
+
+    /* ── Level Progression Bar ── */
+    .prog-section { padding: 36px 0 0; }
+    .prog-bar {
+      display: flex; align-items: stretch;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .prog-step {
+      flex: 1; padding: 22px 20px; position: relative; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .prog-step:not(:last-child)::after {
+      content: ''; position: absolute; right: 0; top: 20%; bottom: 20%;
+      width: 1px; background: var(--border);
+    }
+    .prog-step:hover { background: var(--surface-hover); }
+    .prog-step.active { background: var(--plum-light); }
+    .prog-num {
+      width: 28px; height: 28px; border-radius: 50%; font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
+    }
+    .prog-step-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+    .prog-step-sub { font-size: 11px; color: var(--text-muted); }
+
+    /* ── 3-col grid ── */
+    .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* ── Section label ── */
+    .sec-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 10px;
+    }
+    .sec-title { margin-bottom: 6px; }
+    .sec-desc { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 28px; max-width: 640px; }
+
+    /* ── Concept Cards ── */
+    .concept-card {
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .concept-card:hover { box-shadow: 0 10px 36px rgba(0,0,0,0.12); }
+    .concept-header {
+      padding: 24px 24px 20px;
+    }
+    .concept-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 14px;
+      animation: float 4s ease-in-out infinite;
+    }
+    .concept-icon.p { background: var(--plum-light); animation-delay: 0s; }
+    .concept-icon.c { background: var(--pine-light); animation-delay: 1.3s; }
+    .concept-icon.h { background: var(--amber-light); animation-delay: 2.6s; }
+    .concept-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 10px; margin-bottom: 10px;
+    }
+    .concept-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; }
+    .concept-subtitle { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0; }
+    .concept-body { padding: 0 24px 24px; }
+    .concept-desc { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 18px; line-height: 1.7; }
+
+    /* Key points */
+    .kp-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .kp-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 12px; border-radius: 10px; font-size: 0.85rem;
+    }
+    .kp-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .kp-text { color: var(--text-secondary); }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: var(--border); margin: 0 0 20px; }
+
+    /* ── Example box ── */
+    .ex-box {
+      border-radius: 12px; padding: 16px;
+      font-size: 0.82rem; line-height: 1.65; margin-top: 16px;
+      border-left: 3px solid;
+    }
+    .ex-label {
+      font-size: 9px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .ex-text { color: var(--text-secondary); font-family: 'DM Sans', monospace; white-space: pre-wrap; }
+
+    /* ── Compare table ── */
+    .compare-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--border); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .compare-table th {
+      padding: 12px 16px; text-align: left;
+      font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+      background: var(--sage-light); color: var(--pine); border-bottom: 1.5px solid var(--border);
+    }
+    .compare-table td {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      color: var(--text-secondary); vertical-align: top;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: var(--surface-hover); }
+    .compare-table td:first-child { font-weight: 700; color: var(--text); }
+
+    /* ── Pyramid Diagram ── */
+    .pyramid-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 24px 0;
+    }
+    .pyr-row {
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      gap: 10px; font-weight: 700; font-size: 0.88rem;
+      cursor: pointer; transition: filter 0.2s;
+    }
+    .pyr-row:hover { filter: brightness(1.07); }
+    .pyr-row.r1 { width: 280px; padding: 14px 20px; background: var(--amber-light); color: var(--amber); border: 1.5px solid rgba(212,112,10,0.25); }
+    .pyr-row.r2 { width: 340px; padding: 14px 20px; background: var(--pine-light); color: var(--pine); border: 1.5px solid rgba(16,87,66,0.2); }
+    .pyr-row.r3 { width: 420px; padding: 14px 20px; background: var(--plum-light); color: var(--plum); border: 1.5px solid rgba(114,37,107,0.2); }
+    .pyr-arrow {
+      color: var(--text-muted); font-size: 18px; text-align: center; line-height: 1;
+    }
+    .pyr-label { font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; }
+
+    /* ── Flow Diagram ── */
+    .flow-wrap {
+      display: flex; align-items: center; gap: 0;
+      padding: 12px 0; overflow-x: auto;
+    }
+    .flow-box {
+      flex-shrink: 0; padding: 12px 16px; border-radius: 10px;
+      text-align: center; min-width: 110px;
+      font-size: 0.8rem; font-weight: 600;
+    }
+    .flow-arrow { flex-shrink: 0; font-size: 18px; color: var(--text-muted); padding: 0 4px; }
+
+    /* ── Badge level ── */
+    .level-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.8px;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    /* ── Tips grid ── */
+    .tip-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+      transition: box-shadow 0.2s;
+    }
+    .tip-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .tip-num {
+      width: 26px; height: 26px; border-radius: 8px;
+      font-size: 12px; font-weight: 800; display: flex;
+      align-items: center; justify-content: center; margin-bottom: 10px;
+    }
+    .tip-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 5px; }
+    .tip-desc { font-size: 0.82rem; color: var(--text-muted); }
+
+    /* ── Viz Menu ── */
+    .viz-menu { position: fixed; top: 16px; right: 16px; z-index: 9999; }
+    .viz-menu-toggle {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(12px); transition: all 0.2s;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    .viz-menu-toggle:hover { background: var(--surface-hover); }
+    .viz-menu-dropdown {
+      position: absolute; top: 52px; right: 0; min-width: 200px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px;
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: all 0.2s; backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    .viz-menu-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .viz-menu-dropdown button {
+      width: 100%; padding: 10px 14px; border: none; border-radius: 8px;
+      background: transparent; color: var(--text); font-size: 14px;
+      font-family: inherit; cursor: pointer; text-align: left;
+      display: flex; align-items: center; gap: 10px; transition: background 0.15s;
+    }
+    .viz-menu-dropdown button:hover { background: var(--surface-hover); }
+
+    /* ── Footer ── */
+    .page-footer {
+      background: var(--plum-dark); color: rgba(255,250,235,0.7);
+      padding: 28px 0; text-align: center; font-size: 0.82rem; margin-top: 60px;
+    }
+
+    /* ── Print ── */
+    @media print {
+      .viz-menu { display: none; }
+      body { background: white !important; color: black !important; }
+      .concept-card { break-inside: avoid; }
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .three-col { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .prog-bar { flex-direction: column; }
+      .prog-step:not(:last-child)::after { right: auto; left: 10%; right: 10%; bottom: 0; top: auto; width: auto; height: 1px; }
+      .pyr-row.r1 { width: 200px; }
+      .pyr-row.r2 { width: 250px; }
+      .pyr-row.r3 { width: 300px; }
+    }
+    @media (max-width: 375px) { body { overflow-x: hidden; } .wrap { width: calc(100% - 24px); } }
+  </style>
+</head>
+<body>
+  <a href="#main-content" style="position:absolute;left:-9999px;z-index:10000;">콘텐츠로 이동</a>
+
+  <!-- Menu -->
+  <div class="viz-menu">
+    <button class="viz-menu-toggle" onclick="toggleMenu()" aria-label="메뉴">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
+    <div class="viz-menu-dropdown" id="vizMenuDropdown">
+      <button onclick="cycleTheme()"><span id="themeIcon">☀️</span><span id="themeLabel">라이트 모드</span></button>
+      <button onclick="downloadImage()"><span>📥</span><span>PNG 저장</span></button>
+      <button onclick="window.print()"><span>🖨️</span><span>인쇄 / PDF</span></button>
+    </div>
+  </div>
+
+  <main id="main-content" role="main">
+
+    <!-- ══ HEADER ══ -->
+    <header class="page-header" role="banner">
+      <div class="wrap">
+        <div class="hdr-inner">
+          <div class="hdr-eyebrow animate">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            AI 엔지니어링 입문 가이드
+          </div>
+          <h1 class="hdr-title animate delay-1">AI를 잘 쓰는 3가지 기술</h1>
+          <p class="hdr-sub animate delay-2">
+            프롬프트 · 컨텍스트 · 하네스 엔지니어링<br>
+            초보자도 쉽게 이해하는 개념 정리
+          </p>
+          <div class="hdr-pills animate delay-3">
+            <span class="hdr-pill pill-p">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              프롬프트 엔지니어링
+            </span>
+            <span class="hdr-pill pill-c">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              컨텍스트 엔지니어링
+            </span>
+            <span class="hdr-pill pill-h">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              하네스 엔지니어링
+            </span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══ PROGRESSION BAR ══ -->
+    <section class="section prog-section" aria-label="학습 단계">
+      <div class="wrap">
+        <div class="prog-bar animate">
+          <div class="prog-step active" id="step1" onclick="highlightStep(1)">
+            <div class="prog-num" style="background:var(--plum-light);color:var(--plum);">1</div>
+            <div class="prog-step-title" style="color:var(--plum);">프롬프트 엔지니어링</div>
+            <div class="prog-step-sub">무엇을 말하느냐</div>
+          </div>
+          <div class="prog-step" id="step2" onclick="highlightStep(2)">
+            <div class="prog-num" style="background:var(--pine-light);color:var(--pine);">2</div>
+            <div class="prog-step-title" style="color:var(--pine);">컨텍스트 엔지니어링</div>
+            <div class="prog-step-sub">어떤 맥락을 주느냐</div>
+          </div>
+          <div class="prog-step" id="step3" onclick="highlightStep(3)">
+            <div class="prog-num" style="background:var(--amber-light);color:var(--amber);">3</div>
+            <div class="prog-step-title" style="color:var(--amber);">하네스 엔지니어링</div>
+            <div class="prog-step-sub">어떤 시스템을 만드느냐</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ THREE CONCEPTS ══ -->
+    <section class="section" style="padding-top:0;" aria-label="3가지 엔지니어링 개념">
+      <div class="wrap">
+        <div class="three-col">
+
+          <!-- 프롬프트 엔지니어링 -->
+          <article class="concept-card animate delay-1" data-reveal>
+            <div class="concept-header">
+              <div class="concept-icon p">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--plum)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <span class="concept-tag" style="background:var(--plum-light);color:var(--plum);">STEP 1 · 입문</span>
+              <div class="concept-title" style="color:var(--plum);">프롬프트 엔지니어링</div>
+              <div class="concept-subtitle">Prompt Engineering</div>
+            </div>
+            <div class="divider"></div>
+            <div class="concept-body">
+              <p class="concept-desc">
+                AI에게 <strong>어떻게 말할지</strong> 설계하는 기술.<br>
+                질문·지시의 표현 방식, 구조, 순서를 최적화해 더 정확하고 유용한 답변을 이끌어냅니다.
+              </p>
+              <ul class="kp-list">
+                <li class="kp-item" style="background:var(--plum-light);">
+                  <div class="kp-dot" style="background:var(--plum);"></div>
+                  <span class="kp-text"><strong>역할 부여</strong> — "당신은 전문가입니다" 처럼 AI에게 페르소나를 설정</span>
+                </li>
+                <li class="kp-item" style="background:var(--plum-light);">
+                  <div class="kp-dot" style="background:var(--plum);"></div>
+                  <span class="kp-text"><strong>예시 제시</strong> — Few-shot: 원하는 입출력 예제를 보여줌</span>
+                </li>
+                <li class="kp-item" style="background:var(--plum-light);">
+                  <div class="kp-dot" style="background:var(--plum);"></div>
+                  <span class="kp-text"><strong>단계별 사고</strong> — "단계별로 생각해봐" (Chain-of-Thought)</span>
+                </li>
+                <li class="kp-item" style="background:var(--plum-light);">
+                  <div class="kp-dot" style="background:var(--plum);"></div>
+                  <span class="kp-text"><strong>출력 형식 지정</strong> — JSON/표/글머리 형태로 답변 요청</span>
+                </li>
+              </ul>
+              <div class="ex-box" style="background:var(--plum-light);border-left-color:var(--plum);">
+                <div class="ex-label" style="color:var(--plum);">❌ 나쁜 예시</div>
+                <div class="ex-text">"이메일 써줘"</div>
+                <div class="ex-label" style="color:var(--plum);margin-top:10px;">✅ 좋은 예시</div>
+                <div class="ex-text">"당신은 B2B 영업 전문가입니다. 신규 거래처 담당자에게 첫 미팅을 제안하는 이메일을 3단락, 200자 이내로 작성해주세요."</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 컨텍스트 엔지니어링 -->
+          <article class="concept-card animate delay-2" data-reveal>
+            <div class="concept-header">
+              <div class="concept-icon c">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--pine)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+              </div>
+              <span class="concept-tag" style="background:var(--pine-light);color:var(--pine);">STEP 2 · 중급</span>
+              <div class="concept-title" style="color:var(--pine);">컨텍스트 엔지니어링</div>
+              <div class="concept-subtitle">Context Engineering</div>
+            </div>
+            <div class="divider"></div>
+            <div class="concept-body">
+              <p class="concept-desc">
+                AI가 읽는 <strong>"정보 창"을 설계</strong>하는 기술.<br>
+                어떤 배경 정보, 문서, 대화 이력을 AI에게 제공할지 전략적으로 관리합니다.
+              </p>
+              <ul class="kp-list">
+                <li class="kp-item" style="background:var(--pine-light);">
+                  <div class="kp-dot" style="background:var(--pine);"></div>
+                  <span class="kp-text"><strong>시스템 프롬프트</strong> — AI의 기본 동작 방식과 배경지식 설정</span>
+                </li>
+                <li class="kp-item" style="background:var(--pine-light);">
+                  <div class="kp-dot" style="background:var(--pine);"></div>
+                  <span class="kp-text"><strong>RAG(검색 증강)</strong> — 관련 문서를 실시간으로 찾아 맥락에 추가</span>
+                </li>
+                <li class="kp-item" style="background:var(--pine-light);">
+                  <div class="kp-dot" style="background:var(--pine);"></div>
+                  <span class="kp-text"><strong>메모리 관리</strong> — 대화 이력 중 핵심만 요약·선별해 전달</span>
+                </li>
+                <li class="kp-item" style="background:var(--pine-light);">
+                  <div class="kp-dot" style="background:var(--pine);"></div>
+                  <span class="kp-text"><strong>토큰 최적화</strong> — 컨텍스트 창(토큰)을 효율적으로 활용</span>
+                </li>
+              </ul>
+              <div class="ex-box" style="background:var(--pine-light);border-left-color:var(--pine);">
+                <div class="ex-label" style="color:var(--pine);">💡 실전 예시</div>
+                <div class="ex-text">고객 CS 봇: [시스템] 우리 제품 매뉴얼 PDF + [검색] 이 고객의 구매 이력 + [현재] 고객 질문
+→ AI가 맞춤형 답변 생성</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 하네스 엔지니어링 -->
+          <article class="concept-card animate delay-3" data-reveal>
+            <div class="concept-header">
+              <div class="concept-icon h">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+              </div>
+              <span class="concept-tag" style="background:var(--amber-light);color:var(--amber);">STEP 3 · 고급</span>
+              <div class="concept-title" style="color:var(--amber);">하네스 엔지니어링</div>
+              <div class="concept-subtitle">Harness Engineering</div>
+            </div>
+            <div class="divider"></div>
+            <div class="concept-body">
+              <p class="concept-desc">
+                AI를 <strong>시스템으로 묶고 자동화</strong>하는 기술.<br>
+                여러 도구·에이전트·워크플로우를 연결해 AI가 스스로 작업을 완수하는 구조를 설계합니다.
+              </p>
+              <ul class="kp-list">
+                <li class="kp-item" style="background:var(--amber-light);">
+                  <div class="kp-dot" style="background:var(--amber);"></div>
+                  <span class="kp-text"><strong>Tool Use(도구 사용)</strong> — 웹 검색, 코드 실행, DB조회를 AI가 직접 수행</span>
+                </li>
+                <li class="kp-item" style="background:var(--amber-light);">
+                  <div class="kp-dot" style="background:var(--amber);"></div>
+                  <span class="kp-text"><strong>에이전트 체인</strong> — 여러 AI가 역할 분담해 순서대로 처리</span>
+                </li>
+                <li class="kp-item" style="background:var(--amber-light);">
+                  <div class="kp-dot" style="background:var(--amber);"></div>
+                  <span class="kp-text"><strong>평가·테스트</strong> — AI 출력 품질을 자동으로 측정하고 개선</span>
+                </li>
+                <li class="kp-item" style="background:var(--amber-light);">
+                  <div class="kp-dot" style="background:var(--amber);"></div>
+                  <span class="kp-text"><strong>파이프라인</strong> — 트리거 → 처리 → 결과 저장을 자동화</span>
+                </li>
+              </ul>
+              <div class="ex-box" style="background:var(--amber-light);border-left-color:var(--amber);">
+                <div class="ex-label" style="color:var(--amber);">💡 실전 예시</div>
+                <div class="ex-text">주간 보고 자동화:
+① 이메일 트리거 감지
+② AI가 내용 요약·분류
+③ 스프레드시트에 자동 저장
+④ 슬랙으로 브리핑 발송</div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PYRAMID ══ -->
+    <section class="section" style="padding-top:0;" aria-label="수준 피라미드" data-reveal>
+      <div class="wrap">
+        <span class="sec-label" style="background:var(--sage-light);color:var(--pine);">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 22 20 2 20"/></svg>
+          숙련도 구조
+        </span>
+        <h2 class="sec-title">세 기술의 관계</h2>
+        <p class="sec-desc">낮은 단계에서 높은 단계로 쌓아 올라가는 구조입니다. 프롬프트 없이는 컨텍스트도, 컨텍스트 없이는 하네스도 효과가 없습니다.</p>
+
+        <div class="two-col" style="align-items:center;">
+          <div class="pyramid-wrap">
+            <div class="pyr-row r1">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+              하네스 엔지니어링
+            </div>
+            <div class="pyr-arrow">▼</div>
+            <div class="pyr-row r2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+              컨텍스트 엔지니어링
+            </div>
+            <div class="pyr-arrow">▼</div>
+            <div class="pyr-row r3">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              프롬프트 엔지니어링
+            </div>
+            <p style="font-size:0.78rem;color:var(--text-muted);margin-top:14px;text-align:center;">← 기초일수록 넓고 중요</p>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="card" style="border-left:3px solid var(--plum);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <h4 style="color:var(--plum);">프롬프트</h4>
+                <span class="level-badge" style="background:var(--plum-light);color:var(--plum);">기초</span>
+              </div>
+              <p style="font-size:0.83rem;">대화 한 번에서의 질문·지시 최적화. 누구나 당장 시작 가능.</p>
+            </div>
+            <div class="card" style="border-left:3px solid var(--pine);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <h4 style="color:var(--pine);">컨텍스트</h4>
+                <span class="level-badge" style="background:var(--pine-light);color:var(--pine);">중급</span>
+              </div>
+              <p style="font-size:0.83rem;">AI에게 어떤 정보를 언제 어떻게 줄지 설계. 반복 사용 업무에 필수.</p>
+            </div>
+            <div class="card" style="border-left:3px solid var(--amber);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <h4 style="color:var(--amber);">하네스</h4>
+                <span class="level-badge" style="background:var(--amber-light);color:var(--amber);">고급</span>
+              </div>
+              <p style="font-size:0.83rem;">AI가 스스로 판단·행동하는 자동화 시스템 구축. 엔지니어링 영역.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ COMPARISON TABLE ══ -->
+    <section class="section" style="padding-top:0;" aria-label="비교표" data-reveal>
+      <div class="wrap">
+        <span class="sec-label" style="background:var(--sage-light);color:var(--pine);">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          핵심 비교
+        </span>
+        <h2 class="sec-title">한눈에 보는 차이점</h2>
+        <p class="sec-desc" style="margin-bottom:20px;">세 가지 엔지니어링 방식의 핵심 속성을 비교합니다.</p>
+        <div class="compare-wrap">
+          <table class="compare-table" role="table">
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th style="color:var(--plum);">프롬프트</th>
+                <th style="color:var(--pine);">컨텍스트</th>
+                <th style="color:var(--amber);">하네스</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>핵심 질문</td>
+                <td>무엇을 어떻게 요청하나?</td>
+                <td>어떤 정보를 주나?</td>
+                <td>어떤 시스템으로 만드나?</td>
+              </tr>
+              <tr>
+                <td>주요 관심사</td>
+                <td>지시문·표현 방식</td>
+                <td>배경정보·문서·이력</td>
+                <td>자동화·연결·평가</td>
+              </tr>
+              <tr>
+                <td>비유</td>
+                <td>"말 잘 하는 법"</td>
+                <td>"브리핑 자료 준비"</td>
+                <td>"사무 자동화 시스템"</td>
+              </tr>
+              <tr>
+                <td>난이도</td>
+                <td>⭐ 입문</td>
+                <td>⭐⭐ 중급</td>
+                <td>⭐⭐⭐ 고급</td>
+              </tr>
+              <tr>
+                <td>필요 기술</td>
+                <td>언어 감각·논리 구성</td>
+                <td>정보 설계·RAG 이해</td>
+                <td>코딩·시스템 설계</td>
+              </tr>
+              <tr>
+                <td>효과 범위</td>
+                <td>단일 대화</td>
+                <td>지속적 사용 맥락</td>
+                <td>전체 워크플로우</td>
+              </tr>
+              <tr>
+                <td>대표 도구</td>
+                <td>ChatGPT, Claude, Gemini</td>
+                <td>RAG, LangChain, 시스템 프롬프트</td>
+                <td>n8n, Claude Code, MCP, LangGraph</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ FLOW ══ -->
+    <section class="section" style="padding-top:0;" aria-label="실전 흐름" data-reveal>
+      <div class="wrap">
+        <span class="sec-label" style="background:var(--sage-light);color:var(--pine);">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          실전 워크플로우
+        </span>
+        <h2 class="sec-title">세 기술이 함께 작동하는 방식</h2>
+        <p class="sec-desc" style="margin-bottom:24px;">좋은 AI 시스템은 세 기술이 모두 조화롭게 작동합니다.</p>
+
+        <div class="card" style="padding:28px;">
+          <div class="flow-wrap">
+            <div class="flow-box" style="background:var(--plum-light);color:var(--plum);">
+              <div style="font-size:20px;margin-bottom:4px;">📝</div>
+              <div style="font-weight:700;font-size:0.85rem;">프롬프트 설계</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px;">지시 & 형식</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box" style="background:var(--pine-light);color:var(--pine);">
+              <div style="font-size:20px;margin-bottom:4px;">📚</div>
+              <div style="font-weight:700;font-size:0.85rem;">컨텍스트 주입</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px;">문서 & 이력</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box" style="background:var(--surface);color:var(--text);border:1px solid var(--border);">
+              <div style="font-size:20px;margin-bottom:4px;">🤖</div>
+              <div style="font-weight:700;font-size:0.85rem;">AI 처리</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px;">모델 실행</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box" style="background:var(--amber-light);color:var(--amber);">
+              <div style="font-size:20px;margin-bottom:4px;">⚙️</div>
+              <div style="font-weight:700;font-size:0.85rem;">하네스 자동화</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px;">도구 & 저장</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box" style="background:var(--euca-light);color:var(--pine);">
+              <div style="font-size:20px;margin-bottom:4px;">✅</div>
+              <div style="font-weight:700;font-size:0.85rem;">결과 전달</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px;">사용자에게</div>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+            <p style="font-size:0.85rem;color:var(--text-muted);">
+              <strong style="color:var(--text);">🏥 의료 서비스 사례:</strong>
+              환자가 증상 입력 → [프롬프트] 진료 전문 AI 지시 → [컨텍스트] 환자 진료 이력·약품 매뉴얼 검색 → [AI] 예비 진단 생성 → [하네스] EMR 시스템 자동 저장 + 의사에게 알림 전송
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ TIPS ══ -->
+    <section class="section" style="padding-top:0;" aria-label="초보자 팁" data-reveal>
+      <div class="wrap">
+        <span class="sec-label" style="background:var(--sage-light);color:var(--pine);">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          초보자 가이드
+        </span>
+        <h2 class="sec-title">어디서부터 시작할까요?</h2>
+        <p class="sec-desc" style="margin-bottom:24px;">단계별 권장 학습 로드맵입니다.</p>
+
+        <div class="three-col">
+          <div class="tip-card" style="border-top:3px solid var(--plum);">
+            <div class="tip-num" style="background:var(--plum-light);color:var(--plum);">1</div>
+            <div class="tip-title" style="color:var(--plum);">먼저 역할을 줘보세요</div>
+            <div class="tip-desc">"당신은 ○○ 전문가입니다. ~해주세요" 형태로 구체적인 역할과 지시를 함께 적으면 품질이 크게 달라집니다.</div>
+          </div>
+          <div class="tip-card" style="border-top:3px solid var(--plum);">
+            <div class="tip-num" style="background:var(--plum-light);color:var(--plum);">2</div>
+            <div class="tip-title" style="color:var(--plum);">출력 형식을 지정하세요</div>
+            <div class="tip-desc">"3가지 항목으로", "표 형식으로", "JSON으로" 등 원하는 형태를 명시하면 바로 활용 가능한 결과가 나옵니다.</div>
+          </div>
+          <div class="tip-card" style="border-top:3px solid var(--plum);">
+            <div class="tip-num" style="background:var(--plum-light);color:var(--plum);">3</div>
+            <div class="tip-title" style="color:var(--plum);">예시를 1~2개 보여주세요</div>
+            <div class="tip-desc">원하는 입력-출력 예시를 보여주면(Few-shot) AI가 패턴을 파악해 훨씬 정확하게 작업합니다.</div>
+          </div>
+          <div class="tip-card" style="border-top:3px solid var(--pine);">
+            <div class="tip-num" style="background:var(--pine-light);color:var(--pine);">4</div>
+            <div class="tip-title" style="color:var(--pine);">자주 쓰는 지식을 시스템에 담으세요</div>
+            <div class="tip-desc">반복 업무라면 회사 정보, 제품 매뉴얼, 용어집을 시스템 프롬프트에 넣어 AI가 항상 참조하게 만드세요.</div>
+          </div>
+          <div class="tip-card" style="border-top:3px solid var(--pine);">
+            <div class="tip-num" style="background:var(--pine-light);color:var(--pine);">5</div>
+            <div class="tip-title" style="color:var(--pine);">필요한 정보만 선별해 주세요</div>
+            <div class="tip-desc">AI에게 모든 문서를 다 주면 오히려 혼란스러워집니다. 질문과 가장 관련 높은 정보 2~3개만 골라 전달하세요.</div>
+          </div>
+          <div class="tip-card" style="border-top:3px solid var(--amber);">
+            <div class="tip-num" style="background:var(--amber-light);color:var(--amber);">6</div>
+            <div class="tip-title" style="color:var(--amber);">작은 자동화부터 시작하세요</div>
+            <div class="tip-desc">Claude, n8n, Cowork 같은 도구로 이메일 요약→정리 같은 단순 반복 업무 1개를 자동화하면 하네스 엔지니어링의 맛을 볼 수 있습니다.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ FOOTER ══ -->
+  </main>
+
+  <footer class="page-footer" role="contentinfo">
+    <div class="wrap">
+      <p style="color:rgba(255,250,235,0.6);font-size:0.82rem;">
+        AI 엔지니어링 3단계 가이드 · Prompt · Context · Harness Engineering<br>
+        <span style="font-size:0.75rem;opacity:0.55;">초보자를 위한 개념 정리 자료 · 2026</span>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // === Menu ===
+    function toggleMenu() {
+      var d = document.getElementById('vizMenuDropdown');
+      if (d) d.classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.viz-menu')) {
+        var d = document.getElementById('vizMenuDropdown');
+        if (d) d.classList.remove('open');
+      }
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var d = document.getElementById('vizMenuDropdown');
+        if (d) d.classList.remove('open');
+      }
+    });
+
+    // === Theme ===
+    var savedTheme = localStorage.getItem('viz-theme');
+    var currentTheme = savedTheme || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    function applyTheme(t) {
+      document.documentElement.className = 'theme-' + t;
+      document.getElementById('themeIcon').textContent = t === 'dark' ? '🌙' : '☀️';
+      document.getElementById('themeLabel').textContent = t === 'dark' ? '다크 모드' : '라이트 모드';
+      localStorage.setItem('viz-theme', t);
+      currentTheme = t;
+    }
+    function cycleTheme() { applyTheme(currentTheme === 'dark' ? 'light' : 'dark'); }
+    applyTheme(currentTheme);
+
+    // === Scroll Reveal ===
+    document.querySelectorAll('[data-reveal]').forEach(function(el) { el.classList.add('reveal'); });
+    var revealObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(function(el) { revealObs.observe(el); });
+
+    // === Prog bar highlight ===
+    function highlightStep(n) {
+      [1,2,3].forEach(function(i) {
+        var el = document.getElementById('step' + i);
+        if (el) el.classList.toggle('active', i === n);
+      });
+    }
+
+    // === Download PNG ===
+    async function downloadImage() {
+      var menu = document.querySelector('.viz-menu');
+      if (menu) menu.style.display = 'none';
+      try {
+        var url = await htmlToImage.toPng(document.body, { quality: 1, pixelRatio: 2 });
+        var a = document.createElement('a');
+        a.href = url; a.download = 'ai-engineering-guide.png'; a.click();
+      } catch(e) { console.error('Download failed:', e); }
+      if (menu) menu.style.display = '';
+    }
+  </script>
+</body>
+</html>
