@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Techwiki 보안 & 공지 팝업 설정 가이드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { interpolate-size: allow-keywords; }
+
+    /* ── Vantive Brand Palette ── */
+    :root {
+      --plum:        #72256B;
+      --plum-dark:   #5a1a54;
+      --pine:        #105742;
+      --eucalyptus:  #6CA07A;
+      --sage:        #CDDFD7;
+      --cream:       #FFFAEB;
+    }
+
+    html.theme-light {
+      --bg:            #FFFAEB;
+      --surface:       #FFFFFF;
+      --surface-hover: #F9F3FF;
+      --border:        rgba(0,0,0,0.07);
+      --text:          #1A0D18;
+      --text-secondary:#6B4F68;
+      --accent:        #72256B;
+      --accent-secondary: #105742;
+      --positive:      #105742;
+      --negative:      #C0392B;
+      --warning:       #C4700F;
+      --code-bg:       #1A0D18;
+      --code-text:     #FFFAEB;
+    }
+    html.theme-dark {
+      --bg:            #0A0A0A;
+      --surface:       #141414;
+      --surface-hover: #1E1018;
+      --border:        rgba(255,255,255,0.06);
+      --text:          #EDEDED;
+      --text-secondary:#9A9A9A;
+      --accent:        #C07ABB;
+      --accent-secondary: #5AB890;
+      --positive:      #5AB890;
+      --negative:      #E03D5B;
+      --warning:       #D4870F;
+      --code-bg:       #0D0D0D;
+      --code-text:     #E8D5E5;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.65; -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+      scrollbar-gutter: stable;
+    }
+    h1,h2,h3,h4 { color: var(--text); letter-spacing: -0.02em; line-height: 1.15; }
+    h1 { font-size: clamp(2.5rem, 5vw, 3.8rem); font-weight: 900; }
+    h2 { font-size: clamp(2rem, 3.5vw, 2.6rem); font-weight: 800; }
+    h3 { font-size: clamp(1.5rem, 2.5vw, 1.9rem); font-weight: 700; }
+    h4 { font-size: 1.1rem; font-weight: 700; }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes pulseOrb {
+      0%,100% { box-shadow: 0 0 0 0 rgba(114,37,107,0.4); }
+      50%      { box-shadow: 0 0 0 10px rgba(114,37,107,0); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .animate         { animation: fadeInUp 0.65s ease-out both; }
+    .animate.delay-1 { animation-delay: 0.07s; }
+    .animate.delay-2 { animation-delay: 0.14s; }
+    .animate.delay-3 { animation-delay: 0.21s; }
+    .animate.delay-4 { animation-delay: 0.28s; }
+    .animate.delay-5 { animation-delay: 0.35s; }
+    .animate.delay-6 { animation-delay: 0.42s; }
+
+    .reveal { opacity:0; transform:translateY(26px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation:none !important; transition:none !important; }
+      .reveal { opacity:1; transform:none; }
+    }
+    @media print {
+      .viz-menu, .nav-pill-bar { display:none !important; }
+      body { background:white !important; color:black !important; }
+      .code-block { border: 1px solid #ccc; }
+      .reveal { opacity:1 !important; transform:none !important; }
+      * { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+    }
+    @page { margin: 0.8in; }
+
+    /* ── Menu ── */
+    .viz-menu { position:fixed; top:16px; right:16px; z-index:9999; }
+    .viz-menu-toggle {
+      width:44px; height:44px; border-radius:12px;
+      background:var(--surface); border:1px solid var(--border);
+      color:var(--text); cursor:pointer; display:flex;
+      align-items:center; justify-content:center;
+      backdrop-filter:blur(12px); transition:all 0.2s;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    }
+    .viz-menu-toggle:hover { background:var(--surface-hover); }
+    .viz-menu-dropdown {
+      position:absolute; top:52px; right:0; min-width:200px;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:12px; padding:8px;
+      opacity:0; visibility:hidden; transform:translateY(-8px);
+      transition:all 0.2s; backdrop-filter:blur(16px);
+      box-shadow:0 8px 32px rgba(0,0,0,0.12);
+    }
+    .viz-menu-dropdown.open { opacity:1; visibility:visible; transform:translateY(0); }
+    .viz-menu-dropdown button {
+      width:100%; padding:10px 14px; border:none; border-radius:8px;
+      background:transparent; color:var(--text); font-size:14px;
+      font-family:inherit; cursor:pointer; text-align:left;
+      display:flex; align-items:center; gap:10px; transition:background 0.15s;
+    }
+    .viz-menu-dropdown button:hover { background:var(--surface-hover); }
+
+    /* ── Skip to Content ── */
+    .skip-to-content {
+      position:absolute; left:-9999px; top:auto; width:1px; height:1px;
+      overflow:hidden; z-index:10000; padding:8px 16px;
+      background:var(--accent); color:white; text-decoration:none; border-radius:4px;
+    }
+    .skip-to-content:focus {
+      position:fixed; left:16px; top:16px; width:auto; height:auto; overflow:visible;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 52vh;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:100px 24px 80px;
+      position:relative; overflow:hidden;
+      background: linear-gradient(120deg, #3D0E38 0%, #72256B 35%, #105742 68%, #1A6B50 100%);
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(ellipse 65% 55% at 18% 45%, rgba(255,250,235,0.08) 0%, transparent 60%),
+                  radial-gradient(ellipse 40% 50% at 82% 70%, rgba(16,87,66,0.25) 0%, transparent 55%);
+      pointer-events:none;
+    }
+    .hero::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,250,235,0.25), transparent);
+    }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(255,250,235,0.14); border:1px solid rgba(255,250,235,0.28);
+      color:rgba(255,250,235,0.9); padding:6px 18px; border-radius:100px;
+      font-size:12.5px; font-weight:600; letter-spacing:0.06em;
+      text-transform:uppercase; margin-bottom:22px;
+    }
+    .hero-badge-dot {
+      width:7px; height:7px; border-radius:50%;
+      background:rgba(255,250,235,0.85); animation: pulseOrb 2.4s ease-in-out infinite; flex-shrink:0;
+    }
+    .hero h1 {
+      color: #FFFFFF; margin-bottom:14px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .hero-sub {
+      font-size:clamp(1rem, 2.2vw, 1.25rem); color:rgba(255,250,235,0.78);
+      font-weight:500; max-width:600px; line-height:1.7; margin-bottom:40px;
+    }
+    .hero-chips { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+    .hero-chip {
+      display:inline-flex; align-items:center; gap:7px;
+      background:rgba(255,250,235,0.12); border:1px solid rgba(255,250,235,0.22);
+      color:rgba(255,250,235,0.88); padding:8px 18px; border-radius:10px;
+      font-size:13.5px; font-weight:600;
+    }
+    .hero-chip svg { flex-shrink:0; }
+
+    /* ── Nav Pill Bar ── */
+    .nav-pill-bar {
+      position:sticky; top:0; z-index:100;
+      background:var(--bg); border-bottom:1px solid var(--border);
+      backdrop-filter:blur(16px); padding:0 24px;
+    }
+    .nav-pill-inner {
+      max-width:960px; margin:0 auto;
+      display:flex; gap:4px; padding:10px 0; overflow-x:auto; scrollbar-width:none;
+    }
+    .nav-pill-inner::-webkit-scrollbar { display:none; }
+    .nav-pill {
+      white-space:nowrap; padding:7px 18px; border-radius:100px;
+      border:1px solid var(--border); background:var(--surface);
+      color:var(--text-secondary); font-size:13px; font-weight:600;
+      font-family:inherit; cursor:pointer; transition:all 0.2s; flex-shrink:0;
+      text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+    }
+    .nav-pill:hover { border-color:var(--accent); color:var(--accent); }
+    .nav-pill.active {
+      background:var(--accent); color:white; border-color:var(--accent);
+    }
+
+    /* ── Section Layout ── */
+    .content-section {
+      padding: 72px 24px 80px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .section-header { display:flex; align-items:center; gap:18px; margin-bottom:40px; }
+    .section-num {
+      width:54px; height:54px; border-radius:16px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.5rem; font-weight:900; color:#fff;
+      font-family:'Inter', sans-serif;
+    }
+    .section-num.plum { background: var(--plum); }
+    .section-num.pine { background: var(--pine); }
+    .section-title-group h2 { margin-bottom:4px; }
+    .section-sub { font-size:0.92rem; color:var(--text-secondary); }
+    .section-divider {
+      max-width:960px; margin:0 auto;
+      height:1px; background: linear-gradient(90deg, transparent, var(--sage), transparent);
+    }
+
+    /* ── Feature Cards Grid ── */
+    .feature-grid {
+      display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px;
+      margin-bottom:48px;
+    }
+    .feature-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:16px; padding:26px 24px;
+      transition:box-shadow 0.25s, transform 0.25s;
+    }
+    .feature-card:hover { box-shadow:0 6px 28px rgba(0,0,0,0.08); transform:translateY(-2px); }
+    .fc-icon {
+      width:46px; height:46px; border-radius:14px;
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom:16px;
+    }
+    .fc-icon.plum { background:rgba(114,37,107,0.10); }
+    .fc-icon.pine { background:rgba(16,87,66,0.10); }
+    .fc-icon.sage { background:rgba(205,223,215,0.50); }
+    html.theme-dark .fc-icon.plum { background:rgba(192,122,187,0.15); }
+    html.theme-dark .fc-icon.pine { background:rgba(90,184,144,0.15); }
+    html.theme-dark .fc-icon.sage { background:rgba(205,223,215,0.08); }
+    .fc-title { font-size:1rem; font-weight:700; margin-bottom:8px; color:var(--text); }
+    .fc-desc { font-size:0.88rem; color:var(--text-secondary); line-height:1.7; }
+    .fc-badge {
+      display:inline-block; margin-top:14px;
+      padding:3px 10px; border-radius:100px;
+      font-size:11.5px; font-weight:700; letter-spacing:0.04em;
+    }
+    .fc-badge.plum { background:rgba(114,37,107,0.10); color:var(--plum); }
+    .fc-badge.pine { background:rgba(16,87,66,0.10); color:var(--pine); }
+    html.theme-dark .fc-badge.plum { background:rgba(192,122,187,0.15); color:#C07ABB; }
+    html.theme-dark .fc-badge.pine { background:rgba(90,184,144,0.15); color:#5AB890; }
+
+    /* ── Steps ── */
+    .steps-label {
+      font-size:11px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase;
+      color:var(--text-secondary); margin-bottom:20px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .steps-label::after {
+      content:''; flex:1; height:1px; background:var(--border);
+    }
+    .steps { display:flex; flex-direction:column; gap:0; margin-bottom:48px; }
+    .step {
+      display:flex; gap:20px; padding:24px 0;
+      border-bottom:1px solid var(--border);
+    }
+    .step:last-child { border-bottom:none; }
+    .step-num {
+      width:36px; height:36px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; font-weight:800; color:#fff; margin-top:2px;
+      font-family:'Inter', sans-serif;
+    }
+    .step-num.plum { background:var(--plum); }
+    .step-num.pine { background:var(--pine); }
+    .step-body { flex:1; }
+    .step-title { font-size:1.05rem; font-weight:700; margin-bottom:8px; color:var(--text); }
+    .step-desc { font-size:0.9rem; color:var(--text-secondary); line-height:1.7; margin-bottom:12px; }
+    .step-link {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:12.5px; font-weight:600; color:var(--accent);
+      text-decoration:none; border-bottom:1px solid transparent;
+      transition:border-color 0.2s;
+    }
+    .step-link:hover { border-bottom-color:var(--accent); }
+
+    /* ── Code Block ── */
+    .code-wrap { position:relative; margin:12px 0 0; }
+    .code-block {
+      background:var(--code-bg); color:var(--code-text);
+      border-radius:12px; padding:20px 22px;
+      font-family:'SF Mono','Consolas','Fira Code','Courier New',monospace;
+      font-size:13px; line-height:1.75; overflow-x:auto;
+      white-space:pre; border:1px solid rgba(255,255,255,0.06);
+    }
+    html.theme-dark .code-block { border-color:rgba(255,255,255,0.08); }
+    .copy-btn {
+      position:absolute; top:10px; right:10px;
+      background:rgba(255,250,235,0.12); border:1px solid rgba(255,250,235,0.18);
+      color:rgba(255,250,235,0.7); border-radius:8px;
+      padding:5px 12px; font-size:12px; font-family:inherit;
+      cursor:pointer; transition:all 0.15s; font-weight:600;
+    }
+    .copy-btn:hover { background:rgba(255,250,235,0.22); color:rgba(255,250,235,1); }
+    .copy-btn.copied { background:rgba(16,87,66,0.5); color:#CDDFD7; }
+
+    /* Code Highlight */
+    .hl-comment { color: #7A8A7A; }
+    .hl-key { color: #C07ABB; }
+    .hl-val { color: #A8D8A8; }
+    .hl-str { color: #F7C59F; }
+    .hl-fn  { color: #82CFCF; }
+    html.theme-dark .hl-comment { color: #6A7A6A; }
+
+    /* ── Callout / Info Box ── */
+    .callout {
+      border-radius:12px; padding:18px 22px;
+      display:flex; gap:14px; align-items:flex-start; margin:20px 0;
+    }
+    .callout.tip  { background:rgba(16,87,66,0.08); border:1px solid rgba(16,87,66,0.18); border-left:4px solid var(--pine); }
+    .callout.warn { background:rgba(196,112,15,0.08); border:1px solid rgba(196,112,15,0.18); border-left:4px solid #C4700F; }
+    .callout.info { background:rgba(114,37,107,0.07); border:1px solid rgba(114,37,107,0.18); border-left:4px solid var(--plum); }
+    html.theme-dark .callout.tip  { background:rgba(90,184,144,0.08); }
+    html.theme-dark .callout.warn { background:rgba(212,135,15,0.08); }
+    html.theme-dark .callout.info { background:rgba(192,122,187,0.08); }
+    .callout-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
+    .callout-title { font-size:13px; font-weight:700; margin-bottom:5px; }
+    .callout.tip  .callout-title { color:var(--pine); }
+    .callout.warn .callout-title { color:#C4700F; }
+    .callout.info .callout-title { color:var(--plum); }
+    html.theme-dark .callout.tip  .callout-title { color:#5AB890; }
+    html.theme-dark .callout.warn .callout-title { color:#D4870F; }
+    html.theme-dark .callout.info .callout-title { color:#C07ABB; }
+    .callout-body { font-size:0.875rem; color:var(--text-secondary); line-height:1.7; }
+    .callout-body strong { color:var(--text); }
+
+    /* ── Flow Diagram ── */
+    .flow-wrap { margin:32px 0 48px; }
+    .flow-title {
+      font-size:11px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase;
+      color:var(--text-secondary); margin-bottom:20px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .flow-title::after { content:''; flex:1; height:1px; background:var(--border); }
+    .flow {
+      display:flex; align-items:center; flex-wrap:wrap; gap:8px;
+    }
+    .flow-node {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:10px; padding:10px 18px;
+      font-size:13px; font-weight:600; color:var(--text);
+      text-align:center; white-space:nowrap;
+    }
+    .flow-node.plum { background:rgba(114,37,107,0.08); border-color:rgba(114,37,107,0.25); color:var(--plum); }
+    .flow-node.pine { background:rgba(16,87,66,0.08); border-color:rgba(16,87,66,0.25); color:var(--pine); }
+    .flow-node.sage { background:rgba(205,223,215,0.5); border-color:rgba(16,87,66,0.15); color:var(--pine); }
+    .flow-node.warn { background:rgba(196,112,15,0.08); border-color:rgba(196,112,15,0.25); color:#C4700F; }
+    html.theme-dark .flow-node.plum { background:rgba(192,122,187,0.12); color:#C07ABB; }
+    html.theme-dark .flow-node.pine { background:rgba(90,184,144,0.12); color:#5AB890; }
+    html.theme-dark .flow-node.sage { background:rgba(90,184,144,0.08); color:#5AB890; }
+    html.theme-dark .flow-node.warn { background:rgba(212,135,15,0.10); color:#D4870F; }
+    .flow-arrow {
+      color:var(--text-secondary); font-size:16px; font-weight:700;
+    }
+
+    /* ── Setting Cards (for notice popup) ── */
+    .setting-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:16px; margin-bottom:48px; }
+    .setting-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:14px; padding:22px 22px 18px; overflow:hidden;
+      transition:box-shadow 0.25s;
+    }
+    .setting-card:hover { box-shadow:0 4px 20px rgba(0,0,0,0.07); }
+    .sc-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .sc-var {
+      font-family:'SF Mono','Consolas','Courier New',monospace;
+      font-size:13px; font-weight:700; color:var(--accent);
+      background:rgba(114,37,107,0.08); padding:3px 10px; border-radius:6px;
+    }
+    html.theme-dark .sc-var { background:rgba(192,122,187,0.12); }
+    .sc-type { font-size:11px; font-weight:700; color:var(--text-secondary); letter-spacing:0.05em; }
+    .sc-desc { font-size:0.88rem; color:var(--text-secondary); line-height:1.7; margin-bottom:14px; }
+    .sc-example {
+      background:var(--code-bg); border-radius:8px; padding:10px 14px;
+      font-family:'SF Mono','Consolas','Courier New',monospace;
+      font-size:12px; color:var(--code-text); line-height:1.7;
+    }
+
+    /* ── Summary Table ── */
+    .sum-table { width:100%; border-collapse:collapse; margin-bottom:48px; font-size:14px; }
+    .sum-table th {
+      text-align:left; padding:12px 18px; font-size:11px; font-weight:700;
+      letter-spacing:0.07em; text-transform:uppercase; color:var(--text-secondary);
+      border-bottom:2px solid var(--border); background:var(--surface);
+    }
+    .sum-table th:first-child { border-radius:10px 0 0 0; }
+    .sum-table th:last-child  { border-radius:0 10px 0 0; }
+    .sum-table td {
+      padding:14px 18px; border-bottom:1px solid var(--border);
+      color:var(--text); vertical-align:top; line-height:1.6;
+    }
+    .sum-table tr:last-child td { border-bottom:none; }
+    .sum-table tr:hover td { background:var(--surface-hover); }
+    .tag {
+      display:inline-block; padding:2px 10px; border-radius:100px;
+      font-size:11.5px; font-weight:700;
+    }
+    .tag.plum { background:rgba(114,37,107,0.1); color:var(--plum); }
+    .tag.pine { background:rgba(16,87,66,0.1); color:var(--pine); }
+    html.theme-dark .tag.plum { background:rgba(192,122,187,0.15); color:#C07ABB; }
+    html.theme-dark .tag.pine { background:rgba(90,184,144,0.15); color:#5AB890; }
+    .mono { font-family:'SF Mono','Consolas','Courier New',monospace; font-size:12.5px; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align:center; padding:48px 24px;
+      color:var(--text-secondary); font-size:13px; border-top:1px solid var(--border);
+    }
+    .footer strong { color:var(--text); }
+
+    /* ── Responsive ── */
+    @media (max-width:768px) {
+      .feature-grid, .setting-grid { grid-template-columns:1fr; }
+      .flow { flex-direction:column; align-items:flex-start; }
+      .hero-chips { flex-direction:column; align-items:center; }
+    }
+    @media (max-width:375px) {
+      body { overflow-x:hidden; }
+      .content-section { padding:48px 16px 60px; }
+      .code-block { font-size:11.5px; }
+      h1 { font-size:2.2rem; }
+      h2 { font-size:1.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-to-content">컨텐츠로 이동</a>
+
+<!-- ── Menu ── -->
+<div class="viz-menu">
+  <button class="viz-menu-toggle" onclick="toggleMenu()" aria-label="메뉴">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+    </svg>
+  </button>
+  <div class="viz-menu-dropdown" id="vizMenuDropdown">
+    <button onclick="cycleTheme()"><span id="themeIcon">☀️</span><span id="themeLabel">Light</span></button>
+    <button onclick="downloadImage()"><span>📥</span><span>PNG 저장</span></button>
+    <button onclick="window.print()"><span>🖨️</span><span>인쇄 / PDF</span></button>
+  </div>
+</div>
+
+<main id="main-content" role="main">
+
+  <!-- ── Hero ── -->
+  <header class="hero" role="banner">
+    <div class="hero-badge animate">
+      <span class="hero-badge-dot"></span>
+      Vantive TS Techwiki · 관리자 가이드
+    </div>
+    <h1 class="animate delay-1">보안 & 공지 팝업<br>설정 가이드</h1>
+    <p class="hero-sub animate delay-2">
+      Techwiki 비밀번호 보안 구조와 공지 팝업을<br>쉽게 설정하고 관리하는 방법을 정리한 문서입니다.
+    </p>
+    <div class="hero-chips animate delay-3">
+      <span class="hero-chip">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        SHA-256 암호화 비밀번호
+      </span>
+      <span class="hero-chip">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        5회 실패 잠금 시스템
+      </span>
+      <span class="hero-chip">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        8시간 세션 자동 만료
+      </span>
+      <span class="hero-chip">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        공지 팝업 ON/OFF
+      </span>
+    </div>
+  </header>
+
+  <!-- ── Nav Pills ── -->
+  <nav class="nav-pill-bar" role="navigation" aria-label="섹션 이동">
+    <div class="nav-pill-inner">
+      <a href="#sec-security" class="nav-pill active">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        보안 구조 설정
+      </a>
+      <a href="#sec-password-change" class="nav-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        비밀번호 변경
+      </a>
+      <a href="#sec-notice" class="nav-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        공지 팝업 설정
+      </a>
+      <a href="#sec-summary" class="nav-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        요약
+      </a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       Section 1 · 보안 구조 설정
+  ══════════════════════════════════════════ -->
+  <section id="sec-security" class="content-section">
+
+    <div class="section-header" data-reveal>
+      <div class="section-num plum">1</div>
+      <div class="section-title-group">
+        <h2>보안 구조 설정</h2>
+        <p class="section-sub">Vantive_Techwiki_index_pw.html 에 적용된 3가지 보안 레이어</p>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card" data-reveal>
+        <div class="fc-icon plum">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#72256B" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="fc-title">① SHA-256 비밀번호 암호화</div>
+        <div class="fc-desc">실제 비밀번호 문자열이 파일에 저장되지 않습니다. 비밀번호의 해시값만 코드에 존재하므로, 파일이 노출되더라도 원래 비밀번호를 알 수 없습니다.</div>
+        <span class="fc-badge plum">WebCrypto API</span>
+      </div>
+      <div class="feature-card" data-reveal>
+        <div class="fc-icon plum">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#72256B" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="fc-title">② 5회 실패 잠금 시스템</div>
+        <div class="fc-desc">비밀번호를 5회 연속 틀리면 15분간 로그인이 잠깁니다. 잠금 상태는 페이지를 새로고침해도 유지되며, 카운트다운 타이머가 표시됩니다.</div>
+        <span class="fc-badge plum">localStorage 기반</span>
+      </div>
+      <div class="feature-card" data-reveal>
+        <div class="fc-icon pine">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#105742" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="fc-title">③ 8시간 세션 자동 만료</div>
+        <div class="fc-desc">로그인 후 8시간이 경과하면 자동으로 세션이 만료되어 재로그인이 필요합니다. 브라우저 탭을 닫으면 즉시 세션이 종료됩니다.</div>
+        <span class="fc-badge pine">sessionStorage 기반</span>
+      </div>
+    </div>
+
+    <!-- 보안 흐름도 -->
+    <div class="flow-wrap" data-reveal>
+      <div class="flow-title">로그인 처리 흐름</div>
+      <div class="flow">
+        <div class="flow-node">비밀번호 입력</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node plum">SHA-256 해시 변환</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">CORRECT_HASH 비교</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node pine">✓ 일치 → 세션 저장</div>
+      </div>
+      <div class="flow" style="margin-top:10px; padding-left:280px;">
+        <div class="flow-arrow" style="transform:rotate(90deg);">→</div>
+      </div>
+      <div class="flow" style="margin-top:4px;">
+        <div class="flow-node" style="opacity:0;pointer-events:none;">비밀번호 입력</div>
+        <div class="flow-arrow" style="opacity:0;">→</div>
+        <div class="flow-node warn">✗ 불일치 → 실패 횟수 +1</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node warn">5회 시 15분 잠금</div>
+      </div>
+    </div>
+
+    <!-- 코드 핵심 구조 -->
+    <div class="steps-label" data-reveal>HTML 파일 핵심 구조</div>
+    <div class="code-wrap" data-reveal>
+      <div class="code-block"><span class="hl-comment">/* ─── 보안 설정값 (수정 가능한 부분) ─── */</span>
+<span class="hl-key">const</span> CORRECT_HASH = <span class="hl-str">'3117f7aab1d822bef0c6e408c...'</span>;  <span class="hl-comment">// SHA-256 해시값</span>
+<span class="hl-key">const</span> MAX_ATTEMPTS = <span class="hl-val">5</span>;               <span class="hl-comment">// 최대 실패 횟수</span>
+<span class="hl-key">const</span> LOCK_MS      = <span class="hl-val">15 * 60 * 1000</span>; <span class="hl-comment">// 잠금 시간 (15분)</span>
+<span class="hl-key">const</span> SESSION_MS   = <span class="hl-val">8  * 60 * 60 * 1000</span>; <span class="hl-comment">// 세션 유지 (8시간)</span>
+
+<span class="hl-comment">/* ─── 로그인 처리 (수정 불필요) ─── */</span>
+<span class="hl-fn">window.pwSubmit</span> = <span class="hl-key">async function</span>() {
+  <span class="hl-key">const</span> hash = <span class="hl-key">await</span> <span class="hl-fn">sha256</span>(input.value.trim());
+  <span class="hl-key">if</span> (hash === CORRECT_HASH) {
+    <span class="hl-comment">// ✅ 성공: 세션 저장 + 게이트 숨김</span>
+  } <span class="hl-key">else</span> {
+    <span class="hl-comment">// ❌ 실패: 횟수 증가, 5회 시 잠금</span>
+  }
+};</div>
+      <button class="copy-btn" onclick="copyCode(this)">복사</button>
+    </div>
+
+    <div class="callout tip" data-reveal style="margin-top:24px;">
+      <div class="callout-icon">💡</div>
+      <div>
+        <div class="callout-title">보안 수준 안내</div>
+        <div class="callout-body">이 구조는 <strong>내부 팀 전용 도구</strong>에 적합한 클라이언트 사이드 보안입니다. 브라우저 개발자 도구로 우회 가능하지만, 내부 직원 대상으로는 충분한 접근 제어 효과가 있습니다.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       Section 2 · 비밀번호 변경 방법
+  ══════════════════════════════════════════ -->
+  <section id="sec-password-change" class="content-section">
+
+    <div class="section-header" data-reveal>
+      <div class="section-num plum">2</div>
+      <div class="section-title-group">
+        <h2>비밀번호 변경 방법</h2>
+        <p class="section-sub">새 비밀번호 설정 — 3단계로 완료</p>
+      </div>
+    </div>
+
+    <div class="steps" data-reveal>
+
+      <div class="step">
+        <div class="step-num plum">1</div>
+        <div class="step-body">
+          <div class="step-title">SHA256 도구에서 해시값 생성</div>
+          <div class="step-desc">아래 링크의 온라인 도구에서 새 비밀번호를 Input 칸에 직접 타이핑합니다.<br>Auto Update가 켜져 있으면 Output에 즉시 해시값이 표시됩니다.</div>
+          <a href="https://emn178.github.io/online-tools/sha256.html" class="step-link" target="_blank">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            emn178.github.io/online-tools/sha256.html
+          </a>
+          <div class="code-wrap" style="margin-top:14px;">
+            <div class="code-block"><span class="hl-comment">Input Encoding  : UTF-8  (기본값 유지)</span>
+<span class="hl-comment">Output Encoding : Hex (Lower Case)  (기본값 유지)</span>
+<span class="hl-comment">Enable HMAC     : OFF  (기본값 유지)</span>
+
+<span class="hl-comment">⚠️  Enter 키 누르지 말 것 → 줄바꿈(\n)이 포함되어 해시값이 달라짐</span>
+<span class="hl-comment">⚠️  Input 앞뒤 공백 없도록 확인 (복사 붙여넣기 주의)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num plum">2</div>
+        <div class="step-body">
+          <div class="step-title">Output 해시값 전체 복사</div>
+          <div class="step-desc">Output 칸의 64자리 16진수 문자열을 전체 선택 후 복사합니다.<br>예시 — <code class="mono">787a126e8ce277e9a07b2d2fb6e14064e850933b8627...</code></div>
+          <div class="callout warn" style="margin-top:12px;">
+            <div class="callout-icon">⚠️</div>
+            <div>
+              <div class="callout-title">주의: 같은 비밀번호인데 해시가 다르게 나온다면?</div>
+              <div class="callout-body">Input 칸에 <strong>줄바꿈 문자(\n)나 앞뒤 공백이 포함된 것</strong>입니다. Input 칸을 완전히 지우고 비밀번호를 다시 직접 타이핑하세요.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num plum">3</div>
+        <div class="step-body">
+          <div class="step-title">HTML 파일에서 CORRECT_HASH 교체</div>
+          <div class="step-desc"><code class="mono">Vantive_Techwiki_index_pw.html</code>을 텍스트 에디터로 열고, 아래 줄을 찾아 작은따옴표 안의 값만 교체합니다.</div>
+          <div class="code-wrap" style="margin-top:14px;">
+            <div class="code-block"><span class="hl-comment">// 🔍 이 줄을 찾아서</span>
+<span class="hl-key">const</span> CORRECT_HASH = <span class="hl-str">'3117f7aab1d822bef0c6e408c474112e9c276c620d9b36309645e5e23e6d384a'</span>;
+
+<span class="hl-comment">// ✏️ 새 해시값으로 교체</span>
+<span class="hl-key">const</span> CORRECT_HASH = <span class="hl-str">'여기에_새_해시값_붙여넣기_64자_전체'</span>;</div>
+            <button class="copy-btn" onclick="copyCode(this)">복사</button>
+          </div>
+          <div class="callout tip" style="margin-top:14px;">
+            <div class="callout-icon">✅</div>
+            <div>
+              <div class="callout-title">저장 후 즉시 적용</div>
+              <div class="callout-body">파일을 저장하면 완료입니다. GitHub에 올린 경우 <strong>브라우저 강제 새로고침(Ctrl+Shift+R)</strong> 후 5분 내외 대기 후 테스트하세요.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       Section 3 · 공지 팝업 설정
+  ══════════════════════════════════════════ -->
+  <section id="sec-notice" class="content-section">
+
+    <div class="section-header" data-reveal>
+      <div class="section-num pine">3</div>
+      <div class="section-title-group">
+        <h2>공지 팝업 설정</h2>
+        <p class="section-sub">로그인 성공 후 표시되는 공지 팝업 — 4개의 설정값만 수정하면 됩니다</p>
+      </div>
+    </div>
+
+    <!-- 설정값 4개 -->
+    <div class="steps-label" data-reveal>수정 가능한 설정값 (HTML 파일 최상단)</div>
+
+    <div class="setting-grid" data-reveal>
+      <div class="setting-card">
+        <div class="sc-header">
+          <span class="sc-var">NOTICE_ENABLED</span>
+          <span class="sc-type">boolean</span>
+        </div>
+        <div class="sc-desc">팝업을 표시할지 말지를 결정합니다.<br><strong>true</strong> = 팝업 표시 / <strong>false</strong> = 완전히 숨김</div>
+        <div class="sc-example"><span class="hl-comment">// 팝업 켜기</span>
+<span class="hl-key">const</span> NOTICE_ENABLED = <span class="hl-val">true</span>;
+
+<span class="hl-comment">// 팝업 끄기</span>
+<span class="hl-key">const</span> NOTICE_ENABLED = <span class="hl-val">false</span>;</div>
+      </div>
+      <div class="setting-card">
+        <div class="sc-header">
+          <span class="sc-var">NOTICE_UNTIL</span>
+          <span class="sc-type">string (날짜)</span>
+        </div>
+        <div class="sc-desc">이 날짜까지만 팝업을 표시합니다.<br>날짜가 지나면 <strong>자동으로 팝업이 사라집니다</strong>. 계속 표시하려면 먼 미래 날짜로 설정하세요.</div>
+        <div class="sc-example"><span class="hl-comment">// 2026년 6월 30일까지</span>
+<span class="hl-key">const</span> NOTICE_UNTIL = <span class="hl-str">'2026-06-30'</span>;
+
+<span class="hl-comment">// 무기한 표시</span>
+<span class="hl-key">const</span> NOTICE_UNTIL = <span class="hl-str">'2099-12-31'</span>;</div>
+      </div>
+      <div class="setting-card">
+        <div class="sc-header">
+          <span class="sc-var">NOTICE_TITLE</span>
+          <span class="sc-type">string</span>
+        </div>
+        <div class="sc-desc">팝업 상단에 표시될 제목입니다.<br>이모지를 포함해도 됩니다.</div>
+        <div class="sc-example"><span class="hl-key">const</span> NOTICE_TITLE =
+  <span class="hl-str">'🔒 보안 업데이트 안내'</span>;
+
+<span class="hl-key">const</span> NOTICE_TITLE =
+  <span class="hl-str">'📢 3월 정기 점검 공지'</span>;</div>
+      </div>
+      <div class="setting-card">
+        <div class="sc-header">
+          <span class="sc-var">NOTICE_BODY</span>
+          <span class="sc-type">HTML string</span>
+        </div>
+        <div class="sc-desc">팝업 본문입니다. HTML 태그 사용 가능합니다.<br>백틱(`) 사이에 내용을 작성하세요.</div>
+        <div class="sc-example"><span class="hl-key">const</span> NOTICE_BODY = <span class="hl-str">`
+  &lt;p&gt;공지 내용을 입력하세요.&lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;항목 1&lt;/li&gt;
+    &lt;li&gt;항목 2&lt;/li&gt;
+  &lt;/ul&gt;
+`</span>;</div>
+      </div>
+    </div>
+
+    <!-- 팝업 동작 흐름 -->
+    <div class="flow-wrap" data-reveal>
+      <div class="flow-title">공지 팝업 표시 결정 흐름</div>
+      <div class="flow">
+        <div class="flow-node">로그인 성공</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node pine">NOTICE_ENABLED<br>= true?</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node pine">오늘 날짜 ≤<br>NOTICE_UNTIL?</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node pine">"오늘 숨김"<br>미선택?</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node sage">✓ 팝업 표시</div>
+      </div>
+    </div>
+
+    <!-- 팝업 변경 3단계 -->
+    <div class="steps-label" data-reveal>팝업 내용 변경 방법</div>
+    <div class="steps" data-reveal>
+      <div class="step">
+        <div class="step-num pine">1</div>
+        <div class="step-body">
+          <div class="step-title">HTML 파일 열기</div>
+          <div class="step-desc"><code class="mono">Vantive_Techwiki_index_pw.html</code>을 텍스트 에디터(VS Code, 메모장 등)로 열고 최상단 <code class="mono">&lt;script&gt;</code> 태그 바로 다음을 찾습니다.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num pine">2</div>
+        <div class="step-body">
+          <div class="step-title">공지 팝업 설정 블록 찾기</div>
+          <div class="step-desc">아래와 같은 주석 블록을 찾아서 그 아래 4개의 값을 수정합니다.</div>
+          <div class="code-wrap" style="margin-top:12px;">
+            <div class="code-block"><span class="hl-comment">/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  📢 공지 팝업 설정  ← 여기만 수정하세요
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */</span>
+<span class="hl-key">const</span> NOTICE_ENABLED = <span class="hl-val">true</span>;
+<span class="hl-key">const</span> NOTICE_UNTIL   = <span class="hl-str">'2026-06-30'</span>;
+<span class="hl-key">const</span> NOTICE_TITLE   = <span class="hl-str">'🔒 보안 업데이트 안내'</span>;
+<span class="hl-key">const</span> NOTICE_BODY    = <span class="hl-str">`
+  &lt;p&gt;내용 입력&lt;/p&gt;
+`</span>;</div>
+            <button class="copy-btn" onclick="copyCode(this)">복사</button>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num pine">3</div>
+        <div class="step-body">
+          <div class="step-title">저장 후 업로드</div>
+          <div class="step-desc">파일을 저장하고 GitHub에 업로드하면 즉시 반영됩니다.<br>팝업을 내리고 싶을 때는 <code class="mono">NOTICE_ENABLED = false</code> 로 변경하거나 <code class="mono">NOTICE_UNTIL</code>의 날짜를 오늘보다 이전 날짜로 설정하세요.</div>
+          <div class="callout info" style="margin-top:12px;">
+            <div class="callout-icon">ℹ️</div>
+            <div>
+              <div class="callout-title">"오늘 하루 보지 않기" 기능</div>
+              <div class="callout-body">사용자가 팝업에서 "오늘 하루 보지 않기"를 체크하면 해당 브라우저에서 당일 재접속 시 팝업이 표시되지 않습니다. <strong>다음 날 자정이 지나면 자동으로 초기화</strong>됩니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       Section 4 · 요약 테이블
+  ══════════════════════════════════════════ -->
+  <section id="sec-summary" class="content-section">
+
+    <div class="section-header" data-reveal>
+      <div class="section-num pine" style="font-size:1.2rem;">✓</div>
+      <div class="section-title-group">
+        <h2>전체 요약</h2>
+        <p class="section-sub">수정 가능한 모든 설정값 한눈에 보기</p>
+      </div>
+    </div>
+
+    <div data-reveal style="overflow-x:auto; margin-bottom:48px;">
+      <table class="sum-table">
+        <thead>
+          <tr>
+            <th>설정값</th>
+            <th>기본값</th>
+            <th>역할</th>
+            <th>구분</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mono">CORRECT_HASH</span></td>
+            <td><span class="mono" style="font-size:11px;">3117f7aa...</span></td>
+            <td>비밀번호 SHA-256 해시값 (원문: Vantive2025)</td>
+            <td><span class="tag plum">보안</span></td>
+          </tr>
+          <tr>
+            <td><span class="mono">MAX_ATTEMPTS</span></td>
+            <td><span class="mono">5</span></td>
+            <td>로그인 최대 실패 허용 횟수</td>
+            <td><span class="tag plum">보안</span></td>
+          </tr>
+          <tr>
+            <td><span class="mono">LOCK_MS</span></td>
+            <td><span class="mono">15분</span></td>
+            <td>실패 초과 후 잠금 지속 시간</td>
+            <td><span class="tag plum">보안</span></td>
+          </tr>
+          <tr>
+            <td><span class="mono">SESSION_MS</span></td>
+            <td><span class="mono">8시간</span></td>
+            <td>로그인 세션 유지 시간</td>
+            <td><span class="tag plum">보안</span></td>
+          </tr>
+          <tr>
+            <td><span class="mono">NOTICE_ENABLED</span></td>
+            <td><span class="mono">true</span></td>
+            <td>공지 팝업 표시 여부 (true/false)</td>
+            <td><span class="tag pine">공지</span></td>
+          </tr>
+          <tr>
+            <td><span class="mono">NOTICE_UNTIL</span></td>
+            <td><span class="mono">'2026-06-30'</span></td>
+            <td>팝업 자동 만료 날짜 (YYYY-MM-DD)</td>
+            <td><span class="tag pine">공지</span></td>
+          </tr>
+          <tr>
+            <td><span class="mono">NOTICE_TITLE</span></td>
+            <td><span class="mono">'🔒 보안 업데이트...'</span></td>
+            <td>팝업 헤더에 표시될 제목</td>
+            <td><span class="tag pine">공지</span></td>
+          </tr>
+          <tr>
+            <td><span class="mono">NOTICE_BODY</span></td>
+            <td><span class="mono">HTML 템플릿</span></td>
+            <td>팝업 본문 내용 (HTML 태그 가능)</td>
+            <td><span class="tag pine">공지</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip" data-reveal>
+      <div class="callout-icon">🔑</div>
+      <div>
+        <div class="callout-title">비밀번호 변경 원칙</div>
+        <div class="callout-body">
+          <strong>절대 원본 비밀번호를 파일에 직접 쓰지 마세요.</strong><br>
+          반드시 <a href="https://emn178.github.io/online-tools/sha256.html" target="_blank" style="color:var(--pine)">SHA256 도구</a>에서 해시값으로 변환한 후, <code class="mono">CORRECT_HASH</code> 값만 교체합니다.<br>
+          새 비밀번호 입력 시 Enter를 누르지 말고, 복사할 때 앞뒤 공백이 포함되지 않도록 주의하세요.
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <strong>Vantive TS Techwiki</strong> · 관리자 설정 가이드<br>
+    <span style="font-size:12px; margin-top:4px; display:block;">문서 생성: Claude · 2026년 5월 · Internal Use Only</span>
+  </footer>
+
+</main>
+
+<script>
+  // === Menu ===
+  function toggleMenu() {
+    var dropdown = document.getElementById('vizMenuDropdown');
+    if (dropdown) dropdown.classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.viz-menu')) {
+      var dropdown = document.getElementById('vizMenuDropdown');
+      if (dropdown) dropdown.classList.remove('open');
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var dropdown = document.getElementById('vizMenuDropdown');
+      if (dropdown) dropdown.classList.remove('open');
+    }
+  });
+
+  // === Theme ===
+  var savedTheme = localStorage.getItem('viz-theme-techwiki-guide');
+  var currentTheme = savedTheme || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  function applyTheme(t) {
+    document.documentElement.className = 'theme-' + t;
+    var icon = document.getElementById('themeIcon');
+    var label = document.getElementById('themeLabel');
+    if (icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+    if (label) label.textContent = t === 'dark' ? 'Dark' : 'Light';
+    localStorage.setItem('viz-theme-techwiki-guide', t);
+    currentTheme = t;
+  }
+  function cycleTheme() { applyTheme(currentTheme === 'dark' ? 'light' : 'dark'); }
+  applyTheme(currentTheme);
+
+  // === Scroll Reveal ===
+  document.querySelectorAll('[data-reveal]').forEach(function(el) { el.classList.add('reveal'); });
+  var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(function(el) { revealObserver.observe(el); });
+
+  // === Nav Pill Active State ===
+  var sections = document.querySelectorAll('section[id]');
+  var navPills = document.querySelectorAll('.nav-pill');
+  var scrollObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        navPills.forEach(function(p) { p.classList.remove('active'); });
+        var activeLink = document.querySelector('.nav-pill[href="#' + e.target.id + '"]');
+        if (activeLink) activeLink.classList.add('active');
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(function(s) { scrollObserver.observe(s); });
+
+  // === Copy Code ===
+  function copyCode(btn) {
+    var codeBlock = btn.previousElementSibling;
+    var text = codeBlock.innerText || codeBlock.textContent;
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = '✓ 복사됨';
+      btn.classList.add('copied');
+      setTimeout(function() { btn.textContent = '복사'; btn.classList.remove('copied'); }, 2000);
+    }).catch(function() {
+      btn.textContent = '복사 실패';
+      setTimeout(function() { btn.textContent = '복사'; }, 2000);
+    });
+  }
+
+  // === Smooth Scroll for Nav Pills ===
+  document.querySelectorAll('.nav-pill[href^="#"]').forEach(function(pill) {
+    pill.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // === Download PNG ===
+  async function downloadImage() {
+    var menu = document.querySelector('.viz-menu');
+    menu.style.display = 'none';
+    try {
+      var url = await htmlToImage.toPng(document.body, {
+        quality: 1, pixelRatio: 2,
+        filter: function(n) { return !n.classList || !n.classList.contains('viz-menu'); }
+      });
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'techwiki-security-guide.png';
+      a.click();
+    } catch(e) { console.error('Download failed:', e); }
+    menu.style.display = '';
+  }
+
+  function onThemeChange() {}
+</script>
+</body>
+</html>
