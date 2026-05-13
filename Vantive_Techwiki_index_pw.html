@@ -764,7 +764,7 @@
   </button>
 
   <button class="header-brand" id="logo-btn" aria-label="홈으로">
-    <img src="vantive%20logo.png" class="vantive-logo-img" alt="Vantive">
+    <img src="vantive%20logo.png" id="header-logo-img" class="vantive-logo-img" alt="Vantive">
     <span class="brand-sep"></span>
     <span class="techwiki-label">Techwiki</span>
   </button>
@@ -1198,7 +1198,7 @@ window.closeNotice = function() {
    * ─────────────────────────────────────────────── */
   (function initPasswordGate() {
     // ① 비밀번호 해시 (SHA-256) — 원문: 관리자에게 문의
-    const CORRECT_HASH   = 'c49c8147669d7b84cdc3f75f118fd1df5552348966c407dddf077df7ed686848';
+    const CORRECT_HASH   = '3117f7aab1d822bef0c6e408c474112e9c276c620d9b36309645e5e23e6d384a';
 
     const SESSION_KEY    = 'vantive_tw_auth';
     const SESSION_EXP    = 'vantive_tw_exp';    // 세션 만료 시각 (ms)
@@ -1254,6 +1254,39 @@ window.closeNotice = function() {
       } else {
         const t = setInterval(function(){
           if (window._LOGO_B64) { clearInterval(t); applyPine(window._LOGO_B64); }
+        }, 30);
+      }
+    })();
+
+    // ── 헤더 로고 Canvas 처리 (Cream color on transparent bg) ─────
+    (function processHeaderLogo() {
+      const img = document.getElementById('header-logo-img');
+      if (!img) return;
+      const cR=255, cG=250, cB=235;  // Cream #FFFAEB
+      function applyCream(dataUrl) {
+        const tmp = new Image();
+        tmp.onload = function(){
+          const c = document.createElement('canvas');
+          c.width = tmp.naturalWidth; c.height = tmp.naturalHeight;
+          const ctx = c.getContext('2d');
+          ctx.drawImage(tmp, 0, 0);
+          const id = ctx.getImageData(0,0,c.width,c.height);
+          const d = id.data;
+          for (let i=0;i<d.length;i+=4){
+            const lum=(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2])/255;
+            if(lum>0.50){d[i]=cR;d[i+1]=cG;d[i+2]=cB;d[i+3]=255;}
+            else{d[i+3]=0;}
+          }
+          ctx.putImageData(id,0,0);
+          img.src = c.toDataURL('image/png');
+        };
+        tmp.src = dataUrl;
+      }
+      if (window._LOGO_B64) {
+        applyCream(window._LOGO_B64);
+      } else {
+        const t = setInterval(function(){
+          if (window._LOGO_B64) { clearInterval(t); applyCream(window._LOGO_B64); }
         }, 30);
       }
     })();
