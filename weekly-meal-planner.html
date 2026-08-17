@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주간 식단표 · Weekly Meal Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<style>
+:root {
+  --plum: #72256B;
+  --plum-deep: #58184F;
+  --plum-soft: #A4599C;
+  --cream: #FFFAEB;
+  --pine: #105742;
+  --eucalyptus: #6CA07A;
+  --sage: #CDDFD7;
+}
+.theme-light {
+  --bg: #F6F0EA;
+  --surface: #FFFFFF;
+  --surface-hover: #FFFAEB;
+  --border: rgba(114,37,107,0.14);
+  --rule: rgba(27,18,25,0.13);
+  --rule-soft: rgba(27,18,25,0.07);
+  --divider: #72256B;
+  --divider-soft: #A4599C;
+  --text: #1B1219;
+  --text-secondary: #6B5468;
+  --text-muted: #9B879A;
+  --accent: #72256B;
+  --accent-secondary: #6CA07A;
+  --positive: #105742;
+  --negative: #AE4048;
+  --warning: #B07D2E;
+  --field: rgba(114,37,107,0.05);
+}
+.theme-dark {
+  --bg: #150A14;
+  --surface: #1F0F1D;
+  --surface-hover: #2C182A;
+  --border: rgba(205,223,215,0.16);
+  --rule: rgba(243,239,228,0.16);
+  --rule-soft: rgba(243,239,228,0.08);
+  --divider: #A4599C;
+  --divider-soft: #72256B;
+  --text: #F3EFE4;
+  --text-secondary: #C9B4C6;
+  --text-muted: #94808F;
+  --accent: #C77BBD;
+  --accent-secondary: #8FC49E;
+  --positive: #7FC49A;
+  --negative: #E08A8A;
+  --warning: #D9AE55;
+  --field: rgba(243,239,228,0.05);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', 'Inter', sans-serif;
+  font-size: 1rem;
+  line-height: 1.75;
+  letter-spacing: -0.003em;
+  transition: background 0.3s, color 0.3s;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+strong { font-weight: 700; color: var(--text); }
+.skip-link { position: absolute; top: -40px; left: 1rem; background: var(--accent); color: #fff; padding: 8px 16px; font-size: 0.875rem; z-index: 9999; text-decoration: none; }
+.skip-link:focus { top: 8px; }
+
+/* ---------- UTILITY MENU ---------- */
+.viz-menu { position: fixed; top: 3.75rem; right: 1.25rem; z-index: 9998; }
+.viz-menu-toggle {
+  width: 34px; height: 34px;
+  background: var(--bg); border: 1px solid var(--rule);
+  color: var(--text-muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.2s, border-color 0.2s;
+}
+.viz-menu-toggle:hover { color: var(--accent); border-color: var(--accent); }
+.viz-menu-dropdown {
+  position: absolute; top: 40px; right: 0;
+  background: var(--surface); border: 1px solid var(--rule);
+  padding: 4px; min-width: 180px; opacity: 0; pointer-events: none;
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(27,18,25,0.10);
+  transition: all 0.18s;
+}
+.viz-menu-dropdown.open { opacity: 1; pointer-events: all; transform: none; }
+.viz-menu-btn {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 9px 12px; border: none;
+  background: none; color: var(--text); cursor: pointer;
+  font-size: 0.85rem; font-family: inherit; text-align: left;
+  transition: color 0.15s;
+}
+.viz-menu-btn:hover { color: var(--accent); }
+.viz-menu-btn svg { flex-shrink: 0; color: var(--text-muted); }
+
+/* ---------- MASTHEAD ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(90deg, #58184F 0%, #72256B 26%, #105742 62%, #6CA07A 100%);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  padding: 0.75rem 2rem;
+  display: flex; align-items: center; gap: 1rem;
+  box-shadow: 0 2px 16px rgba(88,24,79,0.25);
+}
+.theme-dark .site-header {
+  background: linear-gradient(90deg, #3E0F38 0%, #58184F 32%, #0C4234 68%, #4E7D5D 100%);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.45);
+}
+.header-mark { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.22em; color: #fff; text-transform: uppercase; }
+.site-header .header-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.3); }
+.site-header .header-title { font-size: 0.8125rem; font-weight: 500; color: rgba(255,255,255,0.9); letter-spacing: 0.02em; }
+.header-badge {
+  margin-left: auto; padding: 4px 12px; border-radius: 20px;
+  background: rgba(255,255,255,0.22); color: #fff;
+  border: 1px solid rgba(255,255,255,0.32);
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
+}
+.theme-dark .header-badge { background: rgba(0,0,0,0.25); color: rgba(255,255,255,0.92); }
+
+/* ---------- TYPE ---------- */
+h1 { font-size: 3.25rem; line-height: 1.15; letter-spacing: -0.03em; font-weight: 800; margin-bottom: 1.35rem; }
+h1 span { color: var(--accent); }
+h2 { font-size: 2rem; line-height: 1.24; letter-spacing: -0.025em; margin-bottom: 0.8rem; font-weight: 700; }
+h3 { font-size: 1.25rem; line-height: 1.4; letter-spacing: -0.015em; margin: 2.75rem 0 1rem; font-weight: 700; padding-bottom: 0.5rem; border-bottom: 1px solid var(--rule-soft); }
+
+/* ---------- COVER ---------- */
+.hero { max-width: 1360px; margin: 0 auto; padding: 5rem 3rem 3rem; text-align: left; }
+.hero-eyebrow {
+  display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 2rem; padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--rule); max-width: 780px;
+}
+.hero-sub { font-size: 1.1rem; color: var(--text-secondary); max-width: 640px; margin: 0 0 2.5rem; line-height: 1.85; }
+.hero-meta { display: flex; align-items: baseline; gap: 0; flex-wrap: wrap; max-width: 780px; padding-top: 1.1rem; border-top: 1px solid var(--rule); }
+.hero-meta-item { display: inline-flex; align-items: center; font-size: 0.78rem; color: var(--text-muted); letter-spacing: 0.02em; }
+.hero-meta-item + .hero-meta-item::before { content: '·'; margin: 0 0.85rem; color: var(--rule); font-weight: 700; }
+
+/* ---------- EDITORIAL FLOW ---------- */
+main { max-width: 1360px; margin: 0 auto; padding: 0 3rem 7rem; }
+main > section {
+  display: block;
+  padding-top: 3rem;
+  margin-bottom: 3.5rem;
+  border-top: 4px solid var(--divider);
+}
+main > section:first-child { border-top: none; padding-top: 1rem; }
+
+.section-label {
+  display: flex; align-items: center; gap: 0.8rem;
+  margin: 0 0 0.85rem;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text-muted); line-height: 1.4;
+}
+.section-label .label-bar { display: block; width: 26px; height: 2px; background: var(--accent); margin: 0; flex-shrink: 0; }
+.section-desc { font-size: 1rem; color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.85; max-width: 900px; }
+
+/* ---------- CALLOUT ---------- */
+.callout {
+  border-left: 2px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 1.6rem;
+  margin: 1.75rem 0; font-size: 0.9rem; max-width: 960px;
+  color: var(--text-secondary); line-height: 1.85;
+}
+.callout strong { color: var(--text); }
+.callout.pine { border-left-color: var(--positive); }
+
+/* ---------- CONTROLS ---------- */
+.control-bar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 1.25rem;
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  padding: 1.25rem 0; margin-bottom: 1.5rem;
+}
+.week-nav { display: flex; align-items: center; gap: 0.55rem; }
+.wk-btn {
+  width: 30px; height: 30px; border: 1px solid var(--rule); background: none;
+  color: var(--text-secondary); cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.wk-btn:hover { color: var(--accent); border-color: var(--accent); }
+.week-range {
+  font-family: 'Inter', sans-serif; font-size: 1.05rem; font-weight: 700;
+  letter-spacing: -0.02em; color: var(--text); min-width: 190px;
+  font-variant-numeric: tabular-nums;
+}
+.week-tag { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); display: block; }
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 0.6rem 1.1rem; border: 1px solid var(--accent); background: none;
+  color: var(--accent); font-family: inherit; font-size: 0.8rem; font-weight: 700;
+  letter-spacing: 0.02em; cursor: pointer; transition: all 0.15s;
+}
+.btn:hover { background: var(--accent); color: #fff; }
+.btn.solid { background: var(--accent); color: #fff; }
+.btn.solid:hover { opacity: 0.86; }
+.btn.ghost { border-color: var(--rule); color: var(--text-secondary); }
+.btn.ghost:hover { background: none; border-color: var(--accent); color: var(--accent); }
+.btn svg { width: 14px; height: 14px; }
+
+.opt-row { display: flex; flex-wrap: wrap; gap: 1.5rem 2.25rem; align-items: flex-start; padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule); margin-bottom: 2rem; }
+.opt-group { display: flex; flex-direction: column; gap: 0.55rem; }
+.opt-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+.seg { display: flex; border: 1px solid var(--rule); }
+.seg button {
+  padding: 0.45rem 0.85rem; border: none; background: none; cursor: pointer;
+  font-family: inherit; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.15s;
+  border-right: 1px solid var(--rule-soft);
+}
+.seg button:last-child { border-right: none; }
+.seg button:hover { color: var(--accent); }
+.seg button.on { background: var(--accent); color: #fff; font-weight: 700; }
+.opt-input {
+  border: none; border-bottom: 1px solid var(--rule); background: none;
+  font-family: inherit; font-size: 0.85rem; color: var(--text);
+  padding: 0.4rem 0; min-width: 230px; outline: none;
+}
+.opt-input:focus { border-bottom-color: var(--accent); }
+.opt-input::placeholder { color: var(--text-muted); }
+.switch { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; padding-top: 0.35rem; }
+.switch input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+
+/* ---------- PLANNER ---------- */
+.legend { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 0.85rem; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; color: var(--text-muted); }
+.legend i { display: inline-block; width: 14px; height: 2px; margin-right: 6px; vertical-align: middle; }
+.lg-staple { background: var(--text-muted); }
+.lg-soup { background: var(--accent-secondary); }
+.lg-main { background: var(--accent); }
+.lg-side { background: var(--positive); }
+
+.planner { border-top: 2px solid var(--text); }
+.theme-dark .planner { border-top-color: var(--text-secondary); }
+.planner-head, .day-row { display: grid; grid-template-columns: 116px repeat(3, minmax(0,1fr)); }
+.planner.no-b .planner-head, .planner.no-b .day-row { grid-template-columns: 116px repeat(2, minmax(0,1fr)); }
+.planner-head > div {
+  font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-muted); font-weight: 700; padding: 0.7rem 1rem 0.7rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.day-row { border-bottom: 1px solid var(--rule-soft); }
+.day-row:last-child { border-bottom: 1px solid var(--rule); }
+.day-row.today { background: var(--surface-hover); }
+.theme-dark .day-row.today { background: var(--surface); }
+.day-cell { padding: 1.15rem 1rem 1.15rem 0; }
+.day-name { font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; }
+.day-row.today .day-name { color: var(--accent); }
+.day-date { font-size: 0.72rem; color: var(--text-muted); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.day-sat .day-name { color: var(--text-secondary); }
+.day-sun .day-name { color: var(--negative); }
+.day-row.today .day-date { color: var(--accent); }
+.day-reroll {
+  margin-top: 0.5rem; border: none; background: none; padding: 0; cursor: pointer;
+  font-family: inherit; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-muted); transition: color 0.15s;
+}
+.day-reroll:hover { color: var(--accent); }
+
+.meal { padding: 1.05rem 1.25rem 1.15rem 0; border-left: 1px solid var(--rule-soft); padding-left: 1.25rem; position: relative; }
+.meal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.45rem; }
+.meal-tag { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+.meal-tools { display: flex; gap: 0.3rem; opacity: 0; transition: opacity 0.15s; }
+.meal:hover .meal-tools, .meal:focus-within .meal-tools { opacity: 1; }
+.mini {
+  border: none; background: none; cursor: pointer; padding: 2px; line-height: 0;
+  color: var(--text-muted); transition: color 0.15s;
+}
+.mini:hover { color: var(--accent); }
+.mini svg { width: 13px; height: 13px; }
+.mi {
+  display: block; width: 100%; border: none; background: none; outline: none;
+  font-family: inherit; font-size: 0.875rem; line-height: 1.55;
+  color: var(--text-secondary); padding: 2px 4px 2px 0.55rem;
+  border-left: 2px solid transparent; margin-bottom: 1px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.mi::placeholder { color: var(--text-muted); opacity: 0.55; }
+.mi:hover { background: var(--field); }
+.mi:focus { background: var(--field); border-left-color: var(--accent); }
+.mi.p-staple { color: var(--text-muted); font-size: 0.8rem; border-left-color: transparent; }
+.mi.p-staple:focus { border-left-color: var(--text-muted); }
+.mi.p-soup { color: var(--text-secondary); }
+.mi.p-main { color: var(--text); font-weight: 700; font-size: 0.925rem; }
+.mi.p-side { color: var(--text-secondary); }
+.mi.p-staple:not(:placeholder-shown) { border-left-color: var(--text-muted); opacity: 0.9; }
+.mi.p-soup:not(:placeholder-shown) { border-left-color: var(--accent-secondary); }
+.mi.p-main:not(:placeholder-shown) { border-left-color: var(--accent); }
+.mi.p-side:not(:placeholder-shown) { border-left-color: var(--positive); }
+
+/* ---------- KPI ---------- */
+.kpi-row { display: flex; flex-wrap: wrap; gap: 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.kpi-card { flex: 1 1 0; min-width: 150px; padding: 1.5rem 1.5rem 1.6rem 0; }
+.kpi-card + .kpi-card { border-left: 1px solid var(--rule-soft); padding-left: 1.5rem; }
+.kpi-label { font-size: 0.68rem; color: var(--text-muted); margin-bottom: 0.7rem; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; }
+.kpi-value { font-size: 2.2rem; font-weight: 800; color: var(--accent); letter-spacing: -0.035em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.kpi-value.pine { color: var(--positive); }
+.kpi-value.warn { color: var(--warning); }
+.kpi-note { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.7rem; line-height: 1.6; }
+
+/* ---------- BARS ---------- */
+.dist { margin-top: 2rem; max-width: 940px; }
+.dist-title { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.9rem; }
+.bar-row { display: grid; grid-template-columns: 92px minmax(0,1fr) 40px; align-items: center; gap: 0.85rem; padding: 0.4rem 0; }
+.bar-name { font-size: 0.8rem; color: var(--text-secondary); }
+.bar-track { height: 6px; background: var(--rule-soft); }
+.bar-fill { height: 100%; background: var(--accent); transition: width 0.4s ease; }
+.bar-fill.alt { background: var(--accent-secondary); }
+.bar-val { font-size: 0.78rem; color: var(--text-muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- TABLE ---------- */
+.table-scroll { overflow-x: auto; }
+.scorecard { width: 100%; border-collapse: collapse; border-top: 2px solid var(--text); }
+.theme-dark .scorecard { border-top-color: var(--text-secondary); }
+.scorecard th, .scorecard td { text-align: left; padding: 0.85rem 1.1rem 0.85rem 0; font-size: 0.86rem; border-bottom: 1px solid var(--rule-soft); vertical-align: top; line-height: 1.7; }
+.scorecard th { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); font-weight: 700; border-bottom: 1px solid var(--rule); }
+.scorecard tr:last-child td { border-bottom: 1px solid var(--rule); }
+.scorecard td:first-child { font-weight: 700; color: var(--text); padding-right: 1.5rem; }
+.metric-note { color: var(--text-secondary); font-weight: 400; }
+.light { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; font-size: 0.78rem; }
+.light .bulb { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.light.green .bulb { background: var(--positive); } .light.green { color: var(--positive); }
+.light.amber .bulb { background: var(--warning); } .light.amber { color: var(--warning); }
+.light.red .bulb { background: var(--negative); } .light.red { color: var(--negative); }
+
+/* ---------- SHOPPING ---------- */
+.shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 2rem; }
+.shop-card { border-top: 1px solid var(--rule); padding: 1.2rem 0 1.5rem; }
+.shop-cat { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+.shop-list { list-style: none; }
+.shop-list li { font-size: 0.85rem; color: var(--text-secondary); padding: 0.3rem 0; border-bottom: 1px solid var(--rule-soft); display: flex; justify-content: space-between; gap: 0.75rem; }
+.shop-list li:last-child { border-bottom: none; }
+.shop-n { color: var(--text-muted); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
+.empty-note { font-size: 0.85rem; color: var(--text-muted); padding: 1.5rem 0; border-top: 1px solid var(--rule); }
+
+/* ---------- GUIDE ---------- */
+.card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 2rem; }
+.feature-card { border-top: 1px solid var(--rule); padding: 1.35rem 0 1.75rem; display: flex; flex-direction: column; gap: 0.55rem; }
+.feature-icon { color: var(--accent); font-weight: 800; font-size: 0.85rem; letter-spacing: 0.08em; }
+.feature-icon.green { color: var(--positive); }
+.feature-title { font-size: 0.98rem; font-weight: 700; line-height: 1.5; }
+.feature-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8; }
+
+.footer-note { font-size: 0.76rem; color: var(--text-muted); line-height: 1.85; max-width: 900px; }
+.toast {
+  position: fixed; bottom: 1.75rem; left: 50%; transform: translate(-50%, 12px);
+  background: var(--text); color: var(--bg); padding: 0.7rem 1.35rem;
+  font-size: 0.82rem; font-weight: 600; letter-spacing: 0.02em;
+  opacity: 0; pointer-events: none; transition: all 0.22s; z-index: 9999;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- PRINT ---------- */
+@media print {
+  .viz-menu, .site-header, .control-bar, .opt-row, .no-print { display: none !important; }
+  body { background: #fff; color: #000; }
+  main > section { break-inside: avoid; border-top: 3px solid #72256B; }
+  .meal-tools, .day-reroll { display: none !important; }
+  .mi { color: #000 !important; }
+  .day-row { break-inside: avoid; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1024px) {
+  .hero { padding: 4rem 2rem 2.5rem; }
+  main { padding: 0 2rem 5rem; }
+  .site-header { padding: 0.85rem 2rem; }
+  .planner-head, .day-row { grid-template-columns: 92px repeat(3, minmax(0,1fr)); }
+  .planner.no-b .planner-head, .planner.no-b .day-row { grid-template-columns: 92px repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 768px) {
+  h1 { font-size: 2.15rem; }
+  h2 { font-size: 1.5rem; }
+  .hero { padding: 2.5rem 1.25rem 2rem; }
+  main { padding: 0 1.25rem 4rem; }
+  .site-header { padding: 0.8rem 1.25rem; }
+  .header-badge { font-size: 0.6rem; }
+  main > section { padding-top: 2.25rem; margin-bottom: 2.25rem; border-top-width: 3px; }
+  .section-label { margin-bottom: 0.9rem; }
+  .planner-head { display: none; }
+  .day-row, .planner.no-b .day-row { grid-template-columns: 1fr; padding-bottom: 0.5rem; }
+  .day-cell { padding-bottom: 0.3rem; display: flex; align-items: baseline; gap: 0.7rem; }
+  .day-reroll { margin-top: 0; margin-left: auto; }
+  .meal { border-left: none; padding-left: 0; padding-top: 0.5rem; border-top: 1px solid var(--rule-soft); }
+  .kpi-row { display: block; }
+  .kpi-card + .kpi-card { border-left: none; padding-left: 0; border-top: 1px solid var(--rule-soft); }
+  .kpi-card { padding: 1.25rem 0; }
+  .shop-grid, .card-grid-3 { grid-template-columns: 1fr; }
+  .week-range { min-width: 0; font-size: 0.95rem; }
+  .bar-row { grid-template-columns: 76px minmax(0,1fr) 34px; gap: 0.6rem; }
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">본문으로 바로가기</a>
+
+<nav class="viz-menu no-print" role="navigation" aria-label="문서 메뉴">
+  <button class="viz-menu-toggle" onclick="toggleMenu()" aria-expanded="false" aria-haspopup="true" aria-label="메뉴 열기">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+  </button>
+  <div class="viz-menu-dropdown" id="vizMenuDropdown" role="menu">
+    <button class="viz-menu-btn" onclick="cycleTheme()" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      테마 변경
+    </button>
+    <button class="viz-menu-btn" onclick="copyPlanText()" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      텍스트 복사
+    </button>
+    <button class="viz-menu-btn" onclick="downloadImage()" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      PNG 저장
+    </button>
+    <button class="viz-menu-btn" onclick="window.print()" role="menuitem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      인쇄
+    </button>
+  </div>
+</nav>
+
+<header class="site-header" role="banner">
+  <div class="header-mark">Weekly Menu</div>
+  <div class="header-divider"></div>
+  <div class="header-title">주간 식단표 · 직접 입력 + 자동 밸런스 추천</div>
+  <span class="header-badge" id="headerBadge">MON – SUN</span>
+</header>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-eyebrow">WEEKLY MEAL PLANNER · 월요일 시작</div>
+  <h1 id="hero-title">한 주의 식탁을<br><span>미리 정해둡니다</span></h1>
+  <p class="hero-sub">월요일부터 일요일까지 <strong>아침·점심·저녁</strong>을 직접 적거나, <strong>자동 추천</strong>으로 한 번에 채웁니다. 추천은 단백질 급원·조리법·채소 구성을 주 단위로 분산시켜 한쪽으로 치우치지 않게 짭니다. 입력한 내용은 이 브라우저에 주차별로 저장됩니다.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">한 끼 = 주식 · 국/찌개 · 주찬 · 부찬</div>
+    <div class="hero-meta-item">메뉴 DB 140여 종</div>
+    <div class="hero-meta-item">주차별 자동 저장</div>
+  </div>
+</section>
+
+<main id="main-content">
+
+  <!-- PLANNER -->
+  <section class="wide" aria-labelledby="plan-title">
+    <div class="section-label"><span class="label-bar"></span>THIS WEEK</div>
+    <h2 id="plan-title">주간 식단표</h2>
+
+    <div class="control-bar no-print">
+      <div class="week-nav">
+        <button class="wk-btn" onclick="shiftWeek(-1)" aria-label="이전 주">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div>
+          <span class="week-tag" id="weekTag">THIS WEEK</span>
+          <span class="week-range" id="weekRange">—</span>
+        </div>
+        <button class="wk-btn" onclick="shiftWeek(1)" aria-label="다음 주">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="btn ghost" onclick="goToday()">이번 주</button>
+      </div>
+      <button class="btn solid" onclick="generateWeek()" style="margin-left:auto;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+        한 주 자동 추천
+      </button>
+      <button class="btn ghost" onclick="clearWeek()">전체 비우기</button>
+    </div>
+
+    <div class="opt-row no-print">
+      <div class="opt-group">
+        <span class="opt-label">식단 성향</span>
+        <div class="seg" id="modeSeg">
+          <button data-mode="balance" class="on">균형</button>
+          <button data-mode="protein">고단백</button>
+          <button data-mode="light">가볍게</button>
+          <button data-mode="veg">채식 위주</button>
+        </div>
+      </div>
+      <div class="opt-group">
+        <span class="opt-label">아침</span>
+        <label class="switch"><input type="checkbox" id="optBreakfast" checked> 아침 포함</label>
+      </div>
+      <div class="opt-group" style="flex:1 1 260px;">
+        <span class="opt-label">제외 재료 · 싫어하는 메뉴</span>
+        <input class="opt-input" id="optExclude" placeholder="예: 오이, 새우, 튀김 (쉼표로 구분)" style="width:100%;">
+      </div>
+    </div>
+
+    <div class="legend no-print">
+      <span><i class="lg-staple"></i>주식</span>
+      <span><i class="lg-soup"></i>국·찌개</span>
+      <span><i class="lg-main"></i>주찬</span>
+      <span><i class="lg-side"></i>부찬</span>
+      <span style="color:var(--text-secondary); text-transform:none; letter-spacing:0; font-weight:400;">칸을 클릭해 직접 입력 · ↻ 는 그 끼니만 다시 추천</span>
+    </div>
+
+    <div class="planner" id="planner">
+      <div class="planner-head" id="plannerHead"></div>
+      <div id="plannerBody"></div>
+    </div>
+
+    <div class="callout" style="margin-top:1.75rem;">
+      <strong>추천 규칙</strong> — ① 한 주 안에서 같은 메뉴를 반복하지 않고, ② 소·돼지 / 닭 / 생선·해물 / 계란 / 두부·콩을 번갈아 배치하며, ③ 구이·볶음·조림·무침 등 조리법이 연달아 겹치지 않게 하고, ④ 튀김은 주 2회 이하, 생선·해물은 주 2회 이상, ⑤ 부찬은 잎채소·뿌리·버섯·해조 등 종류를 돌려가며 넣습니다.
+    </div>
+  </section>
+
+  <!-- BALANCE -->
+  <section aria-labelledby="bal-title">
+    <div class="section-label"><span class="label-bar"></span>BALANCE</div>
+    <h2 id="bal-title">이번 주 구성 점검</h2>
+    <p class="section-desc">직접 입력한 메뉴도 이름이 DB와 맞으면 함께 집계됩니다. 목표치는 일반적인 가정식 기준의 참고값이며 의학적 영양 기준이 아닙니다.</p>
+
+    <div class="kpi-row" id="kpiRow"></div>
+
+    <div class="dist">
+      <div class="dist-title">단백질 급원 분포 (주찬 기준)</div>
+      <div id="proteinBars"></div>
+    </div>
+    <div class="dist">
+      <div class="dist-title">조리법 분포</div>
+      <div id="methodBars"></div>
+    </div>
+
+    <h3>밸런스 체크리스트</h3>
+    <div class="table-scroll">
+      <table class="scorecard">
+        <thead><tr><th>항목</th><th>이번 주</th><th>기준</th><th>상태</th></tr></thead>
+        <tbody id="checkBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SHOPPING -->
+  <section aria-labelledby="shop-title">
+    <div class="section-label"><span class="label-bar"></span>SHOPPING</div>
+    <h2 id="shop-title">장보기 목록</h2>
+    <p class="section-desc">식단에 들어간 메뉴의 주재료를 자동으로 모았습니다. 숫자는 그 재료가 쓰이는 끼니 수입니다. 직접 적은 메뉴 중 DB에 없는 것은 재료를 알 수 없어 빠집니다.</p>
+    <div class="shop-grid" id="shopGrid"></div>
+    <div class="empty-note" id="shopEmpty" style="display:none;">아직 식단이 비어 있습니다. 위에서 <strong>한 주 자동 추천</strong>을 눌러보세요.</div>
+  </section>
+
+  <!-- GUIDE -->
+  <section aria-labelledby="guide-title">
+    <div class="section-label"><span class="label-bar"></span>HOW TO USE</div>
+    <h2 id="guide-title">사용법</h2>
+    <div class="card-grid-3">
+      <div class="feature-card">
+        <div class="feature-icon">01</div>
+        <div class="feature-title">직접 입력</div>
+        <p class="feature-desc">칸을 클릭해 바로 타이핑합니다. 몇 글자만 쳐도 DB에 있는 메뉴가 자동완성 목록으로 뜹니다. DB에 없는 메뉴도 자유롭게 적을 수 있습니다.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">02</div>
+        <div class="feature-title">자동 추천</div>
+        <p class="feature-desc">한 주 전체, 하루, 한 끼니 단위로 각각 다시 추천할 수 있습니다. 이미 적어둔 칸이 있으면 그 칸도 함께 다시 계산되니, 남기고 싶으면 끼니 단위 ↻ 를 쓰세요.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">03</div>
+        <div class="feature-title">저장 · 공유</div>
+        <p class="feature-desc">입력 즉시 주차별로 자동 저장되어 다음에 열어도 그대로입니다. 우측 상단 메뉴에서 텍스트 복사(메신저 공유), PNG 저장, 인쇄를 쓸 수 있습니다.</p>
+      </div>
+    </div>
+    <div class="callout pine">
+      <strong>저장 위치</strong> — 이 파일을 연 브라우저에만 저장됩니다(localStorage). 다른 기기·다른 브라우저에서는 보이지 않고, 브라우저 데이터를 지우면 함께 지워집니다. 오래 보관하려면 PNG 저장이나 인쇄(PDF)를 이용하세요.
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <section>
+    <div class="section-label"><span class="label-bar"></span>NOTE</div>
+    <p class="footer-note">
+      메뉴 DB는 일반적인 한식 가정식을 기준으로 구성했으며, 밸런스 규칙은 영양학적 처방이 아니라 <strong>식단이 한쪽으로 쏠리지 않게 하는 배치 규칙</strong>입니다.<br>
+      알레르기·질환 관련 식이 제한이 있다면 제외 재료란을 활용하시고, 치료 목적의 식단은 전문가 상담을 권합니다.
+    </p>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<datalist id="dl-staple"></datalist>
+<datalist id="dl-soup"></datalist>
+<datalist id="dl-main"></datalist>
+<datalist id="dl-side"></datalist>
+
+<script>
+/* ============================================================
+   MENU DATABASE
+   n: 이름 | p: 단백질급원 | m: 조리법 | h: 중량감(1가벼움~3든든함)
+   b: 아침 적합 | g: 채소 계열 | ing: 주재료
+   ============================================================ */
+const DB = {
+  staple: [
+    {n:'잡곡밥', h:2, b:true, ing:['잡곡','쌀']},
+    {n:'현미밥', h:2, b:true, ing:['현미','쌀']},
+    {n:'흰쌀밥', h:2, b:true, ing:['쌀']},
+    {n:'보리밥', h:2, b:true, ing:['보리','쌀']},
+    {n:'콩나물밥', h:2, b:true, ing:['쌀','콩나물']},
+    {n:'귀리밥', h:2, b:true, ing:['귀리','쌀']},
+    {n:'누룽지', h:1, b:'only', solo:true, ing:['쌀']},
+    {n:'오트밀', h:1, b:'only', solo:true, ing:['오트밀','우유']},
+    {n:'통밀토스트', h:1, b:'only', solo:true, ing:['식빵','계란']},
+    {n:'단호박죽', h:1, b:'only', solo:true, ing:['단호박','쌀']},
+    {n:'야채죽', h:1, b:'only', solo:true, ing:['쌀','당근','애호박']},
+    {n:'플레인요거트+과일', h:1, b:'only', solo:true, ing:['요거트','과일']},
+    {n:'김밥', h:2, b:'only', ing:['쌀','김','단무지','계란']},
+    {n:'잔치국수', h:2, only:'l', solo:true, ing:['소면','멸치','애호박']},
+    {n:'비빔국수', h:2, only:'l', solo:true, ing:['소면','오이','고추장']},
+    {n:'메밀국수', h:1, only:'l', solo:true, ing:['메밀면','무']}
+  ],
+  soup: [
+    {n:'된장찌개', base:'된장', h:2, b:true, ing:['된장','두부','애호박','양파']},
+    {n:'김치찌개', base:'김치', h:3, ing:['김치','돼지고기','두부']},
+    {n:'순두부찌개', base:'김치', h:2, b:true, ing:['순두부','계란','고춧가루']},
+    {n:'청국장', base:'된장', h:3, ing:['청국장','두부','김치']},
+    {n:'미역국', base:'맑은', h:1, b:true, ing:['미역','소고기']},
+    {n:'들깨미역국', base:'맑은', h:2, b:true, ing:['미역','들깨가루']},
+    {n:'콩나물국', base:'맑은', h:1, b:true, ing:['콩나물','대파']},
+    {n:'북엇국', base:'맑은', h:1, b:true, ing:['북어채','계란','무']},
+    {n:'황태해장국', base:'맑은', h:2, b:true, ing:['황태','무','계란']},
+    {n:'소고기무국', base:'고기', h:2, ing:['소고기','무']},
+    {n:'육개장', base:'고기', h:3, ing:['소고기','고사리','대파','고춧가루']},
+    {n:'배춧된장국', base:'된장', h:1, b:true, ing:['배추','된장']},
+    {n:'시금치된장국', base:'된장', h:1, b:true, ing:['시금치','된장']},
+    {n:'아욱된장국', base:'된장', h:1, b:true, ing:['아욱','된장']},
+    {n:'근대된장국', base:'된장', h:1, b:true, ing:['근대','된장']},
+    {n:'우거지된장국', base:'된장', h:2, ing:['우거지','된장']},
+    {n:'달걀국', base:'맑은', h:1, b:true, ing:['계란','대파']},
+    {n:'감자국', base:'맑은', h:1, b:true, ing:['감자','양파']},
+    {n:'어묵탕', base:'해물', h:2, ing:['어묵','무','대파']},
+    {n:'바지락탕', base:'해물', h:1, ing:['바지락','대파']},
+    {n:'대구탕', base:'해물', h:2, ing:['대구','무','미나리']},
+    {n:'김치콩나물국', base:'김치', h:1, b:true, ing:['김치','콩나물']},
+    {n:'떡국', base:'고기', h:3, ing:['떡국떡','계란','소고기']},
+    {n:'만둣국', base:'고기', h:3, ing:['만두','계란','대파']},
+    {n:'오이냉국', base:'맑은', h:1, b:true, ing:['오이','식초']},
+    {n:'콩비지찌개', base:'된장', h:2, ing:['비지','김치','돼지고기']}
+  ],
+  main: [
+    /* 소 */
+    {n:'소불고기', p:'beef', m:'stir', h:3, ing:['소고기','양파','당근']},
+    {n:'소고기장조림', p:'beef', m:'braise', h:2, b:true, ing:['소고기','메추리알','간장']},
+    {n:'갈비찜', p:'beef', m:'braise', h:3, ing:['소갈비','당근','무']},
+    {n:'소고기가지볶음', p:'beef', m:'stir', h:2, ing:['소고기','가지','양파']},
+    {n:'떡갈비', p:'beef', m:'grill', h:3, ing:['다짐육','양파']},
+    {n:'육전', p:'beef', m:'fry', h:3, ing:['소고기','계란','밀가루']},
+    {n:'소고기미역볶음', p:'beef', m:'stir', h:2, ing:['소고기','미역']},
+    /* 돼지 */
+    {n:'제육볶음', p:'pork', m:'stir', h:3, ing:['돼지고기','양파','고추장']},
+    {n:'돼지고기김치볶음', p:'pork', m:'stir', h:3, ing:['돼지고기','김치']},
+    {n:'수육', p:'pork', m:'steam', h:3, ing:['돼지고기','된장','대파']},
+    {n:'돈까스', p:'pork', m:'fry', h:3, ing:['돼지고기','빵가루','계란']},
+    {n:'삼겹살구이', p:'pork', m:'grill', h:3, ing:['삼겹살','마늘','상추']},
+    {n:'대패숙주볶음', p:'pork', m:'stir', h:2, ing:['돼지고기','숙주','대파']},
+    {n:'돼지갈비찜', p:'pork', m:'braise', h:3, ing:['돼지갈비','감자','당근']},
+    {n:'목살스테이크', p:'pork', m:'grill', h:3, ing:['돼지고기','후추']},
+    /* 닭 */
+    {n:'닭갈비', p:'chicken', m:'stir', h:3, ing:['닭고기','양배추','고구마']},
+    {n:'찜닭', p:'chicken', m:'braise', h:3, ing:['닭고기','감자','당면','당근']},
+    {n:'닭볶음탕', p:'chicken', m:'braise', h:3, ing:['닭고기','감자','당근']},
+    {n:'닭가슴살스테이크', p:'chicken', m:'grill', h:2, b:true, ing:['닭가슴살','올리브유']},
+    {n:'닭봉조림', p:'chicken', m:'braise', h:2, ing:['닭봉','간장','마늘']},
+    {n:'닭가슴살채소볶음', p:'chicken', m:'stir', h:2, b:true, ing:['닭가슴살','파프리카','양파']},
+    {n:'간장치킨', p:'chicken', m:'fry', h:3, ing:['닭고기','간장','튀김가루']},
+    {n:'삼계탕', p:'chicken', m:'steam', h:3, ing:['닭고기','찹쌀','대추','인삼']},
+    /* 생선·해물 */
+    {n:'고등어구이', p:'fish', m:'grill', h:2, b:true, ing:['고등어','소금']},
+    {n:'삼치구이', p:'fish', m:'grill', h:2, b:true, ing:['삼치','소금']},
+    {n:'임연수구이', p:'fish', m:'grill', h:2, b:true, ing:['임연수','소금']},
+    {n:'연어구이', p:'fish', m:'grill', h:2, b:true, ing:['연어','레몬']},
+    {n:'갈치조림', p:'fish', m:'braise', h:2, ing:['갈치','무','고춧가루']},
+    {n:'코다리조림', p:'fish', m:'braise', h:2, ing:['코다리','무','간장']},
+    {n:'고등어무조림', p:'fish', m:'braise', h:2, ing:['고등어','무','고춧가루']},
+    {n:'오징어볶음', p:'fish', m:'stir', h:2, ing:['오징어','양파','고추장']},
+    {n:'낙지볶음', p:'fish', m:'stir', h:2, ing:['낙지','양파','고춧가루']},
+    {n:'새우장', p:'fish', m:'raw', h:1, b:true, ing:['새우','간장']},
+    {n:'동태전', p:'fish', m:'fry', h:2, ing:['동태살','계란','밀가루']},
+    {n:'새우튀김', p:'fish', m:'fry', h:3, ing:['새우','튀김가루']},
+    {n:'명란구이', p:'fish', m:'grill', h:1, b:true, ing:['명란']},
+    {n:'골뱅이무침', p:'fish', m:'raw', h:2, ing:['골뱅이','양파','고추장']},
+    {n:'홍합찜', p:'fish', m:'steam', h:1, ing:['홍합','마늘']},
+    {n:'가자미구이', p:'fish', m:'grill', h:2, b:true, ing:['가자미','소금']},
+    /* 계란 */
+    {n:'계란말이', p:'egg', m:'stir', h:1, b:true, ing:['계란','당근','대파']},
+    {n:'계란찜', p:'egg', m:'steam', h:1, b:true, ing:['계란','새우젓']},
+    {n:'스크램블에그', p:'egg', m:'stir', h:1, b:true, ing:['계란','우유']},
+    {n:'메추리알장조림', p:'egg', m:'braise', h:1, b:true, ing:['메추리알','간장']},
+    {n:'계란후라이', p:'egg', m:'fry', h:1, b:true, ing:['계란']},
+    {n:'채소오믈렛', p:'egg', m:'stir', h:1, b:true, ing:['계란','파프리카','양파']},
+    /* 두부·콩 */
+    {n:'두부조림', p:'tofu', m:'braise', h:1, b:true, ing:['두부','간장','고춧가루']},
+    {n:'두부부침', p:'tofu', m:'fry', h:1, b:true, ing:['두부','참기름']},
+    {n:'마파두부', p:'tofu', m:'stir', h:2, ing:['두부','다짐육','두반장']},
+    {n:'두부스테이크', p:'tofu', m:'grill', h:2, b:true, ing:['두부','양파','당근']},
+    {n:'두부김치', p:'tofu', m:'stir', h:2, ing:['두부','김치','돼지고기']},
+    {n:'콩나물잡채', p:'tofu', m:'stir', h:2, ing:['당면','콩나물','당근']},
+    {n:'된장두부무침', p:'tofu', m:'raw', h:1, b:true, ing:['두부','된장','참기름']},
+    /* 기타 */
+    {n:'소세지야채볶음', p:'pork', m:'stir', h:2, b:true, ing:['소시지','파프리카','양파']},
+    {n:'표고버섯탕수', p:'none', m:'fry', h:2, ing:['표고버섯','전분','파인애플']},
+    {n:'가지강정', p:'none', m:'fry', h:2, ing:['가지','전분','간장']},
+    {n:'채소잡채', p:'none', m:'stir', h:2, ing:['당면','시금치','당근','목이버섯']}
+  ],
+  side: [
+    {n:'시금치나물', g:'leaf', b:true, ing:['시금치','참기름']},
+    {n:'콩나물무침', g:'sprout', b:true, ing:['콩나물','참기름']},
+    {n:'숙주나물', g:'sprout', b:true, ing:['숙주','참기름']},
+    {n:'취나물볶음', g:'leaf', b:true, ing:['취나물','들기름']},
+    {n:'깻잎무침', g:'leaf', b:true, ing:['깻잎','간장']},
+    {n:'상추겉절이', g:'leaf', b:true, ing:['상추','고춧가루']},
+    {n:'부추무침', g:'leaf', b:true, ing:['부추','고춧가루']},
+    {n:'배추겉절이', g:'leaf', b:true, ing:['배추','고춧가루']},
+    {n:'무생채', g:'root', b:true, ing:['무','고춧가루']},
+    {n:'도라지무침', g:'root', b:true, ing:['도라지','고추장']},
+    {n:'연근조림', g:'root', ing:['연근','간장']},
+    {n:'우엉조림', g:'root', ing:['우엉','간장']},
+    {n:'감자조림', g:'root', ing:['감자','간장']},
+    {n:'감자채볶음', g:'root', b:true, ing:['감자','양파']},
+    {n:'당근라페', g:'root', b:true, ing:['당근','식초']},
+    {n:'애호박볶음', g:'fruit', b:true, ing:['애호박','새우젓']},
+    {n:'가지나물', g:'fruit', b:true, ing:['가지','간장']},
+    {n:'오이무침', g:'fruit', b:true, ing:['오이','고춧가루']},
+    {n:'파프리카볶음', g:'fruit', b:true, ing:['파프리카','올리브유']},
+    {n:'단호박찜', g:'fruit', b:true, ing:['단호박']},
+    {n:'방울토마토샐러드', g:'fruit', b:true, ing:['방울토마토','올리브유']},
+    {n:'가지구이', g:'fruit', ing:['가지','올리브유']},
+    {n:'미역줄기볶음', g:'sea', b:true, ing:['미역줄기','마늘']},
+    {n:'김자반', g:'sea', b:true, ing:['김','참기름']},
+    {n:'파래무침', g:'sea', b:true, ing:['파래','식초']},
+    {n:'톳두부무침', g:'sea', b:true, ing:['톳','두부']},
+    {n:'다시마쌈', g:'sea', ing:['다시마','쌈장']},
+    {n:'버섯볶음', g:'mush', b:true, ing:['느타리버섯','마늘']},
+    {n:'표고버섯구이', g:'mush', ing:['표고버섯','참기름']},
+    {n:'새송이버섯조림', g:'mush', ing:['새송이버섯','간장']},
+    {n:'브로콜리숙회', g:'other', b:true, ing:['브로콜리','초고추장']},
+    {n:'양배추찜', g:'other', b:true, ing:['양배추','쌈장']},
+    {n:'코울슬로', g:'other', b:true, ing:['양배추','마요네즈']},
+    {n:'그린샐러드', g:'other', b:true, ing:['채소믹스','드레싱']},
+    {n:'멸치볶음', g:'other', b:true, ing:['멸치','견과류']},
+    {n:'어묵볶음', g:'other', b:true, ing:['어묵','양파']},
+    {n:'양파절임', g:'other', b:true, ing:['양파','간장']},
+    {n:'오이소박이', g:'fruit', b:true, ing:['오이','부추']},
+    {n:'총각김치', g:'root', b:true, ing:['총각무']},
+    {n:'깍두기', g:'root', b:true, ing:['무']},
+    {n:'열무김치', g:'leaf', b:true, ing:['열무']}
+  ]
+};
+
+const PROTEIN_LABEL = { beef:'소고기', pork:'돼지고기', chicken:'닭고기', fish:'생선·해물', egg:'계란', tofu:'두부·콩', none:'채소' };
+const METHOD_LABEL = { grill:'구이', stir:'볶음', braise:'조림·찜', steam:'찜·수육', fry:'튀김·전', raw:'무침·생' };
+const SLOTS = [ {k:'b', label:'아침'}, {k:'l', label:'점심'}, {k:'d', label:'저녁'} ];
+const PARTS = [ {k:'staple', ph:'주식'}, {k:'soup', ph:'국·찌개'}, {k:'main', ph:'주찬'}, {k:'side', ph:'부찬'} ];
+const DAY_NAMES = ['월','화','수','목','금','토','일'];
+
+/* index by name for reverse lookup */
+const INDEX = {};
+Object.keys(DB).forEach(function(cat){
+  DB[cat].forEach(function(d){ INDEX[d.n] = Object.assign({ cat: cat }, d); });
+});
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var state = { weekStart: mondayOf(new Date()), mode:'balance', breakfast:true, exclude:'', plan:{} };
+
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+function ymd(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function parseYmd(s){ var p = s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function mondayOf(d){
+  var x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  var wd = (x.getDay() + 6) % 7;          // 월=0 … 일=6
+  x.setDate(x.getDate() - wd);
+  return ymd(x);
+}
+function dayDate(i){ var d = parseYmd(state.weekStart); d.setDate(d.getDate()+i); return d; }
+function storeKey(){ return 'mealplan:' + state.weekStart; }
+
+function emptyPlan(){
+  var p = {};
+  for (var i=0;i<7;i++){ p[i] = { b:blank(), l:blank(), d:blank() }; }
+  return p;
+}
+function blank(){ return { staple:'', soup:'', main:'', side:'' }; }
+
+function save(){
+  try {
+    localStorage.setItem(storeKey(), JSON.stringify({
+      plan: state.plan, mode: state.mode, breakfast: state.breakfast, exclude: state.exclude
+    }));
+    localStorage.setItem('mealplan:prefs', JSON.stringify({
+      mode: state.mode, breakfast: state.breakfast, exclude: state.exclude
+    }));
+  } catch(e){ /* 저장 불가(사생활 보호 모드 등) — 화면 동작은 유지 */ }
+}
+function loadPrefs(){
+  try {
+    var p = JSON.parse(localStorage.getItem('mealplan:prefs') || 'null');
+    if (p){ state.mode = p.mode || 'balance'; state.breakfast = p.breakfast !== false; state.exclude = p.exclude || ''; }
+  } catch(e){}
+}
+function loadWeek(){
+  var raw = null;
+  try { raw = localStorage.getItem(storeKey()); } catch(e){}
+  if (raw){
+    try {
+      var o = JSON.parse(raw);
+      state.plan = o.plan || emptyPlan();
+      for (var i=0;i<7;i++){
+        if (!state.plan[i]) state.plan[i] = { b:blank(), l:blank(), d:blank() };
+        ['b','l','d'].forEach(function(s){ if (!state.plan[i][s]) state.plan[i][s] = blank(); });
+      }
+      return;
+    } catch(e){}
+  }
+  state.plan = emptyPlan();
+}
+
+/* ============================================================
+   RECOMMENDATION ENGINE
+   ============================================================ */
+function excludeList(){
+  return state.exclude.split(/[,·\n]/).map(function(s){ return s.trim(); }).filter(Boolean);
+}
+function blocked(dish, ex){
+  for (var i=0;i<ex.length;i++){
+    var t = ex[i];
+    if (dish.n.indexOf(t) > -1) return true;
+    if (dish.ing && dish.ing.some(function(g){ return g.indexOf(t) > -1 || t.indexOf(g) > -1; })) return true;
+    if (t === '튀김' && dish.m === 'fry') return true;
+  }
+  return false;
+}
+
+/* 계획 전체를 훑어 현재까지 쓰인 것들을 집계 */
+function usageSnapshot(skip){
+  var u = { names:{}, protein:{}, method:{}, group:{}, base:{}, fry:0 };
+  for (var i=0;i<7;i++){
+    for (var s=0;s<SLOTS.length;s++){
+      var sk = SLOTS[s].k;
+      if (skip && skip.day === i && skip.slot === sk) continue;
+      var meal = state.plan[i][sk];
+      PARTS.forEach(function(p){
+        var name = (meal[p.k]||'').trim();
+        if (!name) return;
+        u.names[name] = (u.names[name]||0) + 1;
+        var d = INDEX[name];
+        if (!d) return;
+        if (d.p){ u.protein[d.p] = (u.protein[d.p]||0)+1; }
+        if (d.m){ u.method[d.m] = (u.method[d.m]||0)+1; if (d.m==='fry') u.fry++; }
+        if (d.g){ u.group[d.g] = (u.group[d.g]||0)+1; }
+        if (d.base){ u.base[d.base] = (u.base[d.base]||0)+1; }
+      });
+    }
+  }
+  return u;
+}
+
+function neighborInfo(day, slotKey){
+  /* 같은 날 다른 끼니 + 전날 저녁의 주찬/조리법 */
+  var same = [], prev = [];
+  ['b','l','d'].forEach(function(sk){
+    if (sk === slotKey) return;
+    var m = state.plan[day][sk];
+    if (m && m.main) same.push(m.main);
+  });
+  if (day > 0){ var pm = state.plan[day-1]; if (pm && pm.d && pm.d.main) prev.push(pm.d.main); }
+  return { same: same, prev: prev };
+}
+
+function pick(cat, ctx){
+  var ex = excludeList();
+  var pool = DB[cat].filter(function(d){ return !blocked(d, ex); });
+
+  /* 슬롯 적합성 */
+  if (ctx.slot === 'b'){
+    pool = pool.filter(function(d){ return d.b === true || d.b === 'only'; });
+  } else {
+    pool = pool.filter(function(d){ return d.b !== 'only'; });
+  }
+  pool = pool.filter(function(d){ return !d.only || d.only === ctx.slot; });   // 국수류는 점심 전용
+  if (state.mode === 'veg' && cat === 'main'){
+    pool = pool.filter(function(d){ return d.p === 'tofu' || d.p === 'egg' || d.p === 'none'; });
+  }
+  if (!pool.length){
+    pool = DB[cat].filter(function(d){ return !blocked(d, ex); });
+    if (!pool.length) pool = DB[cat].slice();
+  }
+
+  var u = ctx.usage, nb = ctx.neighbors;
+  var scored = pool.map(function(d){
+    var s = Math.random() * 5;
+
+    if (u.names[d.n]) s -= 100 * u.names[d.n];          // 주간 중복 금지
+
+    if (cat === 'main'){
+      var pc = u.protein[d.p] || 0;
+      var red = (u.protein.beef||0) + (u.protein.pork||0);
+      var plant = (u.protein.tofu||0) + (u.protein.egg||0) + (u.protein.none||0);
+      var fish = u.protein.fish || 0;
+
+      s -= pc * 7;                                      // 이미 많이 쓴 급원은 감점
+      if (d.p === 'fish' && fish < 2) s += 14;          // 생선 주 2회 이상
+      if ((d.p === 'tofu' || d.p === 'egg') && plant < 4) s += 10;
+      if ((d.p === 'beef' || d.p === 'pork') && red >= 5) s -= 30;
+      if (d.p === 'chicken' && (u.protein.chicken||0) >= 3) s -= 18;
+
+      nb.same.forEach(function(n){ var o = INDEX[n]; if (o && o.p === d.p) s -= 26; if (o && o.m === d.m) s -= 10; });
+      nb.prev.forEach(function(n){ var o = INDEX[n]; if (o && o.p === d.p) s -= 16; if (o && o.m === d.m) s -= 8; });
+
+      var mc = u.method[d.m] || 0;
+      s -= mc * 4;
+      if (d.m === 'fry'){ s -= 14 + (u.fry >= 2 ? 40 : 0); }
+
+      if (state.mode === 'protein'){ s += (d.p === 'none' ? -18 : 10); }
+      if (state.mode === 'light'){ s -= (d.h - 1) * 14; if (d.m === 'fry') s -= 25; }
+      else if (ctx.slot !== 'b' && d.h === 1) s -= 12;  // 아주 가벼운 반찬은 점심·저녁 메인으로 덜 쓰기
+    }
+
+    if (cat === 'soup'){
+      var bc = u.base[d.base] || 0;
+      s -= bc * 9;
+      nb.same.concat(nb.prev).forEach(function(n){ var o = INDEX[n]; if (o && o.base === d.base) s -= 12; });
+      if (state.mode === 'light') s -= (d.h - 1) * 10;
+      if (state.mode === 'veg' && d.ing.some(function(g){ return /고기|갈비|삼겹|만두|어묵|바지락|대구|황태|북어|멸치/.test(g); })) s -= 45;
+      if (ctx.slot === 'b') s -= (d.h - 1) * 8;
+    }
+
+    if (cat === 'side'){
+      var gc = u.group[d.g] || 0;
+      s -= gc * 8;
+      if (state.mode === 'light') s += (d.g === 'leaf' || d.g === 'sea' || d.g === 'mush') ? 6 : 0;
+    }
+
+    if (cat === 'staple'){
+      if (ctx.slot === 'b') s += (d.b === 'only' ? 8 : 0);
+      if (state.mode === 'light') s -= (d.h - 1) * 8;
+      if (state.mode === 'protein' && /잡곡|현미|귀리|보리/.test(d.n)) s += 5;
+    }
+
+    return { d: d, s: s };
+  });
+
+  scored.sort(function(a,b){ return b.s - a.s; });
+  return scored[0].d.n;
+}
+
+function fillMeal(day, slotKey){
+  var ctx = {
+    slot: slotKey,
+    usage: usageSnapshot({ day: day, slot: slotKey }),
+    neighbors: neighborInfo(day, slotKey)
+  };
+  var m = state.plan[day][slotKey];
+  m.staple = pick('staple', ctx);
+  ctx.usage = usageSnapshot({ day: day, slot: slotKey });
+  /* 국수·죽처럼 그 자체가 국물인 주식에는 국·찌개를 따로 붙이지 않는다 */
+  var st = INDEX[m.staple];
+  m.soup = (st && st.solo) ? '' : pick('soup', ctx);
+  ctx.usage = usageSnapshot({ day: day, slot: slotKey });
+  m.main   = pick('main', ctx);
+  ctx.usage = usageSnapshot({ day: day, slot: slotKey });
+  m.side   = pick('side', ctx);
+}
+
+function generateWeek(){
+  state.plan = emptyPlan();
+  /* 점심·저녁을 먼저 채워 주찬 분산을 확보한 뒤 아침을 채운다 */
+  var order = [];
+  for (var i=0;i<7;i++){ order.push([i,'l']); order.push([i,'d']); }
+  if (state.breakfast){ for (var j=0;j<7;j++){ order.push([j,'b']); } }
+  order.forEach(function(o){ fillMeal(o[0], o[1]); });
+  if (!state.breakfast){ for (var k=0;k<7;k++){ state.plan[k].b = blank(); } }
+  save(); render();
+  toast('한 주 식단을 새로 추천했습니다');
+}
+function generateDay(day){
+  var slots = state.breakfast ? ['l','d','b'] : ['l','d'];
+  slots.forEach(function(sk){ state.plan[day][sk] = blank(); });
+  slots.forEach(function(sk){ fillMeal(day, sk); });
+  save(); render();
+  toast(DAY_NAMES[day] + '요일 식단을 다시 추천했습니다');
+}
+function generateMeal(day, slotKey){
+  state.plan[day][slotKey] = blank();
+  fillMeal(day, slotKey);
+  save(); render();
+}
+function clearMeal(day, slotKey){
+  state.plan[day][slotKey] = blank();
+  save(); render();
+}
+function clearWeek(){
+  if (!confirm('이번 주 식단을 모두 비웁니다. 계속할까요?')) return;
+  state.plan = emptyPlan();
+  save(); render();
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function activeSlots(){ return state.breakfast ? SLOTS : SLOTS.slice(1); }
+
+function renderPlanner(){
+  var planner = document.getElementById('planner');
+  planner.classList.toggle('no-b', !state.breakfast);
+
+  var head = '<div></div>' + activeSlots().map(function(s){
+    return '<div style="padding-left:1.25rem;">' + s.label + '</div>';
+  }).join('');
+  document.getElementById('plannerHead').innerHTML = head;
+
+  var todayStr = ymd(new Date());
+  var html = '';
+  for (var i=0;i<7;i++){
+    var d = dayDate(i);
+    var isToday = ymd(d) === todayStr;
+    var cls = 'day-row' + (isToday ? ' today' : '') + (i===5 ? ' day-sat' : '') + (i===6 ? ' day-sun' : '');
+    html += '<div class="'+cls+'">';
+    html += '<div class="day-cell">'
+          +   '<div class="day-name">'+DAY_NAMES[i]+'</div>'
+          +   '<div class="day-date">'+(d.getMonth()+1)+'.'+pad(d.getDate())+'</div>'
+          +   '<button class="day-reroll no-print" onclick="generateDay('+i+')">↻ 하루 추천</button>'
+          + '</div>';
+    activeSlots().forEach(function(s){
+      var meal = state.plan[i][s.k];
+      html += '<div class="meal">'
+            +   '<div class="meal-head">'
+            +     '<span class="meal-tag">'+s.label+'</span>'
+            +     '<span class="meal-tools no-print">'
+            +       '<button class="mini" title="이 끼니만 다시 추천" onclick="generateMeal('+i+',\''+s.k+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg></button>'
+            +       '<button class="mini" title="비우기" onclick="clearMeal('+i+',\''+s.k+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
+            +     '</span>'
+            +   '</div>';
+      PARTS.forEach(function(p){
+        html += '<input class="mi p-'+p.k+'" list="dl-'+p.k+'" placeholder="'+p.ph+'"'
+              + ' data-day="'+i+'" data-slot="'+s.k+'" data-part="'+p.k+'"'
+              + ' value="'+escapeAttr(meal[p.k]||'')+'" aria-label="'+DAY_NAMES[i]+'요일 '+s.label+' '+p.ph+'">';
+      });
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  document.getElementById('plannerBody').innerHTML = html;
+
+  document.getElementById('plannerBody').querySelectorAll('.mi').forEach(function(el){
+    el.addEventListener('change', onEdit);
+    el.addEventListener('blur', onEdit);
+  });
+}
+
+function escapeAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+function onEdit(e){
+  var el = e.target;
+  var v = el.value.trim();
+  state.plan[el.dataset.day][el.dataset.slot][el.dataset.part] = v;
+  save();
+  renderAnalysis();
+}
+
+function renderHeader(){
+  var s = parseYmd(state.weekStart), e = dayDate(6);
+  var txt = (s.getMonth()+1)+'월 '+s.getDate()+'일 – '+(e.getMonth()+1)+'월 '+e.getDate()+'일';
+  document.getElementById('weekRange').textContent = txt;
+  var isThis = state.weekStart === mondayOf(new Date());
+  var diff = Math.round((parseYmd(state.weekStart) - parseYmd(mondayOf(new Date()))) / 604800000);
+  document.getElementById('weekTag').textContent = isThis ? 'THIS WEEK'
+      : (diff > 0 ? diff + '주 뒤' : Math.abs(diff) + '주 전');
+  document.getElementById('headerBadge').textContent = s.getFullYear()+'.'+pad(s.getMonth()+1)+'.'+pad(s.getDate())+' 주간';
+}
+
+/* ---------- 분석 ---------- */
+function collect(){
+  var mains = [], soups = [], sides = [], all = [], meals = 0, mealsWithSide = 0, names = {};
+  for (var i=0;i<7;i++){
+    activeSlots().forEach(function(s){
+      var m = state.plan[i][s.k];
+      var filled = PARTS.some(function(p){ return (m[p.k]||'').trim(); });
+      if (filled) meals++;
+      if ((m.side||'').trim()) mealsWithSide++;
+      PARTS.forEach(function(p){
+        var n = (m[p.k]||'').trim();
+        if (!n) return;
+        /* 주식과 김치류는 매일 반복되는 것이 정상이므로 중복 집계에서 제외 */
+        if (p.k !== 'staple' && !/김치$|깍두기/.test(n)) names[n] = (names[n]||0)+1;
+        all.push(n);
+        if (p.k==='main') mains.push(n);
+        if (p.k==='soup') soups.push(n);
+        if (p.k==='side') sides.push(n);
+      });
+    });
+  }
+  return { mains:mains, soups:soups, sides:sides, all:all, meals:meals, mealsWithSide:mealsWithSide, names:names };
+}
+
+function renderAnalysis(){
+  var c = collect();
+  var protein = {}, method = {}, groups = {}, unknown = 0, fry = 0, fish = 0, plant = 0, red = 0, veg = 0;
+
+  c.mains.forEach(function(n){
+    var d = INDEX[n];
+    if (!d){ unknown++; return; }
+    protein[d.p] = (protein[d.p]||0)+1;
+    method[d.m] = (method[d.m]||0)+1;
+    if (d.m === 'fry') fry++;
+    if (d.p === 'fish') fish++;
+    if (d.p === 'tofu' || d.p === 'egg') plant++;
+    if (d.p === 'beef' || d.p === 'pork') red++;
+  });
+  c.sides.forEach(function(n){ var d = INDEX[n]; if (d && d.g){ groups[d.g] = (groups[d.g]||0)+1; veg++; } });
+
+  var dupes = Object.keys(c.names).filter(function(n){ return c.names[n] > 1; });
+
+  /* KPI */
+  var totalSlots = 7 * activeSlots().length;
+  var kpis = [
+    { label:'채운 끼니', value: c.meals + '/' + totalSlots, cls:'', note: c.meals === totalSlots ? '이번 주 식단 완성' : (totalSlots - c.meals) + '끼가 비어 있습니다' },
+    { label:'생선·해물 주찬', value: String(fish), cls: fish >= 2 ? 'pine' : 'warn', note:'권장 주 2회 이상' },
+    { label:'두부·계란 주찬', value: String(plant), cls: plant >= 3 ? 'pine' : 'warn', note:'권장 주 3회 이상' },
+    { label:'중복 메뉴', value: String(dupes.length), cls: dupes.length ? 'warn' : 'pine', note: dupes.length ? dupes.slice(0,3).join(', ') : '같은 메뉴 반복 없음' }
+  ];
+  document.getElementById('kpiRow').innerHTML = kpis.map(function(k){
+    return '<div class="kpi-card"><div class="kpi-label">'+k.label+'</div>'
+         + '<div class="kpi-value '+k.cls+'">'+k.value+'</div>'
+         + '<div class="kpi-note">'+k.note+'</div></div>';
+  }).join('');
+
+  /* Bars */
+  document.getElementById('proteinBars').innerHTML = bars(protein, PROTEIN_LABEL, c.mains.length, false)
+    + (unknown ? '<div class="bar-row"><div class="bar-name" style="color:var(--text-muted)">DB 외 메뉴</div><div class="bar-track"></div><div class="bar-val">'+unknown+'</div></div>' : '');
+  document.getElementById('methodBars').innerHTML = bars(method, METHOD_LABEL, c.mains.length, true);
+
+  /* Checklist */
+  var rows = [
+    check('생선·해물 주찬', fish + '회', '주 2회 이상', fish >= 2 ? 'green' : (fish >= 1 ? 'amber' : 'red')),
+    check('두부·계란 주찬', plant + '회', '주 3회 이상', plant >= 3 ? 'green' : 'amber'),
+    check('소·돼지 주찬', red + '회', '주 5회 이하', red <= 5 ? 'green' : 'amber'),
+    check('튀김·전 조리', fry + '회', '주 2회 이하', fry <= 2 ? 'green' : 'amber'),
+    check('채소 부찬', c.mealsWithSide + '/' + c.meals + '끼', '매 끼 1가지', (c.meals && c.mealsWithSide === c.meals) ? 'green' : 'amber'),
+    check('부찬 종류 다양성', Object.keys(groups).length + '계열', '4계열 이상', Object.keys(groups).length >= 4 ? 'green' : 'amber'),
+    check('메뉴 중복', dupes.length + '건', '0건', dupes.length === 0 ? 'green' : 'amber')
+  ];
+  document.getElementById('checkBody').innerHTML = c.meals ? rows.join('')
+    : '<tr><td colspan="4" class="metric-note">식단을 채우면 자동으로 집계됩니다.</td></tr>';
+
+  renderShopping(c);
+}
+
+function bars(map, labels, total, alt){
+  var keys = Object.keys(labels).filter(function(k){ return map[k]; });
+  if (!keys.length) return '<div class="bar-row"><div class="bar-name" style="color:var(--text-muted)">데이터 없음</div><div class="bar-track"></div><div class="bar-val">0</div></div>';
+  keys.sort(function(a,b){ return map[b]-map[a]; });
+  var max = Math.max.apply(null, keys.map(function(k){ return map[k]; }));
+  return keys.map(function(k){
+    var pct = Math.round(map[k] / max * 100);
+    return '<div class="bar-row"><div class="bar-name">'+labels[k]+'</div>'
+         + '<div class="bar-track"><div class="bar-fill'+(alt?' alt':'')+'" style="width:'+pct+'%"></div></div>'
+         + '<div class="bar-val">'+map[k]+'</div></div>';
+  }).join('');
+}
+function check(name, now, target, level){
+  var txt = { green:'양호', amber:'조정 권장', red:'부족' }[level];
+  return '<tr><td>'+name+'</td><td class="metric-note">'+now+'</td><td class="metric-note">'+target+'</td>'
+       + '<td><span class="light '+level+'"><span class="bulb"></span>'+txt+'</span></td></tr>';
+}
+
+/* ---------- 장보기 ---------- */
+var ING_RULES = [
+  { cat:'육류·달걀', re:/소고기|돼지|삼겹|목살|갈비|다짐육|닭|소시지|계란|메추리알/ },
+  { cat:'수산·해조', re:/고등어|삼치|갈치|연어|임연수|가자미|코다리|대구|동태|오징어|낙지|새우|홍합|바지락|골뱅이|명란|멸치|황태|북어|어묵|미역|^김$|다시마|톳|파래/ },
+  { cat:'채소·과일', re:/김치|시금치|콩나물|숙주|취나물|깻잎|상추|부추|배추|열무|우거지|아욱|근대|^무$|총각무|당근|양파|대파|마늘|감자|고구마|연근|우엉|도라지|애호박|단호박|가지|오이|파프리카|토마토|브로콜리|양배추|버섯|채소|고사리|미나리|과일|파인애플|레몬|대추|인삼|단무지/ },
+  { cat:'두부·유제품', re:/두부|비지|순두부|우유|요거트|치즈|마요네즈/ },
+  { cat:'곡물·면', re:/쌀|잡곡|현미|보리|귀리|오트밀|식빵|소면|메밀면|당면|떡|만두|밀가루|빵가루|튀김가루|전분|찹쌀/ },
+  { cat:'양념·기타', re:/.*/ }
+];
+function ingCat(name){
+  for (var i=0;i<ING_RULES.length;i++){ if (ING_RULES[i].re.test(name)) return ING_RULES[i].cat; }
+  return '양념·기타';
+}
+function renderShopping(c){
+  var counts = {};
+  c.all.forEach(function(n){
+    var d = INDEX[n];
+    if (!d || !d.ing) return;
+    d.ing.forEach(function(g){ counts[g] = (counts[g]||0)+1; });
+  });
+  var keys = Object.keys(counts);
+  document.getElementById('shopEmpty').style.display = keys.length ? 'none' : 'block';
+  if (!keys.length){ document.getElementById('shopGrid').innerHTML = ''; return; }
+
+  var byCat = {};
+  keys.forEach(function(k){ var cat = ingCat(k); (byCat[cat] = byCat[cat] || []).push(k); });
+  var order = ['육류·달걀','수산·해조','채소·과일','두부·유제품','곡물·면','양념·기타'];
+  document.getElementById('shopGrid').innerHTML = order.filter(function(cat){ return byCat[cat]; }).map(function(cat){
+    var items = byCat[cat].sort(function(a,b){ return counts[b]-counts[a]; });
+    return '<div class="shop-card"><div class="shop-cat">'+cat+'</div><ul class="shop-list">'
+         + items.map(function(k){ return '<li><span>'+k+'</span><span class="shop-n">'+counts[k]+'회</span></li>'; }).join('')
+         + '</ul></div>';
+  }).join('');
+}
+
+function render(){ renderHeader(); renderPlanner(); renderAnalysis(); }
+
+/* ============================================================
+   NAV · OPTIONS · EXPORT
+   ============================================================ */
+function shiftWeek(n){
+  var d = parseYmd(state.weekStart); d.setDate(d.getDate() + n*7);
+  state.weekStart = ymd(d);
+  loadWeek(); render();
+}
+function goToday(){ state.weekStart = mondayOf(new Date()); loadWeek(); render(); }
+
+document.getElementById('modeSeg').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  state.mode = b.dataset.mode;
+  this.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); });
+  save();
+  toast('성향을 «' + b.textContent + '»(으)로 바꿨습니다 — 다음 추천부터 반영됩니다');
+});
+document.getElementById('optBreakfast').addEventListener('change', function(){
+  state.breakfast = this.checked; save(); render();
+});
+document.getElementById('optExclude').addEventListener('change', function(){
+  state.exclude = this.value; save();
+});
+
+function planText(){
+  var s = parseYmd(state.weekStart), e = dayDate(6);
+  var out = ['[주간 식단표] ' + (s.getMonth()+1)+'.'+s.getDate() + ' ~ ' + (e.getMonth()+1)+'.'+e.getDate(), ''];
+  for (var i=0;i<7;i++){
+    var lines = [];
+    activeSlots().forEach(function(sl){
+      var m = state.plan[i][sl.k];
+      var parts = PARTS.map(function(p){ return (m[p.k]||'').trim(); }).filter(Boolean);
+      if (parts.length) lines.push('  ' + sl.label + ' · ' + parts.join(' / '));
+    });
+    if (!lines.length) lines.push('  (비어 있음)');
+    var d = dayDate(i);
+    out.push(DAY_NAMES[i] + ' ' + (d.getMonth()+1)+'/'+d.getDate());
+    out = out.concat(lines);
+    out.push('');
+  }
+  return out.join('\n');
+}
+function copyPlanText(){
+  var t = planText();
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){ toast('식단표를 텍스트로 복사했습니다'); },
+      function(){ fallbackCopy(t); });
+  } else { fallbackCopy(t); }
+  closeMenu();
+}
+function fallbackCopy(t){
+  var ta = document.createElement('textarea');
+  ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); toast('식단표를 텍스트로 복사했습니다'); }
+  catch(e){ toast('복사에 실패했습니다'); }
+  document.body.removeChild(ta);
+}
+
+var currentTheme = 'light';
+var menuOpen = false;
+function cycleTheme(){
+  var html = document.documentElement;
+  currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+  html.className = 'theme-' + currentTheme;
+}
+function toggleMenu(){
+  menuOpen = !menuOpen;
+  document.getElementById('vizMenuDropdown').classList.toggle('open', menuOpen);
+  document.querySelector('.viz-menu-toggle').setAttribute('aria-expanded', String(menuOpen));
+}
+function closeMenu(){
+  menuOpen = false;
+  document.getElementById('vizMenuDropdown').classList.remove('open');
+  document.querySelector('.viz-menu-toggle').setAttribute('aria-expanded', 'false');
+}
+function downloadImage(){
+  closeMenu();
+  if (typeof htmlToImage === 'undefined'){ toast('이미지 라이브러리를 불러오지 못했습니다'); return; }
+  htmlToImage.toPng(document.body, { quality: 0.95, pixelRatio: 1.5, backgroundColor: getComputedStyle(document.body).backgroundColor })
+    .then(function(url){
+      var a = document.createElement('a');
+      a.download = 'weekly-meal-plan-' + state.weekStart + '.png';
+      a.href = url; a.click();
+    })
+    .catch(function(err){ console.error(err); toast('PNG 저장 중 오류가 발생했습니다'); });
+}
+
+var toastTimer = null;
+function toast(msg){
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+
+document.addEventListener('click', function(e){
+  if (menuOpen && !e.target.closest('.viz-menu')) closeMenu();
+});
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && menuOpen) closeMenu(); });
+
+/* ---------- INIT ---------- */
+(function init(){
+  ['staple','soup','main','side'].forEach(function(cat){
+    document.getElementById('dl-'+cat).innerHTML = DB[cat].map(function(d){
+      return '<option value="'+d.n+'">';
+    }).join('');
+  });
+  loadPrefs();
+  document.getElementById('optBreakfast').checked = state.breakfast;
+  document.getElementById('optExclude').value = state.exclude;
+  document.querySelectorAll('#modeSeg button').forEach(function(b){
+    b.classList.toggle('on', b.dataset.mode === state.mode);
+  });
+  loadWeek();
+  render();
+})();
+</script>
+</body>
+</html>
