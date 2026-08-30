@@ -57,7 +57,8 @@
   --field: rgba(243,239,228,0.05);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+/* 전체 타이포·여백을 한 단계(약 10%) 크게 — 개별 값은 모두 rem이라 여기서 함께 조정된다 */
+html { scroll-behavior: smooth; font-size: 110%; }
 body {
   background: var(--bg);
   color: var(--text);
@@ -211,7 +212,7 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
 .opt-row { display: flex; flex-wrap: wrap; gap: 1.5rem 2.25rem; align-items: flex-start; padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule); margin-bottom: 2rem; }
 .opt-group { display: flex; flex-direction: column; gap: 0.55rem; }
 .opt-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
-.seg { display: flex; border: 1px solid var(--rule); }
+.seg { display: flex; flex-wrap: wrap; border: 1px solid var(--rule); }
 .seg button {
   padding: 0.45rem 0.85rem; border: none; background: none; cursor: pointer;
   font-family: inherit; font-size: 0.8rem; color: var(--text-secondary); transition: all 0.15s;
@@ -240,8 +241,8 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
 
 .planner { border-top: 2px solid var(--text); }
 .theme-dark .planner { border-top-color: var(--text-secondary); }
-.planner-head, .day-row { display: grid; grid-template-columns: 116px repeat(3, minmax(0,1fr)); }
-.planner.no-b .planner-head, .planner.no-b .day-row { grid-template-columns: 116px repeat(2, minmax(0,1fr)); }
+.planner-head, .day-row { display: grid; grid-template-columns: 128px repeat(3, minmax(0,1fr)); }
+.planner.no-b .planner-head, .planner.no-b .day-row { grid-template-columns: 128px repeat(2, minmax(0,1fr)); }
 .planner-head > div {
   font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em;
   color: var(--text-muted); font-weight: 700; padding: 0.7rem 1rem 0.7rem 0;
@@ -374,8 +375,8 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
   .hero { padding: 4rem 2rem 2.5rem; }
   main { padding: 0 2rem 5rem; }
   .site-header { padding: 0.85rem 2rem; }
-  .planner-head, .day-row { grid-template-columns: 92px repeat(3, minmax(0,1fr)); }
-  .planner.no-b .planner-head, .planner.no-b .day-row { grid-template-columns: 92px repeat(2, minmax(0,1fr)); }
+  .planner-head, .day-row { grid-template-columns: 104px repeat(3, minmax(0,1fr)); }
+  .planner.no-b .planner-head, .planner.no-b .day-row { grid-template-columns: 104px repeat(2, minmax(0,1fr)); }
 }
 @media (max-width: 768px) {
   h1 { font-size: 2.15rem; }
@@ -439,10 +440,10 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-eyebrow">WEEKLY MEAL PLANNER · 월요일 시작</div>
   <h1 id="hero-title">한 주의 식탁을<br><span>미리 정해둡니다</span></h1>
-  <p class="hero-sub">월요일부터 일요일까지 <strong>아침·점심·저녁</strong>을 직접 적거나, <strong>자동 추천</strong>으로 한 번에 채웁니다. 추천은 단백질 급원·조리법·채소 구성을 주 단위로 분산시켜 한쪽으로 치우치지 않게 짭니다. 입력한 내용은 이 브라우저에 주차별로 저장됩니다.</p>
+  <p class="hero-sub">월요일부터 일요일까지 <strong>아침·점심·저녁</strong>을 직접 적거나, <strong>자동 추천</strong>으로 한 번에 채웁니다. 추천은 단백질 급원·조리법·채소 구성을 주 단위로 분산시켜 한쪽으로 치우치지 않게 짭니다. <strong>고지혈증(LDL)</strong> 성향을 고르면 포화지방·튀김을 줄이고 통곡물·콩·해조·등푸른 생선을 늘린 식단으로 추천합니다. 입력한 내용은 이 브라우저에 주차별로 저장됩니다.</p>
   <div class="hero-meta">
     <div class="hero-meta-item">한 끼 = 주식 · 국/찌개 · 주찬 · 부찬</div>
-    <div class="hero-meta-item">메뉴 DB 140여 종</div>
+    <div class="hero-meta-item">메뉴 DB 150여 종</div>
     <div class="hero-meta-item">주차별 자동 저장</div>
   </div>
 </section>
@@ -483,6 +484,7 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
           <button data-mode="protein">고단백</button>
           <button data-mode="light">가볍게</button>
           <button data-mode="veg">채식 위주</button>
+          <button data-mode="ldl">고지혈증(LDL)</button>
         </div>
       </div>
       <div class="opt-group">
@@ -511,6 +513,11 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
     <div class="callout" style="margin-top:1.75rem;">
       <strong>추천 규칙</strong> — ① 한 주 안에서 같은 메뉴를 반복하지 않고, ② 소·돼지 / 닭 / 생선·해물 / 계란 / 두부·콩을 번갈아 배치하며, ③ 구이·볶음·조림·무침 등 조리법이 연달아 겹치지 않게 하고, ④ 튀김은 주 2회 이하, 생선·해물은 주 2회 이상, ⑤ 부찬은 잎채소·뿌리·버섯·해조 등 종류를 돌려가며 넣습니다.
     </div>
+
+    <div class="callout pine" id="ldlNote" style="margin-top:1rem; display:none;">
+      <strong>고지혈증(LDL) 모드</strong> — LDL 콜레스테롤 관리에서 식사로 조절할 수 있는 부분은 ① <strong>포화지방·트랜스지방 줄이기</strong>(삼겹살·갈비·가공육·버터·튀김), ② <strong>수용성 식이섬유 늘리기</strong>(귀리·보리·현미·콩·해조·버섯·채소), ③ <strong>등푸른 생선 주 2~3회</strong>(오메가3), ④ <strong>조리는 굽기·찜·조림·무침 위주</strong>로 기름을 줄이는 것입니다. 이 모드는 주식·주찬·부찬을 이 기준으로 다시 가중치를 매겨 추천하고, 아래 «구성 점검»에도 LDL 전용 지표가 표시됩니다. 계란·오징어·새우 같은 식이 콜레스테롤 식품은 포화지방만큼 영향이 크지는 않아 <em>금지</em>가 아니라 <em>횟수 제한</em>으로 다룹니다.
+      <br><span style="color:var(--text-muted); font-size:0.82rem;">※ 일반적인 식생활 가이드에 기반한 배치 규칙이며 치료용 처방이 아닙니다. 약물 복용·수치 관리는 담당 의사·영양사와 상의하세요.</span>
+    </div>
   </section>
 
   <!-- BALANCE -->
@@ -518,6 +525,10 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
     <div class="section-label"><span class="label-bar"></span>BALANCE</div>
     <h2 id="bal-title">이번 주 구성 점검</h2>
     <p class="section-desc">직접 입력한 메뉴도 이름이 DB와 맞으면 함께 집계됩니다. 목표치는 일반적인 가정식 기준의 참고값이며 의학적 영양 기준이 아닙니다.</p>
+
+    <div class="callout pine" id="balNote" style="display:none; margin-bottom:1.75rem;">
+      <strong>고지혈증(LDL) 지표 표시 중</strong> — 아래 체크리스트에 포화지방·붉은 고기·튀김·오메가3·통곡물·식이섬유·계란 항목이 추가되어 있습니다. 기준값은 국내외 이상지질혈증 식사요법에서 흔히 쓰이는 일반 권고를 주 단위 횟수로 옮긴 참고값입니다.
+    </div>
 
     <div class="kpi-row" id="kpiRow"></div>
 
@@ -561,7 +572,7 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
       <div class="feature-card">
         <div class="feature-icon">02</div>
         <div class="feature-title">자동 추천</div>
-        <p class="feature-desc">한 주 전체, 하루, 한 끼니 단위로 각각 다시 추천할 수 있습니다. 이미 적어둔 칸이 있으면 그 칸도 함께 다시 계산되니, 남기고 싶으면 끼니 단위 ↻ 를 쓰세요.</p>
+        <p class="feature-desc">성향(균형·고단백·가볍게·채식 위주·고지혈증)을 고른 뒤 한 주 전체, 하루, 한 끼니 단위로 각각 다시 추천할 수 있습니다. 이미 적어둔 칸이 있으면 그 칸도 함께 다시 계산되니, 남기고 싶으면 끼니 단위 ↻ 를 쓰세요.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon green">03</div>
@@ -579,7 +590,8 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
     <div class="section-label"><span class="label-bar"></span>NOTE</div>
     <p class="footer-note">
       메뉴 DB는 일반적인 한식 가정식을 기준으로 구성했으며, 밸런스 규칙은 영양학적 처방이 아니라 <strong>식단이 한쪽으로 쏠리지 않게 하는 배치 규칙</strong>입니다.<br>
-      알레르기·질환 관련 식이 제한이 있다면 제외 재료란을 활용하시고, 치료 목적의 식단은 전문가 상담을 권합니다.
+      «고지혈증(LDL)» 성향은 포화지방·트랜스지방을 줄이고 수용성 식이섬유·오메가3를 늘리는 <strong>일반적인 식생활 권고를 메뉴 배치에 반영한 것</strong>일 뿐, 진단·치료를 대신하지 않습니다.<br>
+      알레르기·질환 관련 식이 제한이 있다면 제외 재료란을 함께 쓰시고, 이상지질혈증 약물 복용 중이거나 수치 관리가 필요하면 담당 의사·영양사와 상의하세요.
     </p>
   </section>
 
@@ -615,7 +627,9 @@ const DB = {
     {n:'김밥', h:2, b:'only', ing:['쌀','김','단무지','계란']},
     {n:'잔치국수', h:2, only:'l', solo:true, ing:['소면','멸치','애호박']},
     {n:'비빔국수', h:2, only:'l', solo:true, ing:['소면','오이','고추장']},
-    {n:'메밀국수', h:1, only:'l', solo:true, ing:['메밀면','무']}
+    {n:'메밀국수', h:1, only:'l', solo:true, ing:['메밀면','무']},
+    {n:'검은콩밥', h:2, b:true, ing:['검은콩','쌀']},
+    {n:'렌틸콩밥', h:2, b:true, ing:['렌틸콩','현미','쌀']}
   ],
   soup: [
     {n:'된장찌개', base:'된장', h:2, b:true, ing:['된장','두부','애호박','양파']},
@@ -643,7 +657,9 @@ const DB = {
     {n:'떡국', base:'고기', h:3, ing:['떡국떡','계란','소고기']},
     {n:'만둣국', base:'고기', h:3, ing:['만두','계란','대파']},
     {n:'오이냉국', base:'맑은', h:1, b:true, ing:['오이','식초']},
-    {n:'콩비지찌개', base:'된장', h:2, ing:['비지','김치','돼지고기']}
+    {n:'콩비지찌개', base:'된장', h:2, ing:['비지','김치','돼지고기']},
+    {n:'버섯들깨국', base:'맑은', h:1, b:true, ing:['느타리버섯','들깨가루']},
+    {n:'시래기된장국', base:'된장', h:1, b:true, ing:['시래기','된장']}
   ],
   main: [
     /* 소 */
@@ -708,7 +724,13 @@ const DB = {
     {n:'소세지야채볶음', p:'pork', m:'stir', h:2, b:true, ing:['소시지','파프리카','양파']},
     {n:'표고버섯탕수', p:'none', m:'fry', h:2, ing:['표고버섯','전분','파인애플']},
     {n:'가지강정', p:'none', m:'fry', h:2, ing:['가지','전분','간장']},
-    {n:'채소잡채', p:'none', m:'stir', h:2, ing:['당면','시금치','당근','목이버섯']}
+    {n:'채소잡채', p:'none', m:'stir', h:2, ing:['당면','시금치','당근','목이버섯']},
+    /* 저포화지방·고식이섬유 */
+    {n:'꽁치구이', p:'fish', m:'grill', h:2, b:true, ing:['꽁치','소금']},
+    {n:'연어채소찜', p:'fish', m:'steam', h:2, b:true, ing:['연어','브로콜리','레몬']},
+    {n:'닭가슴살샐러드', p:'chicken', m:'raw', h:2, b:true, ing:['닭가슴살','채소믹스','올리브유']},
+    {n:'병아리콩카레', p:'tofu', m:'braise', h:2, ing:['병아리콩','당근','양파','카레']},
+    {n:'두부채소찜', p:'tofu', m:'steam', h:1, b:true, ing:['두부','양배추','당근']}
   ],
   side: [
     {n:'시금치나물', g:'leaf', b:true, ing:['시금치','참기름']},
@@ -751,7 +773,11 @@ const DB = {
     {n:'오이소박이', g:'fruit', b:true, ing:['오이','부추']},
     {n:'총각김치', g:'root', b:true, ing:['총각무']},
     {n:'깍두기', g:'root', b:true, ing:['무']},
-    {n:'열무김치', g:'leaf', b:true, ing:['열무']}
+    {n:'열무김치', g:'leaf', b:true, ing:['열무']},
+    {n:'해초무침', g:'sea', b:true, ing:['해초','식초']},
+    {n:'버섯들깨볶음', g:'mush', b:true, ing:['느타리버섯','들깨가루']},
+    {n:'가지들깨찜', g:'fruit', b:true, ing:['가지','들깨가루']},
+    {n:'병아리콩샐러드', g:'other', b:true, ing:['병아리콩','채소믹스','올리브유']}
   ]
 };
 
@@ -761,10 +787,44 @@ const SLOTS = [ {k:'b', label:'아침'}, {k:'l', label:'점심'}, {k:'d', label:
 const PARTS = [ {k:'staple', ph:'주식'}, {k:'soup', ph:'국·찌개'}, {k:'main', ph:'주찬'}, {k:'side', ph:'부찬'} ];
 const DAY_NAMES = ['월','화','수','목','금','토','일'];
 
+/* ============================================================
+   고지혈증(LDL) 프로파일
+   메뉴 이름과 주재료·조리법으로 자동 판정한다.
+   sat  : 포화지방 부담 (0~4, 3 이상이면 '포화지방 높은 메뉴')
+   chol : 식이 콜레스테롤 (계란·알류·오징어·새우 등)
+   omega: 등푸른 생선·들깨·견과 등 오메가3 급원
+   fiber: 귀리·보리·콩·해조·버섯·채소 등 식이섬유 급원
+   ============================================================ */
+const LDL_RE = {
+  satHigh : /삼겹|갈비|목살|다짐육|소시지|햄|베이컨|버터|생크림|치즈|마요네즈|빵가루|튀김가루/,
+  satMid  : /소고기|돼지고기|닭고기|닭봉|어묵|우유/,
+  cholHigh: /명란|알탕|새우|오징어|낙지|골뱅이|장어|메추리알/,
+  omega3  : /고등어|삼치|꽁치|연어|정어리|청어|들깨|들기름|견과|호두|아몬드|올리브유/,
+  fiber   : /귀리|오트밀|보리|현미|잡곡|통밀|메밀|콩|두부|비지|렌틸|미역|다시마|톳|파래|해초|버섯|채소|야채|나물|시래기|우거지|고사리|우엉|연근|가지|브로콜리|양배추|배추|시금치|부추|깻잎|상추|열무|아욱|근대|취나물|단호박|토마토|과일/
+};
+function ldlTags(d){
+  var t = d.n + ' ' + (d.ing || []).join(' ');
+  var sat = 0, chol = 0;
+  if (LDL_RE.satHigh.test(t)) sat += 2;
+  if (LDL_RE.satMid.test(t)) sat += 1;
+  if (d.p === 'beef' || d.p === 'pork') sat += 1;
+  if (d.m === 'fry') sat += 2;
+  if (LDL_RE.cholHigh.test(t)) chol += 1;
+  if (d.p === 'egg') chol += 1;
+  var omega = LDL_RE.omega3.test(t);
+  var fiber = LDL_RE.fiber.test(t);
+  var good = (omega ? 2 : 0) + (fiber ? 1 : 0) + (d.p === 'fish' && d.m !== 'fry' ? 1 : 0);
+  return { sat: sat, chol: chol, good: good, omega: omega, fiber: fiber };
+}
+
 /* index by name for reverse lookup */
 const INDEX = {};
 Object.keys(DB).forEach(function(cat){
-  DB[cat].forEach(function(d){ INDEX[d.n] = Object.assign({ cat: cat }, d); });
+  DB[cat].forEach(function(d){
+    d.cat = cat;
+    d.ldl = ldlTags(d);
+    INDEX[d.n] = d;
+  });
 });
 
 /* ============================================================
@@ -890,6 +950,18 @@ function pick(cat, ctx){
   if (state.mode === 'veg' && cat === 'main'){
     pool = pool.filter(function(d){ return d.p === 'tofu' || d.p === 'egg' || d.p === 'none'; });
   }
+  if (state.mode === 'ldl'){
+    /* 포화지방이 특히 높은 주찬(삼겹·갈비·가공육·튀김)과 정제 주식은 후보에서 먼저 뺀다 */
+    if (cat === 'main'){
+      /* sat 3 이상 = 삼겹·갈비·가공육·튀김. 살코기 소·돼지는 남겨두고 점수로만 눌러 가끔만 나오게 한다 */
+      var lean = pool.filter(function(d){ return d.ldl.sat <= 2; });
+      if (lean.length >= 5) pool = lean;
+    }
+    if (cat === 'staple'){
+      var whole = pool.filter(function(d){ return d.ldl.fiber; });
+      if (whole.length >= 2) pool = whole;
+    }
+  }
   if (!pool.length){
     pool = DB[cat].filter(function(d){ return !blocked(d, ex); });
     if (!pool.length) pool = DB[cat].slice();
@@ -920,6 +992,17 @@ function pick(cat, ctx){
       s -= mc * 4;
       if (d.m === 'fry'){ s -= 14 + (u.fry >= 2 ? 40 : 0); }
 
+      if (state.mode === 'ldl'){
+        s -= d.ldl.sat * 18;                            // 포화지방 부담
+        s -= d.ldl.chol * 7;                            // 식이 콜레스테롤 (완만하게)
+        s += d.ldl.good * 9;                            // 오메가3·식이섬유 가점
+        if (d.m === 'fry') s -= 60;                     // 튀김·전은 사실상 제외
+        if (d.p === 'beef' || d.p === 'pork'){ s -= 22 + (red >= 2 ? 60 : 0); }   // 붉은 고기 주 2회 이하
+        if (d.p === 'chicken' && d.m !== 'fry') s += 4; // 닭은 껍질 없이 담백하게
+        if (d.p === 'fish' && fish < 3) s += 14;        // 생선 주 2~3회
+        if (d.p === 'tofu') s += 14;                    // 콩·두부 늘리기
+        if (d.p === 'egg' && (u.protein.egg||0) >= 3) s -= 45;                    // 계란 주 3회 이하
+      }
       if (state.mode === 'protein'){ s += (d.p === 'none' ? -18 : 10); }
       if (state.mode === 'light'){ s -= (d.h - 1) * 14; if (d.m === 'fry') s -= 25; }
       else if (ctx.slot !== 'b' && d.h === 1) s -= 12;  // 아주 가벼운 반찬은 점심·저녁 메인으로 덜 쓰기
@@ -931,6 +1014,11 @@ function pick(cat, ctx){
       nb.same.concat(nb.prev).forEach(function(n){ var o = INDEX[n]; if (o && o.base === d.base) s -= 12; });
       if (state.mode === 'light') s -= (d.h - 1) * 10;
       if (state.mode === 'veg' && d.ing.some(function(g){ return /고기|갈비|삼겹|만두|어묵|바지락|대구|황태|북어|멸치/.test(g); })) s -= 45;
+      if (state.mode === 'ldl'){
+        s -= d.ldl.sat * 12;
+        s += d.ldl.good * 6;
+        if (d.base === '고기') s -= 25;
+      }
       if (ctx.slot === 'b') s -= (d.h - 1) * 8;
     }
 
@@ -938,12 +1026,18 @@ function pick(cat, ctx){
       var gc = u.group[d.g] || 0;
       s -= gc * 8;
       if (state.mode === 'light') s += (d.g === 'leaf' || d.g === 'sea' || d.g === 'mush') ? 6 : 0;
+      if (state.mode === 'ldl'){
+        s += d.ldl.good * 8;
+        s -= d.ldl.sat * 14;                            // 코울슬로(마요) 같은 부찬 감점
+        if (d.g === 'sea' || d.g === 'mush') s += 8;    // 해조·버섯 수용성 식이섬유
+      }
     }
 
     if (cat === 'staple'){
       if (ctx.slot === 'b') s += (d.b === 'only' ? 8 : 0);
       if (state.mode === 'light') s -= (d.h - 1) * 8;
       if (state.mode === 'protein' && /잡곡|현미|귀리|보리/.test(d.n)) s += 5;
+      if (state.mode === 'ldl') s += d.ldl.good * 10;
     }
 
     return { d: d, s: s };
@@ -1080,7 +1174,7 @@ function renderHeader(){
 
 /* ---------- 분석 ---------- */
 function collect(){
-  var mains = [], soups = [], sides = [], all = [], meals = 0, mealsWithSide = 0, names = {};
+  var mains = [], soups = [], sides = [], staples = [], all = [], meals = 0, mealsWithSide = 0, names = {};
   for (var i=0;i<7;i++){
     activeSlots().forEach(function(s){
       var m = state.plan[i][s.k];
@@ -1096,10 +1190,11 @@ function collect(){
         if (p.k==='main') mains.push(n);
         if (p.k==='soup') soups.push(n);
         if (p.k==='side') sides.push(n);
+        if (p.k==='staple') staples.push(n);
       });
     });
   }
-  return { mains:mains, soups:soups, sides:sides, all:all, meals:meals, mealsWithSide:mealsWithSide, names:names };
+  return { mains:mains, soups:soups, sides:sides, staples:staples, all:all, meals:meals, mealsWithSide:mealsWithSide, names:names };
 }
 
 function renderAnalysis(){
@@ -1120,9 +1215,33 @@ function renderAnalysis(){
 
   var dupes = Object.keys(c.names).filter(function(n){ return c.names[n] > 1; });
 
+  /* 고지혈증(LDL) 지표 — 주식·국·주찬·부찬 전체를 대상으로 집계 */
+  var L = { satMain:0, satAll:0, friedAll:0, omegaMain:0, beanMain:0, eggMain:0, cholAll:0, wholeStaple:0, fiberSide:0 };
+  c.mains.forEach(function(n){
+    var d = INDEX[n]; if (!d) return;
+    if (d.ldl.sat >= 3) L.satMain++;
+    if (d.ldl.omega) L.omegaMain++;
+    if (d.p === 'tofu') L.beanMain++;
+    if (d.p === 'egg') L.eggMain++;
+  });
+  c.staples.forEach(function(n){ var d = INDEX[n]; if (d && d.ldl.fiber) L.wholeStaple++; });
+  c.sides.forEach(function(n){ var d = INDEX[n]; if (d && d.ldl.fiber) L.fiberSide++; });
+  c.all.forEach(function(n){
+    var d = INDEX[n]; if (!d) return;
+    if (d.ldl.sat >= 3) L.satAll++;
+    if (d.m === 'fry') L.friedAll++;
+    if (d.ldl.chol) L.cholAll++;
+  });
+  var isLdl = state.mode === 'ldl';
+
   /* KPI */
   var totalSlots = 7 * activeSlots().length;
-  var kpis = [
+  var kpis = isLdl ? [
+    { label:'채운 끼니', value: c.meals + '/' + totalSlots, cls:'', note: c.meals === totalSlots ? '이번 주 식단 완성' : (totalSlots - c.meals) + '끼가 비어 있습니다' },
+    { label:'오메가3 주찬', value: String(L.omegaMain), cls: L.omegaMain >= 2 ? 'pine' : 'warn', note:'등푸른 생선·들깨 권장 주 2회 이상' },
+    { label:'포화지방 높은 메뉴', value: String(L.satAll), cls: L.satAll <= 3 ? 'pine' : 'warn', note:'삼겹·갈비·가공육·튀김 주 3회 이하' },
+    { label:'통곡물·콩 주식', value: L.wholeStaple + '/' + (c.staples.length || 0), cls: (c.staples.length && L.wholeStaple >= c.staples.length * 0.7) ? 'pine' : 'warn', note:'끼니의 70% 이상 권장' }
+  ] : [
     { label:'채운 끼니', value: c.meals + '/' + totalSlots, cls:'', note: c.meals === totalSlots ? '이번 주 식단 완성' : (totalSlots - c.meals) + '끼가 비어 있습니다' },
     { label:'생선·해물 주찬', value: String(fish), cls: fish >= 2 ? 'pine' : 'warn', note:'권장 주 2회 이상' },
     { label:'두부·계란 주찬', value: String(plant), cls: plant >= 3 ? 'pine' : 'warn', note:'권장 주 3회 이상' },
@@ -1149,8 +1268,25 @@ function renderAnalysis(){
     check('부찬 종류 다양성', Object.keys(groups).length + '계열', '4계열 이상', Object.keys(groups).length >= 4 ? 'green' : 'amber'),
     check('메뉴 중복', dupes.length + '건', '0건', dupes.length === 0 ? 'green' : 'amber')
   ];
+  if (isLdl){
+    /* LDL 모드에서는 기준이 더 엄격한 전용 행으로 대체한다 */
+    rows = rows.filter(function(r){ return !/<td>소·돼지 주찬<\/td>|<td>튀김·전 조리<\/td>/.test(r); });
+    rows = rows.concat([
+      check('포화지방 높은 메뉴', L.satAll + '회', '주 3회 이하', L.satAll <= 3 ? 'green' : (L.satAll <= 5 ? 'amber' : 'red')),
+      check('붉은 고기 주찬', red + '회', '주 2회 이하', red <= 2 ? 'green' : (red <= 4 ? 'amber' : 'red')),
+      check('튀김·전 조리', L.friedAll + '회', '주 1회 이하', L.friedAll <= 1 ? 'green' : 'amber'),
+      check('오메가3 주찬', L.omegaMain + '회', '주 2회 이상', L.omegaMain >= 2 ? 'green' : (L.omegaMain >= 1 ? 'amber' : 'red')),
+      check('콩·두부 주찬', L.beanMain + '회', '주 3회 이상', L.beanMain >= 3 ? 'green' : 'amber'),
+      check('통곡물·콩 주식', L.wholeStaple + '/' + c.staples.length + '끼', '70% 이상', (c.staples.length && L.wholeStaple >= c.staples.length * 0.7) ? 'green' : 'amber'),
+      check('식이섬유 부찬', L.fiberSide + '/' + c.sides.length + '끼', '대부분의 끼니', (c.sides.length && L.fiberSide >= c.sides.length * 0.8) ? 'green' : 'amber'),
+      check('계란·알류 주찬', L.eggMain + '회', '주 3회 이하', L.eggMain <= 3 ? 'green' : 'amber'),
+      check('콜레스테롤 높은 식품', L.cholAll + '회', '주 5회 이하', L.cholAll <= 5 ? 'green' : 'amber')
+    ]);
+  }
   document.getElementById('checkBody').innerHTML = c.meals ? rows.join('')
     : '<tr><td colspan="4" class="metric-note">식단을 채우면 자동으로 집계됩니다.</td></tr>';
+  var bn = document.getElementById('balNote');
+  if (bn) bn.style.display = isLdl ? 'block' : 'none';
 
   renderShopping(c);
 }
@@ -1176,10 +1312,10 @@ function check(name, now, target, level){
 /* ---------- 장보기 ---------- */
 var ING_RULES = [
   { cat:'육류·달걀', re:/소고기|돼지|삼겹|목살|갈비|다짐육|닭|소시지|계란|메추리알/ },
-  { cat:'수산·해조', re:/고등어|삼치|갈치|연어|임연수|가자미|코다리|대구|동태|오징어|낙지|새우|홍합|바지락|골뱅이|명란|멸치|황태|북어|어묵|미역|^김$|다시마|톳|파래/ },
-  { cat:'채소·과일', re:/김치|시금치|콩나물|숙주|취나물|깻잎|상추|부추|배추|열무|우거지|아욱|근대|^무$|총각무|당근|양파|대파|마늘|감자|고구마|연근|우엉|도라지|애호박|단호박|가지|오이|파프리카|토마토|브로콜리|양배추|버섯|채소|고사리|미나리|과일|파인애플|레몬|대추|인삼|단무지/ },
+  { cat:'수산·해조', re:/고등어|삼치|꽁치|갈치|연어|임연수|가자미|코다리|대구|동태|오징어|낙지|새우|홍합|바지락|골뱅이|명란|멸치|황태|북어|어묵|미역|^김$|다시마|톳|파래|해초/ },
+  { cat:'채소·과일', re:/김치|시금치|콩나물|숙주|취나물|깻잎|상추|부추|배추|열무|우거지|시래기|아욱|근대|^무$|총각무|당근|양파|대파|마늘|감자|고구마|연근|우엉|도라지|애호박|단호박|가지|오이|파프리카|토마토|브로콜리|양배추|버섯|채소|고사리|미나리|과일|파인애플|레몬|대추|인삼|단무지/ },
   { cat:'두부·유제품', re:/두부|비지|순두부|우유|요거트|치즈|마요네즈/ },
-  { cat:'곡물·면', re:/쌀|잡곡|현미|보리|귀리|오트밀|식빵|소면|메밀면|당면|떡|만두|밀가루|빵가루|튀김가루|전분|찹쌀/ },
+  { cat:'곡물·면', re:/쌀|잡곡|현미|보리|귀리|오트밀|검은콩|렌틸콩|병아리콩|식빵|소면|메밀면|당면|떡|만두|밀가루|빵가루|튀김가루|전분|찹쌀/ },
   { cat:'양념·기타', re:/.*/ }
 ];
 function ingCat(name){
@@ -1208,7 +1344,12 @@ function renderShopping(c){
   }).join('');
 }
 
-function render(){ renderHeader(); renderPlanner(); renderAnalysis(); }
+function renderModeNote(){
+  var el = document.getElementById('ldlNote');
+  if (el) el.style.display = (state.mode === 'ldl') ? 'block' : 'none';
+}
+
+function render(){ renderHeader(); renderModeNote(); renderPlanner(); renderAnalysis(); }
 
 /* ============================================================
    NAV · OPTIONS · EXPORT
@@ -1225,6 +1366,7 @@ document.getElementById('modeSeg').addEventListener('click', function(e){
   state.mode = b.dataset.mode;
   this.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); });
   save();
+  renderModeNote(); renderAnalysis();
   toast('성향을 «' + b.textContent + '»(으)로 바꿨습니다 — 다음 추천부터 반영됩니다');
 });
 document.getElementById('optBreakfast').addEventListener('change', function(){
