@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="혈압관리">
+<title>혈압 관리 · Blood Pressure Log</title>
+<style>
+:root{
+  --bg:#FAF9F5; --surface:#FFFFFF; --surface-2:#F0EEE6; --surface-hover:#F5F1E8;
+  --rule:rgba(25,25,25,.14); --rule-soft:rgba(25,25,25,.07); --rule-strong:rgba(25,25,25,.30);
+  --text:#191919; --text-2:#5C5A54; --text-muted:#6E6B64;
+  --accent:#D97757; --accent-deep:#B24E2C; --accent-soft:#D4A27F; --accent-pale:#EBDBBC;
+  --accent-wash:#F7EFE9;
+  --btn-bg:#B24E2C; --btn-bg-hover:#8F3A1A; --on-accent:#FFFFFF;
+  --ok:#3F6B4E; --info:#4E6288; --danger:#B24E2C;
+  --lvH:#4E6288; --lv0:#3F6B4E; --lv1:#7E5F32; --lv2:#9C4C28; --lv3:#8B3D1D; --lv4:#7A2E12;
+}
+html[data-theme="dark"]{
+  --bg:#262624; --surface:#30302E; --surface-2:#3A3A37; --surface-hover:#403F3C;
+  --rule:rgba(235,219,188,.18); --rule-soft:rgba(235,219,188,.09); --rule-strong:rgba(235,219,188,.36);
+  --text:#F5F4EF; --text-2:#C2BFB6; --text-muted:#A29E96;
+  --accent:#E08A6B; --accent-deep:#D97757; --accent-soft:#D4A27F; --accent-pale:#4A3E36;
+  --accent-wash:#3A322C;
+  --btn-bg:#E08A6B; --btn-bg-hover:#EC9C7F; --on-accent:#23160F;
+  --ok:#84B392; --info:#93A6C7; --danger:#E8886A;
+  --lvH:#93A6C7; --lv0:#84B392; --lv1:#D9B98C; --lv2:#E39B7C; --lv3:#E8886A; --lv4:#F0A183;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR","Segoe UI",system-ui,sans-serif;
+  font-size:16px;line-height:1.75;letter-spacing:-.003em;
+  -webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+  overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom);
+}
+.num{font-variant-numeric:tabular-nums}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+/* ---------- MASTHEAD ---------- */
+.masthead{
+  position:sticky;top:0;z-index:100;background:var(--bg);
+  border-bottom:1px solid var(--rule);
+  display:flex;align-items:center;gap:1rem;
+  padding:.85rem 3rem;
+}
+.masthead::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;
+  background:linear-gradient(90deg,#B24E2C,#CC785C,#D97757,#D4A27F)}
+.mast-title{font-size:.8125rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
+.mast-divider{width:1px;height:20px;background:var(--rule)}
+.mast-sub{font-size:.78rem;color:var(--text-muted);letter-spacing:.02em}
+.mast-tools{margin-left:auto;display:flex;align-items:center;gap:.6rem}
+.mast-stat{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+.icon-btn{width:44px;height:44px;border:1px solid var(--rule);background:none;color:var(--text-muted);
+  display:grid;place-items:center;cursor:pointer;transition:color .15s,border-color .15s}
+.icon-btn:hover{color:var(--accent-deep);border-color:var(--accent)}
+
+/* ---------- TYPE ---------- */
+h1{font-size:clamp(2.15rem,6vw,3.25rem);line-height:1.15;letter-spacing:-.03em;font-weight:800}
+h1 em{font-style:normal;color:var(--accent-deep)}
+h2{font-size:clamp(1.5rem,4vw,2rem);line-height:1.24;letter-spacing:-.025em;font-weight:700;margin-bottom:.8rem}
+h3{font-size:1.15rem;line-height:1.4;letter-spacing:-.015em;font-weight:700;
+  margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--rule-soft)}
+
+/* ---------- HERO ---------- */
+.hero{max-width:1180px;margin:0 auto;padding:4.5rem 3rem 3rem}
+.eyebrow{display:block;max-width:780px;font-size:.7rem;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent-deep);margin-bottom:1.8rem;padding-bottom:.9rem;
+  border-bottom:1px solid var(--rule)}
+.hero-sub{font-size:1.1rem;color:var(--text-2);max-width:640px;margin:1.3rem 0 2.4rem;line-height:1.85}
+.hero-meta{display:flex;flex-wrap:wrap;align-items:baseline;max-width:780px;
+  padding-top:1.1rem;border-top:1px solid var(--rule);font-size:.78rem;color:var(--text-muted);letter-spacing:.02em}
+.hero-meta span + span::before{content:"·";margin:0 .85rem;color:var(--rule-strong);font-weight:700}
+
+/* ---------- EDITORIAL GRID ---------- */
+main{max-width:1180px;margin:0 auto;padding:0 3rem 6rem}
+main > section{display:grid;grid-template-columns:196px minmax(0,1fr);column-gap:3.5rem;
+  padding-top:3.25rem;margin-bottom:3.25rem;border-top:4px solid var(--accent)}
+main > section:first-child{border-top:none;padding-top:1rem}
+main > section > *:not(.section-label){grid-column:2;max-width:780px}
+.section-label{grid-column:1;grid-row:1/200;align-self:start;position:sticky;top:5rem;
+  margin:.4rem 0 0;font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text-muted);line-height:1.65}
+.section-label .bar{display:block;width:26px;height:2px;background:var(--accent);margin-bottom:.7rem}
+.section-desc{font-size:.95rem;color:var(--text-2);margin-bottom:2rem;line-height:1.85}
+
+/* ---------- STAT ROW ---------- */
+.stats{display:flex;flex-wrap:wrap;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.stat{flex:1 1 0;min-width:178px;padding:1.5rem 1.4rem 1.6rem 0}
+.stat + .stat{border-left:1px solid var(--rule-soft);padding-left:1.4rem}
+.stat-label{font-size:.68rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:.7rem}
+.stat-value{font-size:1.75rem;font-weight:800;letter-spacing:-.04em;line-height:1.1;
+  color:var(--accent-deep);font-variant-numeric:tabular-nums}
+.stat-value small{font-size:.44em;font-weight:700;letter-spacing:0;margin-left:.15em}
+.stat-note{font-size:.78rem;color:var(--text-2);margin-top:.7rem;line-height:1.6}
+
+/* ---------- LEVEL (점 + 텍스트, 알약 배지 없음) ---------- */
+.lvl{display:inline-flex;align-items:center;gap:7px;font-size:.72rem;font-weight:700;
+  letter-spacing:.02em;white-space:nowrap}
+.lvl::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.lvl.lvH{color:var(--lvH)} .lvl.lv0{color:var(--lv0)} .lvl.lv1{color:var(--lv1)}
+.lvl.lv2{color:var(--lv2)} .lvl.lv3{color:var(--lv3)} .lvl.lv4{color:var(--lv4)}
+
+/* ---------- CALLOUT ---------- */
+.callout{border-left:2px solid var(--accent);padding:.25rem 0 .25rem 1.6rem;margin:1.6rem 0;
+  font-size:.88rem;color:var(--text-2);line-height:1.85}
+.callout strong{color:var(--text)}
+.callout.alert{display:none;border-left-color:var(--danger);color:var(--danger);font-weight:600}
+.callout.alert.show{display:block}
+
+/* ---------- FORM ---------- */
+.lb{display:block;font-size:.68rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:.5rem}
+.lb .opt{font-weight:600;letter-spacing:.06em;color:var(--rule-strong)}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1.4rem;
+  padding:1.4rem 0;border-bottom:1px solid var(--rule-soft)}
+.form-row:first-of-type{border-top:1px solid var(--rule)}
+.form-block{padding:1.4rem 0;border-bottom:1px solid var(--rule-soft)}
+input[type=date],input[type=time],input[type=number],textarea{
+  width:100%;font:inherit;font-size:.95rem;color:var(--text);background:var(--surface-2);
+  border:1px solid var(--rule);border-radius:0;padding:.6rem .7rem;min-height:44px;
+  -webkit-appearance:none;appearance:none}
+input[type=number]{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;padding:.35rem .6rem;min-height:52px}
+textarea{min-height:80px;resize:vertical;line-height:1.6}
+input:focus-visible,textarea:focus-visible,button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+.hint{font-size:.78rem;color:var(--text-muted);margin-top:.6rem;line-height:1.7}
+.preview{display:flex;align-items:baseline;gap:.9rem;min-height:30px;padding-top:.2rem;
+  font-size:.9rem;color:var(--text-2);font-variant-numeric:tabular-nums}
+
+/* ---------- CHIPS ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chip{font:inherit;font-size:.78rem;font-weight:600;letter-spacing:.02em;padding:.5rem .85rem;
+  min-height:44px;display:inline-flex;align-items:center;border-radius:0;cursor:pointer;
+  background:none;border:1px solid var(--rule);color:var(--text-2);transition:.15s}
+.chip:hover{border-color:var(--rule-strong);color:var(--text)}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);
+  color:var(--accent-deep);font-weight:700}
+
+/* ---------- BUTTONS ---------- */
+.btn{font:inherit;font-weight:700;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.75rem 1.5rem;min-height:44px;border-radius:0;border:1px solid transparent;
+  background:var(--btn-bg);color:var(--on-accent);cursor:pointer;transition:.15s}
+.btn:hover{background:var(--btn-bg-hover)}
+.btn.ghost{background:none;border-color:var(--rule-strong);color:var(--text)}
+.btn.ghost:hover{background:none;border-color:var(--accent);color:var(--accent-deep)}
+.btn.sm{padding:.5rem .9rem;font-size:.7rem;letter-spacing:.08em}
+.btn.danger{background:none;border-color:var(--rule-strong);color:var(--danger)}
+.btn.danger:hover{border-color:var(--danger)}
+.btn-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding-top:1.6rem}
+.msg{font-size:.8rem;letter-spacing:0;text-transform:none;font-weight:500}
+
+/* ---------- TABS ---------- */
+.tabs{display:flex;flex-wrap:wrap;gap:0 1.5rem;padding-bottom:.9rem;margin-bottom:.2rem;
+  border-bottom:1px solid var(--rule)}
+.tab{font:inherit;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  background:none;border:none;padding:.5rem 0;min-height:44px;color:var(--text-muted);cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-.95rem;transition:color .15s,border-color .15s}
+.tab:hover{color:var(--text)}
+.tab[aria-pressed="true"]{color:var(--accent-deep);border-bottom-color:var(--accent)}
+
+/* ---------- CHART ---------- */
+.chart-wrap{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:1.5rem 0 1.2rem}
+.chart-cap{font-size:.64rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);line-height:1.7;margin-bottom:1.1rem}
+svg.chart{display:block;width:100%;height:auto}
+.chart-scroll{overflow-x:auto}
+.legend{display:flex;flex-wrap:wrap;gap:0 1.3rem;margin-top:1rem;padding-top:.9rem;
+  border-top:1px solid var(--rule-soft);font-size:.7rem;font-weight:600;letter-spacing:.04em;color:var(--text-muted)}
+.legend span{display:inline-flex;align-items:center;gap:.5rem}
+.legend i{display:inline-block;width:14px;height:0;border-top-width:2px;flex-shrink:0}
+.empty{padding:2rem 0;color:var(--text-muted);font-size:.88rem}
+
+/* ---------- DISTRIBUTION ---------- */
+.dist{display:flex;height:8px;overflow:hidden;background:var(--rule-soft)}
+.dist span{display:block;height:100%}
+.dist-legend{display:flex;flex-wrap:wrap;gap:.4rem 1.3rem;margin-top:.9rem;
+  font-size:.72rem;font-weight:600;color:var(--text-2)}
+.dist-legend b{font-weight:800;font-variant-numeric:tabular-nums}
+.dist-legend i{display:inline-block;width:8px;height:8px;margin-right:.45rem;vertical-align:-1px}
+
+/* ---------- RECORD LOG ---------- */
+.day{display:flex;align-items:baseline;gap:.7rem;margin:2rem 0 0;padding:.6rem 0;
+  border-bottom:1px solid var(--rule);font-size:.68rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+.day em{font-style:normal;font-size:.85rem;letter-spacing:-.01em;text-transform:none;color:var(--text)}
+.day span{margin-left:auto;font-weight:600;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.rec{display:grid;grid-template-columns:4.6rem 1fr auto;align-items:baseline;column-gap:1.1rem;
+  padding:1rem 0;border-bottom:1px solid var(--rule-soft)}
+.rec-time{font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--text-muted);
+  font-variant-numeric:tabular-nums}
+.rec-time em{display:block;font-style:normal;font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--rule-strong);margin-top:.15rem}
+.rec-main{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .9rem}
+.rec-val{font-size:1.3rem;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.rec-val small{font-size:.55em;font-weight:600;color:var(--text-muted);margin-left:.4rem;letter-spacing:0}
+.rec-med{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+.rec-acts{display:flex;gap:.4rem}
+.rec-memo{grid-column:2/4;margin-top:.6rem;padding-left:1rem;border-left:1px solid var(--rule);
+  font-size:.85rem;color:var(--text-2);line-height:1.8;white-space:pre-wrap}
+.rec-tags{display:flex;flex-wrap:wrap;gap:0 1rem;margin-top:.45rem;
+  font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.rec-tags span{display:inline-flex;align-items:center;gap:.45rem;white-space:pre}
+.rec-tags span::before{content:"";width:9px;height:1px;background:var(--accent);opacity:.75}
+.rec.editing{background:var(--accent-wash);box-shadow:-1rem 0 0 var(--accent-wash),1rem 0 0 var(--accent-wash)}
+@media (max-width:520px){
+  .rec{grid-template-columns:1fr auto}
+  .rec-time{grid-column:1/3;margin-bottom:.2rem}
+  .rec-time em{display:inline;margin-left:.6rem}
+  .rec-memo{grid-column:1/3;padding-left:.9rem}
+}
+
+/* ---------- FOOTER ---------- */
+.notice-wrap{max-width:1180px;margin:0 auto;padding:0 3rem}
+.colophon{max-width:1180px;margin:0 auto;padding:2rem 3rem 3rem}
+.colophon > div{max-width:780px;padding-top:1.2rem;border-top:1px solid var(--rule);
+  font-size:.76rem;color:var(--text-muted);line-height:1.85}
+.colophon strong{color:var(--text-2);font-weight:700}
+
+/* ---------- PRINT ---------- */
+.print-only{display:none}
+@media print{
+  body{background:#fff;color:#000}
+  .no-print{display:none!important}
+  .print-only{display:block}
+  table.psum{width:100%;border-collapse:collapse;font-size:11px}
+  table.psum th,table.psum td{border-bottom:1px solid #999;padding:5px 6px;text-align:center}
+  table.psum th{border-bottom:1px solid #333;text-transform:uppercase;letter-spacing:.1em;font-size:9px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:1024px){
+  main > section{grid-template-columns:130px minmax(0,1fr);column-gap:2.25rem}
+  .hero{padding:3.5rem 2rem 2.5rem}
+  main{padding:0 2rem 5rem}
+  .masthead{padding:.8rem 2rem}
+  .notice-wrap{padding:0 2rem}
+  .colophon{padding:2rem 2rem 3rem}
+}
+@media (max-width:768px){
+  body{line-height:1.7}
+  .hero{padding:2.5rem 1.25rem 2rem}
+  main{padding:0 1.25rem 4rem}
+  .masthead{padding:.75rem 1.25rem;gap:.7rem}
+  .mast-sub,.mast-divider{display:none}
+  .mast-title{font-size:.72rem;letter-spacing:.1em;white-space:nowrap}
+  .mast-stat{white-space:nowrap;font-size:.64rem}
+  .mast-tools{gap:.4rem;flex-shrink:0}
+  .notice-wrap{padding:0 1.25rem}
+  .colophon{padding:1.5rem 1.25rem 2.5rem}
+  main > section{grid-template-columns:1fr;padding-top:2.25rem;margin-bottom:2.25rem;border-top-width:3px}
+  main > section > *:not(.section-label){grid-column:1}
+  .section-label{grid-column:1;grid-row:auto;position:static;margin:0 0 1rem}
+  .stats{display:block}
+  .stat{padding:1.2rem 0}
+  .stat + .stat{border-left:none;padding-left:0;border-top:1px solid var(--rule-soft)}
+  .stat-value{font-size:1.85rem}
+  .rec.editing{box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead no-print">
+  <div class="mast-title">Blood Pressure Log</div>
+  <div class="mast-divider"></div>
+  <div class="mast-sub">혈압 관리</div>
+  <div class="mast-tools">
+    <div class="mast-stat" id="mastStat"></div>
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="테마 전환" title="라이트/다크 전환">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+    </button>
+    <button class="icon-btn" id="printBtn" type="button" aria-label="진료용 요약 인쇄" title="진료용 요약 인쇄">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 3 18 3 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>
+    </button>
+  </div>
+</header>
+
+<section class="hero no-print" aria-labelledby="heroTitle">
+  <div class="eyebrow">Personal Health Log</div>
+  <h1 id="heroTitle">매일의 혈압을<br><em>기록</em>합니다</h1>
+  <p class="hero-sub">측정값을 남기고, 몸에 특이한 점이 있으면 함께 적어 둡니다.
+    시간이 쌓이면 아침·저녁의 차이와 생활 습관의 영향이 숫자로 보입니다.</p>
+  <div class="hero-meta" id="heroMeta"></div>
+</section>
+
+<div class="notice-wrap no-print"><div id="storageWarn" class="callout alert" role="status"></div></div>
+
+<main class="no-print">
+
+  <section aria-labelledby="recTitle">
+    <div class="section-label"><span class="bar"></span>Record</div>
+    <h2 id="recTitle">오늘 측정</h2>
+    <p class="section-desc">날짜·시각·시간대는 자동으로 채워집니다. 수축기와 이완기만 넣으면 저장됩니다.
+      특이사항은 비워 두어도 됩니다.</p>
+
+    <div id="crisisAlert" class="callout alert" role="alert"></div>
+
+    <form id="bpForm" novalidate>
+      <div class="form-row">
+        <div><label class="lb" for="fDate">날짜</label><input type="date" id="fDate" required></div>
+        <div><label class="lb" for="fTime">시각</label><input type="time" id="fTime" required></div>
+      </div>
+
+      <div class="form-block">
+        <span class="lb" id="slotLabel">시간대</span>
+        <div class="chips" id="slotChips" role="group" aria-labelledby="slotLabel"></div>
+      </div>
+
+      <div class="form-row">
+        <div><label class="lb" for="fSys">수축기 <span class="opt">최고</span></label>
+          <input type="number" id="fSys" inputmode="numeric" min="50" max="300" step="1" placeholder="120" required></div>
+        <div><label class="lb" for="fDia">이완기 <span class="opt">최저</span></label>
+          <input type="number" id="fDia" inputmode="numeric" min="30" max="200" step="1" placeholder="80" required></div>
+        <div><label class="lb" for="fPulse">맥박 <span class="opt">선택</span></label>
+          <input type="number" id="fPulse" inputmode="numeric" min="20" max="250" step="1" placeholder="70"></div>
+      </div>
+
+      <div class="form-block">
+        <div class="preview" id="livePreview" aria-live="polite"></div>
+      </div>
+
+      <div class="form-block">
+        <span class="lb" id="tagLabel">특이사항 태그 <span class="opt">선택 · 복수 가능</span></span>
+        <div class="chips" id="tagChips" role="group" aria-labelledby="tagLabel"></div>
+      </div>
+
+      <div class="form-block">
+        <label class="lb" for="fNote">메모 <span class="opt">선택</span></label>
+        <textarea id="fNote" placeholder="예: 어제 늦게 잠. 아침에 뒷목이 뻐근했음. 약은 8시에 복용."></textarea>
+        <p class="hint">몸 상태·수면·식사·복약처럼 혈압에 영향을 줄 만한 일을 적어 두면 나중에 패턴이 보입니다.</p>
+      </div>
+
+      <div class="form-block">
+        <div class="chips"><button type="button" class="chip" id="medChip" aria-pressed="false">혈압약 복용함</button></div>
+      </div>
+
+      <div class="btn-row">
+        <button type="submit" class="btn" id="saveBtn">기록 저장</button>
+        <button type="button" class="btn ghost" id="cancelEditBtn" style="display:none">수정 취소</button>
+        <span class="msg" id="formMode"></span>
+        <span class="msg" id="formMsg" role="status"></span>
+      </div>
+    </form>
+  </section>
+
+  <section aria-labelledby="sumTitle">
+    <div class="section-label"><span class="bar"></span>Summary</div>
+    <h2 id="sumTitle">한눈에 보기</h2>
+    <p class="section-desc">평균은 오늘을 포함한 최근 기간의 산술 평균입니다.
+      목표는 가정혈압 기준 <strong>135/85 mmHg 미만</strong>입니다.</p>
+    <div class="stats" id="statRow" aria-label="요약 지표"></div>
+  </section>
+
+  <section aria-labelledby="trendTitle">
+    <div class="section-label"><span class="bar"></span>Trend</div>
+    <h2 id="trendTitle">추이</h2>
+    <div class="tabs" id="rangeTabs" role="group" aria-label="기간 선택"></div>
+    <div class="chart-wrap">
+      <div class="chart-cap" id="chartCap">수축기 · 이완기 · 맥박 (mmHg / bpm)</div>
+      <div class="chart-scroll" id="chartBox"></div>
+      <div class="legend" id="chartLegend"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="patTitle">
+    <div class="section-label"><span class="bar"></span>Pattern</div>
+    <h2 id="patTitle">패턴</h2>
+    <p class="section-desc" id="patDesc"></p>
+    <div id="distBox"></div>
+    <h3>시간대별 평균</h3>
+    <div class="stats" id="slotStats"></div>
+  </section>
+
+  <section aria-labelledby="logTitle">
+    <div class="section-label"><span class="bar"></span>Log</div>
+    <h2 id="logTitle">기록</h2>
+    <div class="tabs" id="filterTabs" role="group" aria-label="목록 필터"></div>
+    <div id="recList"></div>
+  </section>
+
+  <section aria-labelledby="dataTitle">
+    <div class="section-label"><span class="bar"></span>Data</div>
+    <h2 id="dataTitle">데이터 관리</h2>
+    <p class="section-desc">기록은 서버로 전송되지 않고 이 브라우저에만 저장됩니다.
+      기기를 바꾸거나 브라우저 데이터를 지우면 사라지므로 가끔 백업해 두세요.</p>
+    <div class="btn-row" style="padding-top:0">
+      <button type="button" class="btn ghost sm" id="csvBtn">CSV 내보내기</button>
+      <button type="button" class="btn ghost sm" id="jsonBtn">JSON 백업</button>
+      <button type="button" class="btn ghost sm" id="importBtn">파일 가져오기</button>
+      <button type="button" class="btn ghost sm" id="printBtn2">진료용 요약 인쇄</button>
+      <button type="button" class="btn danger sm" id="wipeBtn">전체 삭제</button>
+      <input type="file" id="fileInput" accept=".csv,.json,text/csv,application/json" class="sr-only" aria-label="가져올 파일 선택">
+    </div>
+    <p class="hint" id="toolMsg"></p>
+  </section>
+
+</main>
+
+<section class="print-only" id="printArea" aria-hidden="true"></section>
+
+<footer class="colophon no-print">
+  <div>
+    <strong>참고용 기록입니다.</strong> 진단·약 조절은 반드시 의료진과 상의하세요.
+    분류는 대한고혈압학회 진료실 혈압 기준이며, 가정에서 측정한 혈압은 135/85 mmHg 이상일 때 고혈압으로 봅니다.<br>
+    저장 위치 — 이 브라우저의 localStorage · 외부 전송 없음 · 오프라인 동작
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- 상수 · 계약 (bp-domain.md) ---------- */
+var STORE_KEY = "bpTracker.v1";
+var THEME_KEY = "bpTracker.theme";
+var SCHEMA_VERSION = 1;
+var GOAL_SYS = 135, GOAL_DIA = 85;           /* 가정혈압 고혈압 기준선 */
+var SLOTS = ["아침","점심","저녁","취침전","기타"];
+var TAGS = ["두통","어지러움","가슴답답","두근거림","부종","수면부족","스트레스","음주","카페인","짠 음식","운동 후","감기약 복용","약 거름"];
+var LEVELS = [
+  {key:"lv0", name:"정상"},
+  {key:"lv1", name:"주의혈압"},
+  {key:"lv2", name:"고혈압 전단계"},
+  {key:"lv3", name:"고혈압 1기"},
+  {key:"lv4", name:"고혈압 2기"}
+];
+var HYPO = {key:"lvH", name:"저혈압", level:-1};
+
+/* 수축기·이완기 각각의 등급을 구해 더 높은 쪽을 채택한다. 경계값 포함 규칙 주의. */
+function sysLevel(s){ if(s<120) return 0; if(s<=129) return 1; if(s<=139) return 2; if(s<=159) return 3; return 4; }
+function diaLevel(d){ if(d<80) return 0; if(d<=89) return 2; if(d<=99) return 3; return 4; }
+function classify(sys, dia){
+  if(sys < 90 || dia < 60) return {key:HYPO.key, name:HYPO.name, level:-1};
+  var lv = Math.max(sysLevel(sys), diaLevel(dia));
+  var name = LEVELS[lv].name;
+  if(lv >= 3 && sys >= 140 && dia < 90) name = "수축기 단독 고혈압";
+  return {key:LEVELS[lv].key, name:name, level:lv};
+}
+function isCrisis(sys, dia){ return sys >= 180 || dia >= 120; }
+
+/* ---------- 저장소 ---------- */
+var state = {records:[], range:30, filter:"all", editingId:null, draftSlot:"아침", draftTags:[], draftMed:false};
+var storageOK = true;
+
+function loadStore(){
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return;
+    var data = JSON.parse(raw);
+    var recs = Array.isArray(data) ? data : (data.records || []);
+    state.records = recs.filter(validRecord).map(normalize);
+  }catch(e){
+    warnStorage("저장된 기록을 읽지 못했습니다. 백업 파일이 있다면 '파일 가져오기'로 복구하세요.");
+  }
+}
+function saveStore(){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify({schemaVersion:SCHEMA_VERSION, records:state.records}));
+    return true;
+  }catch(e){
+    storageOK = false;
+    warnStorage("저장에 실패했습니다(저장 공간 부족 또는 시크릿 모드). 지금 화면의 기록은 새로고침하면 사라집니다 — 'JSON 백업'으로 먼저 내려받으세요.");
+    return false;
+  }
+}
+function warnStorage(msg){
+  var el = document.getElementById("storageWarn");
+  el.className = "callout alert show";
+  el.textContent = msg;
+}
+function validRecord(r){ return r && typeof r.date === "string" && isFinite(r.sys) && isFinite(r.dia); }
+function normalize(r){
+  return {
+    id: r.id || uid(),
+    date: r.date,
+    time: r.time || "00:00",
+    slot: SLOTS.indexOf(r.slot) >= 0 ? r.slot : "기타",
+    sys: Math.round(Number(r.sys)),
+    dia: Math.round(Number(r.dia)),
+    pulse: (r.pulse === null || r.pulse === undefined || r.pulse === "") ? null : Math.round(Number(r.pulse)),
+    med: !!r.med,
+    tags: Array.isArray(r.tags) ? r.tags.filter(function(t){return !!t;}) : [],
+    note: typeof r.note === "string" ? r.note : ""
+  };
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+/* ---------- 날짜 유틸 (로컬 기준) ---------- */
+function pad(n){ return (n<10?"0":"") + n; }
+function toDateStr(d){ return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+function todayStr(){ return toDateStr(new Date()); }
+function shiftDays(dateStr, n){
+  var p = dateStr.split("-");
+  var d = new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+  d.setDate(d.getDate() + n);
+  return toDateStr(d);
+}
+function weekdayKo(dateStr){
+  var p = dateStr.split("-");
+  var d = new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+  return ["일","월","화","수","목","금","토"][d.getDay()];
+}
+function fmtDay(dateStr){ var p = dateStr.split("-"); return p[1] + "월 " + p[2] + "일 (" + weekdayKo(dateStr) + ")"; }
+function fmtShort(dateStr){ var p = dateStr.split("-"); return p[1] + "/" + p[2]; }
+
+/* 오늘 포함 최근 days일. days=0 이면 전체. 경계 포함(N일 전 이상). */
+function inRange(rec, days){
+  if(!days) return true;
+  return rec.date >= shiftDays(todayStr(), -(days-1));
+}
+function sortedAsc(list){
+  return list.slice().sort(function(a,b){
+    if(a.date !== b.date) return a.date < b.date ? -1 : 1;
+    if(a.time !== b.time) return a.time < b.time ? -1 : 1;
+    return 0;
+  });
+}
+function avg(nums){
+  if(!nums.length) return null;
+  var s = 0, i;
+  for(i=0;i<nums.length;i++) s += nums[i];
+  return Math.round((s/nums.length) * 10) / 10;
+}
+function fmtAvg(v){ return v === null ? "–" : (Math.round(v*10)/10).toFixed(v % 1 === 0 ? 0 : 1); }
+
+function periodStats(days){
+  var list = state.records.filter(function(r){ return inRange(r, days); });
+  var sys = list.map(function(r){ return r.sys; });
+  var dia = list.map(function(r){ return r.dia; });
+  var goalHit = list.filter(function(r){ return r.sys < GOAL_SYS && r.dia < GOAL_DIA; }).length;
+  var dayset = {};
+  list.forEach(function(r){ dayset[r.date] = 1; });
+  return {
+    count: list.length,
+    days: Object.keys(dayset).length,
+    sys: avg(sys), dia: avg(dia),
+    pulse: avg(list.filter(function(r){return r.pulse!==null;}).map(function(r){return r.pulse;})),
+    goalRate: list.length ? Math.round(goalHit / list.length * 100) : null,
+    list: list
+  };
+}
+function streakDays(){
+  if(!state.records.length) return 0;
+  var dayset = {};
+  state.records.forEach(function(r){ dayset[r.date] = 1; });
+  var days = Object.keys(dayset).sort();
+  var last = days[days.length-1];
+  var today = todayStr();
+  if(last !== today && last !== shiftDays(today, -1)) return 0;  /* 끊긴 연속 기록 */
+  var n = 0, cur = last;
+  while(dayset[cur]){ n++; cur = shiftDays(cur, -1); }
+  return n;
+}
+
+/* ---------- HTML 이스케이프 ---------- */
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+  });
+}
+
+
+/* ---------- 렌더: 히어로 메타 · 마스트헤드 ---------- */
+function renderHeader(){
+  var asc = sortedAsc(state.records);
+  var last = asc.length ? asc[asc.length-1] : null;
+  var meta = document.getElementById("heroMeta");
+  var streak = streakDays();
+  if(last){
+    var c = classify(last.sys, last.dia);
+    meta.innerHTML = "<span>마지막 기록 " + esc(fmtDay(last.date)) + " " + esc(last.time) + "</span>" +
+      '<span class="num">' + last.sys + "/" + last.dia + " mmHg</span>" +
+      '<span><span class="lvl ' + c.key + '">' + esc(c.name) + "</span></span>" +
+      "<span>총 " + state.records.length + "회 기록</span>";
+  }else{
+    meta.innerHTML = "<span>아직 기록이 없습니다</span><span>아래에서 첫 측정을 남겨 보세요</span>";
+  }
+  document.getElementById("mastStat").textContent = streak ? "연속 " + streak + "일" : "";
+}
+
+/* ---------- 렌더: 스탯 로우 ---------- */
+function statCard(label, value, note){
+  return '<div class="stat"><div class="stat-label">' + esc(label) + '</div>' +
+    '<div class="stat-value">' + value + '</div>' +
+    '<div class="stat-note">' + note + "</div></div>";
+}
+function renderStatRow(){
+  var asc = sortedAsc(state.records);
+  var last = asc.length ? asc[asc.length-1] : null;
+  var w = periodStats(7), m = periodStats(30);
+  var html = "";
+
+  if(last){
+    var c = classify(last.sys, last.dia);
+    html += statCard("최근 측정", last.sys + "/" + last.dia,
+      '<span class="lvl ' + c.key + '">' + esc(c.name) + "</span><br>" +
+      esc(fmtShort(last.date) + " " + last.time + " · " + last.slot));
+  }else{
+    html += statCard("최근 측정", "–", "첫 기록을 남겨 보세요");
+  }
+  html += statCard("7일 평균", w.sys === null ? "–" : fmtAvg(w.sys) + "/" + fmtAvg(w.dia),
+    w.count ? esc(w.count + "회 · " + w.days + "일 기록") : "기록 없음");
+  html += statCard("30일 평균", m.sys === null ? "–" : fmtAvg(m.sys) + "/" + fmtAvg(m.dia),
+    m.count ? esc(m.count + "회 · " + m.days + "일 기록") : "기록 없음");
+  html += statCard("목표 달성률", m.goalRate === null ? "–" : m.goalRate + "<small>%</small>",
+    "최근 30일 · " + GOAL_SYS + "/" + GOAL_DIA + " 미만");
+
+  document.getElementById("statRow").innerHTML = html;
+}
+
+/* ---------- 렌더: 차트 (인라인 SVG) ---------- */
+function renderChart(){
+  var box = document.getElementById("chartBox");
+  var legend = document.getElementById("chartLegend");
+  var data = sortedAsc(state.records.filter(function(r){ return inRange(r, state.range); }));
+  document.getElementById("chartCap").textContent =
+    rangeLabel(state.range) + " · 수축기 · 이완기" + (data.some(function(r){return r.pulse!==null;}) ? " · 맥박" : "") +
+    " (mmHg / bpm)";
+
+  if(!data.length){
+    box.innerHTML = '<div class="empty">이 기간에 기록이 없습니다. 기간을 넓히거나 새 기록을 남겨 보세요.</div>';
+    legend.innerHTML = "";
+    return;
+  }
+
+  var cw = Math.round(box.clientWidth) || 720;
+  lastChartW = cw;
+  var W = Math.max(320, Math.min(760, cw));
+  var H = W < 480 ? 230 : 270;
+  var padL = 34, padR = 14, padT = 14, padB = 32;
+  var hasPulse = data.some(function(r){ return r.pulse !== null; });
+  var vals = [];
+  data.forEach(function(r){ vals.push(r.sys, r.dia); if(r.pulse!==null) vals.push(r.pulse); });
+  var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+  var yMin = Math.floor((Math.min(lo, 60) - 10) / 20) * 20;
+  var yMax = Math.ceil((Math.max(hi, 150) + 10) / 20) * 20;
+  var n = data.length;
+  var plotW = W - padL - padR, plotH = H - padT - padB;
+
+  function X(i){ return n === 1 ? padL + plotW/2 : padL + i * plotW / (n - 1); }
+  function Y(v){ return padT + plotH - (v - yMin) / (yMax - yMin) * plotH; }
+
+  var s = '<svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="혈압 추이 그래프">';
+  for(var g = yMin; g <= yMax; g += 20){
+    s += '<line x1="' + padL + '" y1="' + Y(g).toFixed(1) + '" x2="' + (W-padR) + '" y2="' + Y(g).toFixed(1) +
+         '" stroke="var(--rule-soft)" stroke-width="1"/>';
+    s += '<text x="' + (padL-8) + '" y="' + (Y(g)+3.5).toFixed(1) + '" text-anchor="end" font-size="9.5" ' +
+         'letter-spacing=".06em" fill="var(--text-muted)">' + g + "</text>";
+  }
+  [[GOAL_SYS, "기준 " + GOAL_SYS],[GOAL_DIA, "기준 " + GOAL_DIA]].forEach(function(pair){
+    if(pair[0] < yMin || pair[0] > yMax) return;
+    s += '<line x1="' + padL + '" y1="' + Y(pair[0]).toFixed(1) + '" x2="' + (W-padR) + '" y2="' + Y(pair[0]).toFixed(1) +
+         '" stroke="var(--ok)" stroke-width="1" stroke-dasharray="4 4"/>';
+    s += '<text x="' + (W-padR) + '" y="' + (Y(pair[0])-5).toFixed(1) + '" text-anchor="end" font-size="9" ' +
+         'letter-spacing=".1em" fill="var(--ok)">' + esc(pair[1]) + "</text>";
+  });
+
+  function line(getter, color, dash, width){
+    var d = data.map(function(r,i){
+      var v = getter(r);
+      return v === null ? null : X(i).toFixed(1) + " " + Y(v).toFixed(1);
+    }).filter(function(pt){ return pt !== null; });
+    if(!d.length) return "";
+    return '<path d="M' + d.join(" L") + '" fill="none" stroke="' + color + '" stroke-width="' + width +
+      '" stroke-linejoin="round" stroke-linecap="round"' + (dash ? ' stroke-dasharray="' + dash + '"' : "") + "/>";
+  }
+  if(hasPulse) s += line(function(r){return r.pulse;}, "var(--accent-soft)", "1 4", 1.4);
+  s += line(function(r){return r.dia;}, "var(--info)", "6 4", 1.8);
+  s += line(function(r){return r.sys;}, "var(--accent-deep)", "", 2.2);
+
+  data.forEach(function(r,i){
+    var x = X(i).toFixed(1);
+    var c = classify(r.sys, r.dia);
+    var tip = fmtShort(r.date) + " " + r.time + " · " + r.slot + " · " + r.sys + "/" + r.dia +
+      (r.pulse !== null ? " · 맥박 " + r.pulse : "") + " · " + c.name + (r.note ? " · " + r.note.slice(0,40) : "");
+    s += "<g><title>" + esc(tip) + "</title>";
+    s += '<rect x="' + (X(i)-6).toFixed(1) + '" y="' + padT + '" width="12" height="' + plotH + '" fill="transparent"/>';
+    if(r.pulse !== null) s += '<circle cx="' + x + '" cy="' + Y(r.pulse).toFixed(1) + '" r="1.8" fill="var(--accent-soft)"/>';
+    s += '<rect x="' + (X(i)-2.4).toFixed(1) + '" y="' + (Y(r.dia)-2.4).toFixed(1) + '" width="4.8" height="4.8" fill="var(--info)"/>';
+    s += '<circle cx="' + x + '" cy="' + Y(r.sys).toFixed(1) + '" r="2.9" fill="var(--accent-deep)"/>';
+    if(r.note || r.tags.length){
+      s += '<line x1="' + x + '" y1="' + (padT+plotH+7) + '" x2="' + x + '" y2="' + (padT+plotH+12) +
+           '" stroke="var(--accent)" stroke-width="1.5"/>';
+    }
+    s += "</g>";
+  });
+
+  var step = Math.max(1, Math.ceil(n / (W < 480 ? 4 : 6)));
+  for(var i = 0; i < n; i += step){
+    s += '<text x="' + X(i).toFixed(1) + '" y="' + (H-7) + '" text-anchor="middle" font-size="9.5" ' +
+      'letter-spacing=".08em" fill="var(--text-muted)">' + fmtShort(data[i].date) + "</text>";
+  }
+  s += "</svg>";
+  box.innerHTML = s;
+
+  legend.innerHTML =
+    '<span><i style="border-top-style:solid;border-color:var(--accent-deep)"></i>수축기</span>' +
+    '<span><i style="border-top-style:dashed;border-color:var(--info)"></i>이완기</span>' +
+    (hasPulse ? '<span><i style="border-top-style:dotted;border-color:var(--accent-soft)"></i>맥박</span>' : "") +
+    '<span><i style="border-top-style:dashed;border-color:var(--ok)"></i>가정혈압 기준 ' + GOAL_SYS + "/" + GOAL_DIA + "</span>" +
+    "<span>축 아래 눈금 = 특이사항 있는 기록</span>";
+}
+function rangeLabel(days){ return days === 0 ? "전체 기간" : "최근 " + days + "일"; }
+
+/* 차트는 컨테이너 폭에 맞춰 그린다(다운스케일 없이 축 글자를 선명하게). 폭이 바뀌면 다시 그린다. */
+var lastChartW = 0, chartObserver = null, chartRedrawTimer = null;
+function maybeRedrawChart(){
+  var box = document.getElementById("chartBox");
+  var w = Math.round(box.clientWidth);
+  if(!w || Math.abs(w - lastChartW) < 8) return;
+  renderChart();
+}
+function watchChartWidth(){
+  /* 최초 렌더는 레이아웃이 확정되기 전일 수 있어 한 프레임 뒤 다시 확인한다 */
+  if(window.requestAnimationFrame) requestAnimationFrame(maybeRedrawChart);
+  /* 옵저버는 변수에 담아 둔다(참조가 없으면 수거될 수 있다) */
+  if(window.ResizeObserver){
+    chartObserver = new ResizeObserver(maybeRedrawChart);
+    chartObserver.observe(document.getElementById("chartBox"));
+  }
+  window.addEventListener("resize", function(){
+    clearTimeout(chartRedrawTimer);
+    chartRedrawTimer = setTimeout(maybeRedrawChart, 150);
+  });
+}
+
+/* ---------- 렌더: 분포 · 시간대 ---------- */
+function renderPattern(){
+  var st = periodStats(state.range);
+  var desc = document.getElementById("patDesc");
+  var box = document.getElementById("distBox");
+
+  if(!st.count){
+    desc.textContent = rangeLabel(state.range) + "에 기록이 없습니다.";
+    box.innerHTML = "";
+    document.getElementById("slotStats").innerHTML = "";
+    return;
+  }
+  desc.innerHTML = rangeLabel(state.range) + " " + st.count + "회 측정의 등급 분포입니다. " +
+    "아침·저녁 평균이 다르다면 측정 시간대의 영향을 함께 보세요.";
+
+  var buckets = [{k:"lvH",n:"저혈압",c:0},{k:"lv0",n:"정상",c:0},{k:"lv1",n:"주의",c:0},
+                 {k:"lv2",n:"전단계",c:0},{k:"lv3",n:"1기",c:0},{k:"lv4",n:"2기",c:0}];
+  var idx = {lvH:0,lv0:1,lv1:2,lv2:3,lv3:4,lv4:5};
+  st.list.forEach(function(r){ buckets[idx[classify(r.sys,r.dia).key]].c++; });
+  var used = buckets.filter(function(b){ return b.c > 0; });
+
+  box.innerHTML =
+    '<div class="dist" role="img" aria-label="등급 분포">' +
+    used.map(function(b){
+      return '<span style="width:' + (b.c/st.count*100).toFixed(2) + '%;background:var(--' + b.k + ')" title="' +
+        esc(b.n) + " " + b.c + '회"></span>';
+    }).join("") + "</div>" +
+    '<div class="dist-legend">' + used.map(function(b){
+      return '<span><i style="background:var(--' + b.k + ')"></i>' + esc(b.n) + " <b>" + b.c + "</b>회 · " +
+        Math.round(b.c/st.count*100) + "%</span>";
+    }).join("") + "</div>";
+
+  var cards = "";
+  SLOTS.forEach(function(slot){
+    var l = st.list.filter(function(r){ return r.slot === slot; });
+    if(!l.length) return;
+    cards += statCard(slot, fmtAvg(avg(l.map(function(r){return r.sys;}))) + "/" +
+      fmtAvg(avg(l.map(function(r){return r.dia;}))), l.length + "회 측정");
+  });
+  var medN = st.list.filter(function(r){ return r.med; }).length;
+  cards += statCard("복약 기록", medN + "<small>회</small>", "전체 " + st.count + "회 중");
+  document.getElementById("slotStats").innerHTML = cards;
+}
+
+/* ---------- 렌더: 기록 목록 ---------- */
+function renderList(){
+  var box = document.getElementById("recList");
+  var list = state.records.filter(function(r){ return inRange(r, state.range); });
+  if(state.filter === "note") list = list.filter(function(r){ return r.note || r.tags.length; });
+  if(state.filter === "high") list = list.filter(function(r){ return classify(r.sys, r.dia).level >= 3; });
+
+  if(!list.length){
+    box.innerHTML = '<div class="empty">' +
+      (state.records.length ? "조건에 맞는 기록이 없습니다." : "아직 기록이 없습니다. 위에서 첫 측정을 저장해 보세요.") +
+      "</div>";
+    return;
+  }
+  var desc = sortedAsc(list).reverse();
+  var html = "", curDay = null;
+  desc.forEach(function(r){
+    if(r.date !== curDay){
+      curDay = r.date;
+      var dayRecs = desc.filter(function(x){ return x.date === curDay; });
+      html += '<div class="day"><em>' + esc(fmtDay(curDay)) + "</em>" +
+        "<span>" + dayRecs.length + "회 · 평균 " +
+        fmtAvg(avg(dayRecs.map(function(x){return x.sys;}))) + "/" +
+        fmtAvg(avg(dayRecs.map(function(x){return x.dia;}))) + "</span></div>";
+    }
+    var c = classify(r.sys, r.dia);
+    html += '<div class="rec' + (state.editingId === r.id ? " editing" : "") + '">' +
+      '<div class="rec-time">' + esc(r.time) + "<em>" + esc(r.slot) + "</em></div>" +
+      '<div class="rec-main">' +
+        '<span class="rec-val">' + r.sys + " / " + r.dia +
+          (r.pulse !== null ? "<small>맥박 " + r.pulse + "</small>" : "") + "</span>" +
+        '<span class="lvl ' + c.key + '">' + esc(c.name) + "</span>" +
+        (r.med ? '<span class="rec-med">복약</span>' : "") +
+      "</div>" +
+      '<div class="rec-acts">' +
+        '<button type="button" class="btn ghost sm" data-edit="' + r.id + '">수정</button>' +
+        '<button type="button" class="btn danger sm" data-del="' + r.id + '">삭제</button>' +
+      "</div>";
+    if(r.note || r.tags.length){
+      html += '<div class="rec-memo">' + (r.note ? esc(r.note) : "") +
+        (r.tags.length ? '<div class="rec-tags">' + r.tags.map(function(t){
+          return "<span>" + esc(t) + "</span>"; }).join("") + "</div>" : "") + "</div>";
+    }
+    html += "</div>";
+  });
+  box.innerHTML = html;
+}
+
+function renderAll(){ renderHeader(); renderStatRow(); renderChart(); renderPattern(); renderList(); }
+
+/* ---------- 폼 ---------- */
+function buildChips(){
+  document.getElementById("slotChips").innerHTML = SLOTS.map(function(s){
+    return '<button type="button" class="chip" data-slot="' + esc(s) + '" aria-pressed="false">' + esc(s) + "</button>";
+  }).join("");
+  document.getElementById("tagChips").innerHTML = TAGS.map(function(t){
+    return '<button type="button" class="chip" data-tag="' + esc(t) + '" aria-pressed="false">' + esc(t) + "</button>";
+  }).join("");
+}
+function syncChips(){
+  document.querySelectorAll("[data-slot]").forEach(function(b){
+    b.setAttribute("aria-pressed", b.dataset.slot === state.draftSlot ? "true" : "false");
+  });
+  document.querySelectorAll("[data-tag]").forEach(function(b){
+    b.setAttribute("aria-pressed", state.draftTags.indexOf(b.dataset.tag) >= 0 ? "true" : "false");
+  });
+  document.getElementById("medChip").setAttribute("aria-pressed", state.draftMed ? "true" : "false");
+}
+function guessSlot(){
+  var h = new Date().getHours();
+  if(h < 11) return "아침";
+  if(h < 15) return "점심";
+  if(h < 21) return "저녁";
+  return "취침전";
+}
+function resetForm(){
+  state.editingId = null;
+  state.draftSlot = guessSlot();
+  state.draftTags = [];
+  state.draftMed = false;
+  var now = new Date();
+  document.getElementById("fDate").value = todayStr();
+  document.getElementById("fTime").value = pad(now.getHours()) + ":" + pad(now.getMinutes());
+  ["fSys","fDia","fPulse","fNote"].forEach(function(id){ document.getElementById(id).value = ""; });
+  document.getElementById("formMode").textContent = "";
+  document.getElementById("saveBtn").textContent = "기록 저장";
+  document.getElementById("cancelEditBtn").style.display = "none";
+  syncChips(); updatePreview();
+}
+function fillForm(r){
+  state.editingId = r.id;
+  state.draftSlot = r.slot;
+  state.draftTags = r.tags.slice();
+  state.draftMed = r.med;
+  document.getElementById("fDate").value = r.date;
+  document.getElementById("fTime").value = r.time;
+  document.getElementById("fSys").value = r.sys;
+  document.getElementById("fDia").value = r.dia;
+  document.getElementById("fPulse").value = r.pulse === null ? "" : r.pulse;
+  document.getElementById("fNote").value = r.note;
+  document.getElementById("formMode").textContent = fmtShort(r.date) + " " + r.time + " 기록을 수정 중";
+  document.getElementById("saveBtn").textContent = "수정 저장";
+  document.getElementById("cancelEditBtn").style.display = "";
+  syncChips(); updatePreview();
+  document.getElementById("bpForm").scrollIntoView({block:"center", behavior:"smooth"});
+}
+function updatePreview(){
+  var sys = parseInt(document.getElementById("fSys").value, 10);
+  var dia = parseInt(document.getElementById("fDia").value, 10);
+  var prev = document.getElementById("livePreview");
+  var alertEl = document.getElementById("crisisAlert");
+  alertEl.className = "callout alert";
+  if(!isFinite(sys) || !isFinite(dia)){
+    prev.innerHTML = '<span style="color:var(--text-muted)">수축기·이완기를 입력하면 등급이 여기에 표시됩니다</span>';
+    return;
+  }
+  var c = classify(sys, dia);
+  prev.innerHTML = '<span class="lvl ' + c.key + '">' + esc(c.name) + "</span><span>" +
+    sys + " / " + dia + " mmHg</span>";
+  if(isCrisis(sys, dia)){
+    alertEl.className = "callout alert show";
+    alertEl.textContent = "수축기 180 이상 또는 이완기 120 이상입니다. 5분 안정 후 다시 측정하고, 두통·가슴 통증·시야 이상 같은 증상이 있으면 즉시 진료를 받으세요.";
+  }
+}
+function flash(msg, isError){
+  var el = document.getElementById("formMsg");
+  el.textContent = msg;
+  el.style.color = isError ? "var(--danger)" : "var(--ok)";
+  clearTimeout(flash._t);
+  flash._t = setTimeout(function(){ el.textContent = ""; }, 4000);
+}
+function submitForm(e){
+  e.preventDefault();
+  var date = document.getElementById("fDate").value;
+  var time = document.getElementById("fTime").value || "00:00";
+  var sys = parseInt(document.getElementById("fSys").value, 10);
+  var dia = parseInt(document.getElementById("fDia").value, 10);
+  var pulseRaw = document.getElementById("fPulse").value.trim();
+  var pulse = pulseRaw === "" ? null : parseInt(pulseRaw, 10);
+
+  if(!date){ flash("날짜를 입력하세요.", true); return; }
+  if(date > todayStr()){ flash("미래 날짜는 기록할 수 없습니다.", true); return; }
+  if(!isFinite(sys) || !isFinite(dia)){ flash("수축기·이완기를 숫자로 입력하세요.", true); return; }
+  if(sys < 50 || sys > 300 || dia < 30 || dia > 200){ flash("혈압 값이 정상 범위를 벗어납니다. 다시 확인하세요.", true); return; }
+  if(sys <= dia){ flash("수축기는 이완기보다 커야 합니다. 값이 바뀌지 않았는지 확인하세요.", true); return; }
+  if(pulse !== null && (!isFinite(pulse) || pulse < 20 || pulse > 250)){ flash("맥박 값을 확인하세요.", true); return; }
+
+  var rec = normalize({
+    id: state.editingId || uid(), date: date, time: time, slot: state.draftSlot,
+    sys: sys, dia: dia, pulse: pulse, med: state.draftMed,
+    tags: state.draftTags.slice(), note: document.getElementById("fNote").value.trim()
+  });
+
+  if(state.editingId){
+    state.records = state.records.map(function(r){ return r.id === state.editingId ? rec : r; });
+  }else{
+    state.records.push(rec);
+  }
+  var ok = saveStore();
+  var c = classify(sys, dia);
+  resetForm();
+  renderAll();
+  flash(ok ? "저장했습니다 · " + c.name : "화면에는 반영했지만 저장에 실패했습니다.", !ok);
+}
+/* ---------- 내보내기 / 가져오기 ---------- */
+function download(filename, text, mime){
+  var blob = new Blob([text], {type: mime + ";charset=utf-8"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+function csvCell(v){
+  var s = (v === null || v === undefined) ? "" : String(v);
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+var CSV_HEAD = ["날짜","시간","시간대","수축기","이완기","맥박","복약","태그","특이사항"];
+function exportCSV(){
+  if(!state.records.length){ toolMsg("내보낼 기록이 없습니다.", true); return; }
+  var rows = [CSV_HEAD.join(",")];
+  sortedAsc(state.records).forEach(function(r){
+    rows.push([r.date, r.time, r.slot, r.sys, r.dia, r.pulse === null ? "" : r.pulse,
+      r.med ? "Y" : "N", r.tags.join("|"), r.note].map(csvCell).join(","));
+  });
+  download("혈압기록_" + todayStr() + ".csv", "﻿" + rows.join("\r\n"), "text/csv");
+  toolMsg(state.records.length + "건을 CSV로 내보냈습니다.");
+}
+function exportJSON(){
+  if(!state.records.length){ toolMsg("내보낼 기록이 없습니다.", true); return; }
+  download("혈압기록_백업_" + todayStr() + ".json",
+    JSON.stringify({schemaVersion:SCHEMA_VERSION, exportedAt:new Date().toISOString(), records:sortedAsc(state.records)}, null, 2),
+    "application/json");
+  toolMsg(state.records.length + "건을 JSON으로 백업했습니다.");
+}
+/* 따옴표·줄바꿈을 포함한 CSV를 정확히 되돌린다 */
+function parseCSV(text){
+  var rows = [], row = [], cell = "", i = 0, inQ = false;
+  text = text.replace(/^﻿/, "");
+  while(i < text.length){
+    var ch = text[i];
+    if(inQ){
+      if(ch === '"'){
+        if(text[i+1] === '"'){ cell += '"'; i += 2; continue; }
+        inQ = false; i++; continue;
+      }
+      cell += ch; i++; continue;
+    }
+    if(ch === '"'){ inQ = true; i++; continue; }
+    if(ch === ","){ row.push(cell); cell = ""; i++; continue; }
+    if(ch === "\r"){ i++; continue; }
+    if(ch === "\n"){ row.push(cell); rows.push(row); row = []; cell = ""; i++; continue; }
+    cell += ch; i++;
+  }
+  if(cell.length || row.length){ row.push(cell); rows.push(row); }
+  return rows.filter(function(r){ return r.some(function(c){ return c.trim() !== ""; }); });
+}
+function importText(text, name){
+  var incoming = [];
+  try{
+    if(/^\s*[\[{]/.test(text)){
+      var data = JSON.parse(text);
+      incoming = (Array.isArray(data) ? data : (data.records || [])).filter(validRecord).map(normalize);
+    }else{
+      var rows = parseCSV(text);
+      if(!rows.length) throw new Error("empty");
+      var start = rows[0][0] === "날짜" ? 1 : 0;
+      for(var i = start; i < rows.length; i++){
+        var c = rows[i];
+        if(!c[0] || !isFinite(parseInt(c[3],10)) || !isFinite(parseInt(c[4],10))) continue;
+        incoming.push(normalize({
+          date: c[0].trim(), time: (c[1]||"00:00").trim(), slot: (c[2]||"기타").trim(),
+          sys: parseInt(c[3],10), dia: parseInt(c[4],10),
+          pulse: (c[5]||"").trim() === "" ? null : parseInt(c[5],10),
+          med: (c[6]||"").trim().toUpperCase() === "Y",
+          tags: (c[7]||"").split("|").map(function(t){return t.trim();}).filter(Boolean),
+          note: c[8] || ""
+        }));
+      }
+    }
+  }catch(err){
+    toolMsg("파일을 읽지 못했습니다: " + name + " (CSV 또는 JSON 백업 파일인지 확인하세요)", true);
+    return;
+  }
+  if(!incoming.length){ toolMsg("가져올 기록을 찾지 못했습니다.", true); return; }
+
+  /* 병합 + 중복 제거 (같은 날짜·시각·수치는 같은 기록으로 본다) — 기존 기록을 지우지 않는다 */
+  var seen = {};
+  state.records.forEach(function(r){ seen[r.date + "|" + r.time + "|" + r.sys + "|" + r.dia] = 1; });
+  var added = 0, dup = 0;
+  incoming.forEach(function(r){
+    var k = r.date + "|" + r.time + "|" + r.sys + "|" + r.dia;
+    if(seen[k]){ dup++; return; }
+    seen[k] = 1; r.id = uid(); state.records.push(r); added++;
+  });
+  saveStore(); renderAll();
+  toolMsg(added + "건을 추가했습니다." + (dup ? " (중복 " + dup + "건 건너뜀)" : ""));
+}
+function toolMsg(msg, isError){
+  var el = document.getElementById("toolMsg");
+  el.textContent = msg;
+  el.style.color = isError ? "var(--danger)" : "var(--text-2)";
+  clearTimeout(toolMsg._t);
+  toolMsg._t = setTimeout(function(){ el.style.color = ""; el.textContent = ""; }, 6000);
+}
+
+/* ---------- 진료용 요약 인쇄 ---------- */
+function buildPrint(){
+  var days = state.range || 90;
+  var st = periodStats(state.range);
+  var rows = sortedAsc(st.list).reverse().map(function(r){
+    var c = classify(r.sys, r.dia);
+    return "<tr><td>" + esc(r.date) + "</td><td>" + esc(r.time) + "</td><td>" + esc(r.slot) + "</td>" +
+      "<td>" + r.sys + "</td><td>" + r.dia + "</td><td>" + (r.pulse === null ? "" : r.pulse) + "</td>" +
+      "<td>" + (r.med ? "○" : "") + "</td><td>" + esc(c.name) + "</td>" +
+      '<td style="text-align:left">' + esc((r.tags.join(", ") + (r.note ? (r.tags.length ? " / " : "") + r.note : ""))) + "</td></tr>";
+  }).join("");
+  document.getElementById("printArea").innerHTML =
+    "<h2 style='margin-bottom:4px'>혈압 기록 요약 — " + rangeLabel(state.range) + "</h2>" +
+    "<p style='font-size:12px;margin-bottom:8px'>출력일 " + todayStr() + " · 총 " + st.count + "회 · " + st.days + "일 기록 · " +
+      "평균 " + fmtAvg(st.sys) + "/" + fmtAvg(st.dia) + " mmHg" +
+      (st.pulse !== null ? " · 평균 맥박 " + fmtAvg(st.pulse) : "") +
+      " · 목표(" + GOAL_SYS + "/" + GOAL_DIA + " 미만) 달성 " + (st.goalRate === null ? "–" : st.goalRate + "%") + "</p>" +
+    "<table class='psum'><thead><tr><th>날짜</th><th>시각</th><th>시간대</th><th>수축기</th><th>이완기</th>" +
+    "<th>맥박</th><th>복약</th><th>분류</th><th>특이사항</th></tr></thead><tbody>" +
+    (rows || "<tr><td colspan='9'>기록 없음</td></tr>") + "</tbody></table>" +
+    "<p style='font-size:10px;margin-top:8px'>참고용 기록입니다. 진단·약 조절은 의료진과 상의하세요. 가정혈압은 135/85 mmHg 이상을 고혈압으로 봅니다.</p>";
+}
+
+/* ---------- 테마 ---------- */
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme", t);
+  try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+}
+
+
+/* ---------- 이벤트 배선 ---------- */
+function buildTabs(){
+  var ranges = [{d:7,l:"7일"},{d:30,l:"30일"},{d:90,l:"90일"},{d:0,l:"전체"}];
+  document.getElementById("rangeTabs").innerHTML = ranges.map(function(r){
+    return '<button type="button" class="tab" data-range="' + r.d + '" aria-pressed="' +
+      (r.d === state.range) + '">' + r.l + "</button>";
+  }).join("");
+  var filters = [{k:"all",l:"전체"},{k:"note",l:"특이사항"},{k:"high",l:"고혈압 이상"}];
+  document.getElementById("filterTabs").innerHTML = filters.map(function(f){
+    return '<button type="button" class="tab" data-filter="' + f.k + '" aria-pressed="' +
+      (f.k === state.filter) + '">' + f.l + "</button>";
+  }).join("");
+}
+function wire(){
+  document.getElementById("bpForm").addEventListener("submit", submitForm);
+  ["fSys","fDia"].forEach(function(id){
+    document.getElementById(id).addEventListener("input", updatePreview);
+  });
+  document.getElementById("slotChips").addEventListener("click", function(e){
+    var b = e.target.closest("[data-slot]"); if(!b) return;
+    state.draftSlot = b.dataset.slot; syncChips();
+  });
+  document.getElementById("tagChips").addEventListener("click", function(e){
+    var b = e.target.closest("[data-tag]"); if(!b) return;
+    var t = b.dataset.tag, i = state.draftTags.indexOf(t);
+    if(i >= 0) state.draftTags.splice(i,1); else state.draftTags.push(t);
+    syncChips();
+  });
+  document.getElementById("medChip").addEventListener("click", function(){
+    state.draftMed = !state.draftMed; syncChips();
+  });
+  document.getElementById("cancelEditBtn").addEventListener("click", function(){ resetForm(); renderList(); });
+
+  document.getElementById("rangeTabs").addEventListener("click", function(e){
+    var b = e.target.closest("[data-range]"); if(!b) return;
+    state.range = parseInt(b.dataset.range, 10);
+    buildTabs(); renderChart(); renderPattern(); renderList();
+  });
+  document.getElementById("filterTabs").addEventListener("click", function(e){
+    var b = e.target.closest("[data-filter]"); if(!b) return;
+    state.filter = b.dataset.filter;
+    buildTabs(); renderList();
+  });
+  document.getElementById("recList").addEventListener("click", function(e){
+    var ed = e.target.closest("[data-edit]"), de = e.target.closest("[data-del]");
+    if(ed){
+      var r = state.records.filter(function(x){ return x.id === ed.dataset.edit; })[0];
+      if(r){ fillForm(r); renderList(); }
+      return;
+    }
+    if(de){
+      var rec = state.records.filter(function(x){ return x.id === de.dataset.del; })[0];
+      if(!rec) return;
+      if(!confirm(fmtDay(rec.date) + " " + rec.time + " · " + rec.sys + "/" + rec.dia + " 기록을 삭제할까요?\n삭제한 기록은 되돌릴 수 없습니다.")) return;
+      state.records = state.records.filter(function(x){ return x.id !== rec.id; });
+      if(state.editingId === rec.id) resetForm();
+      saveStore(); renderAll();
+    }
+  });
+
+  document.getElementById("csvBtn").addEventListener("click", exportCSV);
+  document.getElementById("jsonBtn").addEventListener("click", exportJSON);
+  document.getElementById("importBtn").addEventListener("click", function(){ document.getElementById("fileInput").click(); });
+  document.getElementById("fileInput").addEventListener("change", function(e){
+    var f = e.target.files && e.target.files[0];
+    if(!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){ importText(String(reader.result), f.name); };
+    reader.onerror = function(){ toolMsg("파일을 읽지 못했습니다.", true); };
+    reader.readAsText(f, "utf-8");
+    e.target.value = "";
+  });
+  document.getElementById("wipeBtn").addEventListener("click", function(){
+    if(!state.records.length){ toolMsg("삭제할 기록이 없습니다.", true); return; }
+    if(!confirm("기록 " + state.records.length + "건을 모두 삭제합니다. 되돌릴 수 없습니다.\n먼저 백업하셨나요?")) return;
+    if(!confirm("정말 전체 삭제할까요?")) return;
+    state.records = []; resetForm(); saveStore(); renderAll();
+    toolMsg("모든 기록을 삭제했습니다.");
+  });
+
+  function doPrint(){ buildPrint(); setTimeout(function(){ window.print(); }, 60); }
+  document.getElementById("printBtn").addEventListener("click", doPrint);
+  document.getElementById("printBtn2").addEventListener("click", doPrint);
+
+  document.getElementById("themeBtn").addEventListener("click", function(){
+    applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+}
+
+/* ---------- 초기화 ---------- */
+(function init(){
+  var saved = null;
+  try{ saved = localStorage.getItem(THEME_KEY); }catch(e){ storageOK = false; }
+  if(saved){
+    applyTheme(saved);
+  }else if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+  if(!storageOK){
+    warnStorage("이 브라우저에서 저장 기능을 쓸 수 없습니다(시크릿 모드일 수 있음). 기록이 유지되지 않으니 'JSON 백업'으로 내려받아 두세요.");
+  }
+  loadStore();
+  buildChips(); buildTabs(); wire(); resetForm(); renderAll(); watchChartWidth();
+})();
+
+})();
+</script>
+</body>
+</html>

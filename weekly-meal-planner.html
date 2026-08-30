@@ -360,25 +360,136 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 /* ---------- PRINT ---------- */
+/* ---------- PRINT HEAD / FOOT (인쇄 전용) ---------- */
+.print-head, .print-foot { display: none; }
+
 @media print {
-  .viz-menu, .site-header, .control-bar, .opt-row, .no-print { display: none !important; }
-  body { background: #fff; color: #000; }
-  main > section { break-inside: avoid; border-top: 3px solid #72256B; }
-  .meal-tools, .day-reroll { display: none !important; }
-  .mi { color: #000 !important; }
-  .day-row { break-inside: avoid; }
+  @page { size: A4 portrait; margin: 10mm; }
+  /* 화면과 같은 코랄/플럼 팔레트로 인쇄한다. 다크 테마로 보고 있어도 인쇄는 라이트 고정,
+     배경·색이 프린터에서 지워지지 않도록 color-adjust를 exact로 둔다. */
+  html.theme-light, html.theme-dark {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    --bg: #F6F0EA; --surface: #FFFFFF; --surface-hover: #FFFAEB;
+    --border: rgba(114,37,107,0.14); --rule: rgba(27,18,25,0.13); --rule-soft: rgba(27,18,25,0.07);
+    --divider: #72256B; --divider-soft: #A4599C;
+    --text: #1B1219; --text-secondary: #6B5468; --text-muted: #9B879A;
+    --accent: #72256B; --accent-secondary: #6CA07A;
+    --positive: #105742; --negative: #AE4048; --warning: #B07D2E;
+    --field: rgba(114,37,107,0.05);
+  }
+  *, *::before, *::after { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff !important; }
+  body { color: var(--text); }
+
+  /* 인쇄 대상 = 주차 헤더 + 식단표. 그 밖의 모든 영역은 제외 */
+  .skip-link, .viz-menu, .site-header, .hero, .no-print { display: none !important; }
+  main { max-width: none; padding: 0 !important; }
+  main > section { display: none !important; }
+  main > section#planSection,
+  main > section#balSection,
+  main > section#shopSection { display: block !important; margin: 0 !important; padding: 0 !important; border-top: none !important; }
+  #planSection > .section-label, #planSection > h2, #planSection > .callout { display: none !important; }
+  .meal-tools, .day-reroll, .legend { display: none !important; }
+
+  /* 주차 헤더 */
+  .print-head { display: flex !important; align-items: baseline; gap: 9pt; flex-wrap: nowrap;
+    border-bottom: 1.5pt solid var(--accent); padding-bottom: 2.5pt; margin-bottom: 3.5pt; }
+  .print-title { font-size: 11.5pt; font-weight: 800; letter-spacing: -0.02em; color: var(--text); white-space: nowrap; }
+  .print-range { font-size: 10.5pt; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .print-mode { margin-left: auto; font-size: 7.5pt; font-weight: 700; letter-spacing: 0.08em; color: var(--text-muted); white-space: nowrap; }
+
+  /* 식단 그리드 — A4 세로 한 장에 7일이 모두 들어가도록 압축한다.
+     (화면 폭이 좁아도 인쇄는 항상 표 형태) */
+  .planner { border-top: 1.5pt solid var(--text); }
+  .planner-head { display: grid !important; }
+  .planner-head, .day-row { grid-template-columns: 52pt repeat(3, minmax(0,1fr)) !important; }
+  .planner.no-b .planner-head, .planner.no-b .day-row { grid-template-columns: 52pt repeat(2, minmax(0,1fr)) !important; }
+  .planner-head > div { padding: 2pt 4pt 2pt 0 !important; border-bottom: 0.75pt solid var(--rule); color: var(--text-muted); font-size: 7pt; }
+  /* 7일 + 하단 각주가 A4 한 장을 채우는 행 높이 (표+각주 ≈ 218mm — 실측 1페이지 한계 225mm보다 7mm 여유) */
+  /* 오늘 행의 크림색 배경, 토·일 요일색 등 화면 색을 그대로 살린다 */
+  .day-row { break-inside: avoid; border-bottom: 0.5pt solid var(--rule-soft); min-height: 25.5mm; }
+  .day-cell { padding: 4pt 4pt 4pt 0; }
+  .day-name { font-size: 11pt; }
+  .day-date { font-size: 8pt; }
+  .meal { padding: 3pt 4pt 3pt 5pt; border-left: 0.5pt solid var(--rule-soft); }
+  .meal-head { display: none !important; }                   /* 칸 라벨은 상단 머리행으로 충분 */
+  .mi { background: none !important; font-size: 9pt; line-height: 1.58;
+        padding: 0 2pt 0 4pt; margin-bottom: 0; border-left-width: 1.5pt; }
+  .mi.p-staple { font-size: 8pt; }
+  .mi.p-main { font-weight: 700; font-size: 9.5pt; }
+  .mi::placeholder { color: transparent !important; }        /* 빈 칸은 비워서 인쇄 */
+
+  /* 하단 각주 — 표 아래 남는 여백을 추천 규칙·모드 설명으로 채운다 */
+  .print-foot { display: block !important; break-inside: avoid;
+    margin-top: 5pt; padding-top: 4pt; border-top: 0.75pt solid var(--accent); }
+  .pf-row { font-size: 7pt; line-height: 1.5; color: var(--text-secondary); margin-bottom: 3pt; text-align: justify; }
+  .pf-row:last-child { margin-bottom: 0; }
+  .pf-row strong { color: var(--accent); font-weight: 800; }
+  .pf-row em { font-style: normal; color: var(--text-muted); }
+
+  /* ===== 2페이지 : 이번 주 구성 점검 + 장보기 목록 ===== */
+  #balSection { break-before: page; page-break-before: always; }
+  #balSection .section-label, #shopSection .section-label,
+  #balSection .section-desc, #shopSection .section-desc,
+  #balSection .callout, .empty-note { display: none !important; }
+  #balSection h2, #shopSection h2 { font-size: 12pt; line-height: 1.2; margin: 0 0 4pt !important;
+    padding-bottom: 2.5pt; border-bottom: 1.5pt solid var(--accent); color: var(--text); }
+  #shopSection { margin-top: 7pt !important; }
+  #balSection h3 { clear: both; font-size: 9pt; margin: 6pt 0 3pt !important; padding-bottom: 2pt;
+    border-bottom: 0.5pt solid var(--rule-soft); color: var(--text); line-height: 1.3; }
+
+  /* KPI */
+  .kpi-row { border-top: 0.75pt solid var(--rule); border-bottom: 0.75pt solid var(--rule); }
+  .kpi-card { flex: 1 1 0; min-width: 0; padding: 4pt 7pt 4pt 0 !important; }
+  .kpi-card + .kpi-card { border-left: 0.5pt solid var(--rule-soft); padding-left: 7pt !important; }
+  .kpi-label { font-size: 6.5pt; margin-bottom: 2pt; letter-spacing: 0.06em; color: var(--text-muted); }
+  .kpi-value { font-size: 15pt; }                            /* 색은 화면 그대로(플럼·파인·앰버) */
+  .kpi-note { font-size: 6.5pt; margin-top: 2pt; line-height: 1.35; color: var(--text-secondary); }
+
+  /* 분포 막대 — 배경이 인쇄되지 않으므로 테두리 선으로 그린다. 두 블록은 나란히 */
+  .dist { float: left; width: 48.5%; margin-top: 6pt; max-width: none; }
+  .dist + .dist { float: right; }
+  .dist-title { font-size: 6.5pt; margin-bottom: 2pt; color: #555; line-height: 1.3; }
+  .bar-row { grid-template-columns: 46pt minmax(0,1fr) 16pt; gap: 5pt; padding: 0.8pt 0; line-height: 1.2; }
+  .bar-name { font-size: 7pt; color: var(--text-secondary); }
+  .bar-val { font-size: 6.5pt; color: var(--text-muted); }
+  /* 프린터가 배경을 지워도 막대가 남도록 테두리로 그리되 색은 화면과 동일하게 */
+  .bar-track { height: 0 !important; border-bottom: 2.5pt solid var(--rule-soft); }
+  .bar-fill { height: 0 !important; border-bottom: 2.5pt solid var(--accent); }
+  .bar-fill.alt { border-bottom-color: var(--accent-secondary); }
+
+  /* 체크리스트 */
+  .scorecard { border-top: 1.5pt solid var(--text); }
+  .scorecard th, .scorecard td { padding: 1.2pt 6pt 1.2pt 0; font-size: 7.5pt; line-height: 1.25;
+    border-bottom: 0.4pt solid var(--rule-soft); }
+  .scorecard th { font-size: 6.5pt; color: var(--text-muted); border-bottom: 0.75pt solid var(--rule); }
+  .scorecard .metric-note { color: var(--text-secondary); }
+  /* 상태등은 색(초록·앰버·빨강) 그대로. 점이 인쇄되지 않는 프린터에서도 글자색으로 구분된다 */
+  .light { font-size: 7pt; }
+  .light .bulb { width: 4pt; height: 4pt; }
+
+  /* 장보기 — 카테고리를 4단으로 흘려 지면을 아낀다.
+     카드가 단 사이를 넘어가도록 두어야 4단이 고르게 채워진다(제목만 고아가 되지 않게 처리) */
+  .shop-grid { display: block !important; column-count: 5; column-gap: 8pt; }
+  .shop-card { border-top: 0.75pt solid var(--rule); padding: 2.5pt 0 4pt; margin-bottom: 1pt; }
+  .shop-cat { font-size: 6.5pt; line-height: 1.3; color: var(--accent); margin-bottom: 1.5pt;
+    break-after: avoid; -webkit-column-break-after: avoid; }
+  .shop-list li { font-size: 7pt; line-height: 1.2; color: var(--text); padding: 0 0 0.3pt;
+    border-bottom: 0.4pt solid var(--rule-soft); gap: 4pt;
+    break-inside: avoid; -webkit-column-break-inside: avoid; }
+  .shop-n { font-size: 6.5pt; color: var(--text-muted); }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 /* ---------- RESPONSIVE ---------- */
-@media (max-width: 1024px) {
+@media screen and (max-width: 1024px) {
   .hero { padding: 4rem 2rem 2.5rem; }
   main { padding: 0 2rem 5rem; }
   .site-header { padding: 0.85rem 2rem; }
   .planner-head, .day-row { grid-template-columns: 104px repeat(3, minmax(0,1fr)); }
   .planner.no-b .planner-head, .planner.no-b .day-row { grid-template-columns: 104px repeat(2, minmax(0,1fr)); }
 }
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   h1 { font-size: 2.15rem; }
   h2 { font-size: 1.5rem; }
   .hero { padding: 2.5rem 1.25rem 2rem; }
@@ -451,7 +562,7 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
 <main id="main-content">
 
   <!-- PLANNER -->
-  <section class="wide" aria-labelledby="plan-title">
+  <section class="wide" id="planSection" aria-labelledby="plan-title">
     <div class="section-label"><span class="label-bar"></span>THIS WEEK</div>
     <h2 id="plan-title">주간 식단표</h2>
 
@@ -505,10 +616,14 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
       <span style="color:var(--text-secondary); text-transform:none; letter-spacing:0; font-weight:400;">칸을 클릭해 직접 입력 · ↻ 는 그 끼니만 다시 추천</span>
     </div>
 
+    <div class="print-head" id="printHead" aria-hidden="true"></div>
+
     <div class="planner" id="planner">
       <div class="planner-head" id="plannerHead"></div>
       <div id="plannerBody"></div>
     </div>
+
+    <div class="print-foot" id="printFoot" aria-hidden="true"></div>
 
     <div class="callout" style="margin-top:1.75rem;">
       <strong>추천 규칙</strong> — ① 한 주 안에서 같은 메뉴를 반복하지 않고, ② 소·돼지 / 닭 / 생선·해물 / 계란 / 두부·콩을 번갈아 배치하며, ③ 구이·볶음·조림·무침 등 조리법이 연달아 겹치지 않게 하고, ④ 튀김은 주 2회 이하, 생선·해물은 주 2회 이상, ⑤ 부찬은 잎채소·뿌리·버섯·해조 등 종류를 돌려가며 넣습니다.
@@ -521,7 +636,8 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
   </section>
 
   <!-- BALANCE -->
-  <section aria-labelledby="bal-title">
+  <section id="balSection" aria-labelledby="bal-title">
+    <div class="print-head" id="printHead2" aria-hidden="true"></div>
     <div class="section-label"><span class="label-bar"></span>BALANCE</div>
     <h2 id="bal-title">이번 주 구성 점검</h2>
     <p class="section-desc">직접 입력한 메뉴도 이름이 DB와 맞으면 함께 집계됩니다. 목표치는 일반적인 가정식 기준의 참고값이며 의학적 영양 기준이 아닙니다.</p>
@@ -551,7 +667,7 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
   </section>
 
   <!-- SHOPPING -->
-  <section aria-labelledby="shop-title">
+  <section id="shopSection" aria-labelledby="shop-title">
     <div class="section-label"><span class="label-bar"></span>SHOPPING</div>
     <h2 id="shop-title">장보기 목록</h2>
     <p class="section-desc">식단에 들어간 메뉴의 주재료를 자동으로 모았습니다. 숫자는 그 재료가 쓰이는 끼니 수입니다. 직접 적은 메뉴 중 DB에 없는 것은 재료를 알 수 없어 빠집니다.</p>
@@ -577,7 +693,7 @@ main > section:first-child { border-top: none; padding-top: 1rem; }
       <div class="feature-card">
         <div class="feature-icon green">03</div>
         <div class="feature-title">저장 · 공유</div>
-        <p class="feature-desc">입력 즉시 주차별로 자동 저장되어 다음에 열어도 그대로입니다. 우측 상단 메뉴에서 텍스트 복사(메신저 공유), PNG 저장, 인쇄를 쓸 수 있습니다.</p>
+        <p class="feature-desc">입력 즉시 주차별로 자동 저장되어 다음에 열어도 그대로입니다. 우측 상단 메뉴에서 텍스트 복사(메신저 공유), PNG 저장, 인쇄를 쓸 수 있습니다. <strong>인쇄</strong>는 주차(날짜)와 식단표만 A4 한 장에 나오고, 점검·장보기·설명은 빠집니다.</p>
       </div>
     </div>
     <div class="callout pine">
@@ -786,6 +902,7 @@ const METHOD_LABEL = { grill:'구이', stir:'볶음', braise:'조림·찜', stea
 const SLOTS = [ {k:'b', label:'아침'}, {k:'l', label:'점심'}, {k:'d', label:'저녁'} ];
 const PARTS = [ {k:'staple', ph:'주식'}, {k:'soup', ph:'국·찌개'}, {k:'main', ph:'주찬'}, {k:'side', ph:'부찬'} ];
 const DAY_NAMES = ['월','화','수','목','금','토','일'];
+const MODE_LABEL = { balance:'균형', protein:'고단백', light:'가볍게', veg:'채식 위주', ldl:'고지혈증(LDL)' };
 
 /* ============================================================
    고지혈증(LDL) 프로파일
@@ -1170,6 +1287,32 @@ function renderHeader(){
   document.getElementById('weekTag').textContent = isThis ? 'THIS WEEK'
       : (diff > 0 ? diff + '주 뒤' : Math.abs(diff) + '주 전');
   document.getElementById('headerBadge').textContent = s.getFullYear()+'.'+pad(s.getMonth()+1)+'.'+pad(s.getDate())+' 주간';
+
+  /* 인쇄용 헤더 — 주차(날짜)와 식단만 인쇄할 때 상단에 들어간다 */
+  var ph = document.getElementById('printHead');
+  if (ph){
+    ph.innerHTML = '<span class="print-title">주간 식단표</span>'
+      + '<span class="print-range">' + s.getFullYear() + '년 ' + txt + ' (' + DAY_NAMES[0] + '–' + DAY_NAMES[6] + ')</span>'
+      + '<span class="print-mode">' + (MODE_LABEL[state.mode] || '') + (state.breakfast ? '' : ' · 아침 제외') + '</span>';
+  }
+
+  /* 인쇄용 각주 — 표 아래 여백에 추천 규칙과 선택한 성향 설명을 넣는다 */
+  var pf = document.getElementById('printFoot');
+  if (pf){
+    var rows = ['<div class="pf-row"><strong>추천 규칙</strong> ① 한 주 안에서 같은 메뉴를 반복하지 않고 ② 소·돼지 / 닭 / 생선·해물 / 계란 / 두부·콩을 번갈아 배치하며 ③ 구이·볶음·조림·무침 등 조리법이 연달아 겹치지 않게 하고 ④ 튀김은 주 2회 이하, 생선·해물은 주 2회 이상 ⑤ 부찬은 잎채소·뿌리·버섯·해조 등 종류를 돌려가며 넣습니다.</div>'];
+    if (state.mode === 'ldl'){
+      rows.push('<div class="pf-row"><strong>고지혈증(LDL) 식단</strong> 포화지방·트랜스지방 줄이기(삼겹·갈비·가공육·버터·튀김) · 수용성 식이섬유 늘리기(귀리·보리·현미·콩·해조·버섯·채소) · 등푸른 생선 주 2~3회(오메가3) · 조리는 굽기·찜·조림·무침 위주. 계란·오징어·새우 같은 식이 콜레스테롤 식품은 포화지방만큼 영향이 크지 않아 금지가 아니라 횟수 제한으로 다룹니다. <em>일반적인 식생활 권고에 기반한 배치 규칙이며 치료용 처방이 아닙니다 — 약물 복용·수치 관리는 담당 의사·영양사와 상의하세요.</em></div>');
+    } else if (state.mode === 'protein'){
+      rows.push('<div class="pf-row"><strong>고단백 식단</strong> 주찬은 고기·생선·계란·두부 등 단백질 급원 위주로 배치하고, 주식은 잡곡·현미·귀리를 우선합니다.</div>');
+    } else if (state.mode === 'light'){
+      rows.push('<div class="pf-row"><strong>가볍게</strong> 중량감이 낮은 메뉴와 국물·튀김이 적은 조리법을 우선해 하루 전체가 무겁지 않도록 배치합니다.</div>');
+    } else if (state.mode === 'veg'){
+      rows.push('<div class="pf-row"><strong>채식 위주</strong> 주찬은 두부·콩·계란·채소 중심으로만 고르고, 고기 육수를 쓰는 국·찌개는 뒤로 미룹니다.</div>');
+    }
+    pf.innerHTML = rows.join('');
+  }
+  var ph2 = document.getElementById('printHead2');
+  if (ph2 && ph) ph2.innerHTML = ph.innerHTML;
 }
 
 /* ---------- 분석 ---------- */
