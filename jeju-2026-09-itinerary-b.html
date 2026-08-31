@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="제주일정B">
+<title>제주 가족여행 B안 · 바다와 오름 · 2026.09</title>
+<style>
+:root{
+  --bg:#FAF9F5; --surface:#FFFFFF; --surface-2:#F0EEE6; --surface-hover:#F5F1E8;
+  --rule:rgba(25,25,25,.14); --rule-soft:rgba(25,25,25,.07); --rule-strong:rgba(25,25,25,.30);
+  --text:#191919; --text-2:#5C5A54; --text-muted:#6E6B64;
+  --accent:#D97757; --accent-deep:#B24E2C; --accent-soft:#D4A27F; --accent-pale:#EBDBBC;
+  --accent-wash:#F7EFE9;
+  --btn-bg:#B24E2C; --btn-bg-hover:#8F3A1A; --on-accent:#FFFFFF;
+  --ok:#3F6B4E; --info:#4E6288; --danger:#B24E2C;
+  --mast-bg:linear-gradient(100deg,#D97757 0%,#CC785C 34%,#D4A27F 70%,#EBDBBC 100%);
+  --mast-fg:#191919; --mast-fg-2:#3D1D0F;
+  --mast-line:rgba(25,25,25,.66); --mast-hover:rgba(255,255,255,.45);
+}
+html[data-theme="dark"]{
+  --bg:#262624; --surface:#30302E; --surface-2:#3A3A37; --surface-hover:#403F3C;
+  --rule:rgba(235,219,188,.18); --rule-soft:rgba(235,219,188,.09); --rule-strong:rgba(235,219,188,.36);
+  --text:#F5F4EF; --text-2:#C2BFB6; --text-muted:#A29E96;
+  --accent:#E08A6B; --accent-deep:#D97757; --accent-soft:#D4A27F; --accent-pale:#4A3E36;
+  --accent-wash:#3A322C;
+  --btn-bg:#E08A6B; --btn-bg-hover:#EC9C7F; --on-accent:#23160F;
+  --ok:#84B392; --info:#93A6C7; --danger:#E8886A;
+  --mast-bg:linear-gradient(100deg,#6E280F 0%,#8F3A1A 38%,#9E4019 72%,#A8461F 100%);
+  --mast-fg:#FDF6F2; --mast-fg-2:#F8E4D8;
+  --mast-line:rgba(255,255,255,.64); --mast-hover:rgba(0,0,0,.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR","Segoe UI",system-ui,sans-serif;
+  font-size:16px;line-height:1.75;letter-spacing:-.003em;
+  -webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+  overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom);
+}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+.masthead{position:sticky;top:0;z-index:100;background:var(--mast-bg);color:var(--mast-fg);
+  display:flex;align-items:center;gap:1rem;padding:.85rem 3rem}
+.mast-title{font-size:.8125rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mast-fg)}
+.mast-divider{width:1px;height:20px;background:var(--mast-line)}
+.mast-sub{font-size:.78rem;color:var(--mast-fg-2);letter-spacing:.02em;font-weight:600}
+.mast-tools{margin-left:auto;display:flex;align-items:center;gap:.6rem}
+.mast-stat{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mast-fg-2);font-variant-numeric:tabular-nums}
+.icon-btn{width:44px;height:44px;border:1px solid var(--mast-line);background:none;color:var(--mast-fg);
+  display:grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s}
+.icon-btn:hover{border-color:var(--mast-fg);background:var(--mast-hover)}
+
+h1{font-size:clamp(2.15rem,6vw,3.25rem);line-height:1.15;letter-spacing:-.03em;font-weight:800}
+h1 em{font-style:normal;color:var(--accent-deep)}
+h2{font-size:clamp(1.5rem,4vw,2rem);line-height:1.24;letter-spacing:-.025em;font-weight:700;margin-bottom:.8rem}
+
+.hero{max-width:1180px;margin:0 auto;padding:4.5rem 3rem 3rem}
+.eyebrow{display:block;max-width:780px;font-size:.7rem;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent-deep);margin-bottom:1.8rem;padding-bottom:.9rem;
+  border-bottom:1px solid var(--rule)}
+.hero-sub{font-size:1.1rem;color:var(--text-2);max-width:640px;margin:1.3rem 0 2.4rem;line-height:1.85}
+.hero-meta{display:flex;flex-wrap:wrap;align-items:baseline;max-width:780px;
+  padding-top:1.1rem;border-top:1px solid var(--rule);font-size:.78rem;color:var(--text-muted);letter-spacing:.02em}
+.hero-meta span + span::before{content:"·";margin:0 .85rem;color:var(--rule-strong);font-weight:700}
+
+.stays{display:flex;flex-wrap:wrap;max-width:780px;margin-top:2.4rem;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.stay{flex:1 1 0;min-width:178px;padding:1.5rem 1.4rem 1.6rem 0}
+.stay + .stay{border-left:1px solid var(--rule-soft);padding-left:1.4rem}
+.stay-label{font-size:.68rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:.7rem;font-variant-numeric:tabular-nums}
+.stay-value{font-size:1.35rem;font-weight:800;letter-spacing:-.03em;line-height:1.2;color:var(--accent-deep)}
+.stay-note{font-size:.78rem;color:var(--text-2);margin-top:.6rem;line-height:1.6}
+
+.daybar{position:sticky;top:60px;z-index:90;background:var(--bg);border-bottom:1px solid var(--rule)}
+.daybar-inner{max-width:1180px;margin:0 auto;padding:.7rem 3rem;display:flex;gap:.45rem;
+  overflow-x:auto;scrollbar-width:none}
+.daybar-inner::-webkit-scrollbar{display:none}
+.daybar a{flex:0 0 auto;text-decoration:none;font-size:.7rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text-2);border:1px solid var(--rule);padding:.5rem .85rem;
+  min-height:38px;display:inline-flex;align-items:center;transition:.15s}
+.daybar a:hover{border-color:var(--accent);color:var(--accent-deep)}
+
+main{max-width:1180px;margin:0 auto;padding:0 3rem 6rem}
+main > section{display:grid;grid-template-columns:196px minmax(0,1fr);column-gap:3.5rem;
+  padding-top:3.25rem;margin-bottom:3.25rem;border-top:4px solid var(--accent);scroll-margin-top:120px}
+main > section:first-child{border-top:none;padding-top:1.5rem}
+main > section > *:not(.section-label){grid-column:2;max-width:780px}
+.section-label{grid-column:1;grid-row:1/200;align-self:start;position:sticky;top:9rem;
+  margin:.4rem 0 0;font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text-muted);line-height:1.65}
+.section-label .bar{display:block;width:26px;height:2px;background:var(--accent);margin-bottom:.7rem}
+.section-label .prog{display:block;margin-top:.5rem;font-size:.7rem;letter-spacing:.08em;
+  color:var(--accent-deep);font-variant-numeric:tabular-nums}
+.section-desc{font-size:.95rem;color:var(--text-2);margin-bottom:2rem;line-height:1.85}
+
+.rec{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:1rem;align-items:start;
+  padding:1.15rem 0;border-bottom:1px solid var(--rule-soft)}
+.rec:first-of-type{border-top:1px solid var(--rule)}
+input[type=checkbox]{
+  -webkit-appearance:none;appearance:none;
+  width:20px;height:20px;margin-top:.42rem;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--rule-strong);border-radius:0;
+  cursor:pointer;display:grid;place-content:center;transition:border-color .15s,background .15s}
+input[type=checkbox]:hover{border-color:var(--accent)}
+input[type=checkbox]::before{
+  content:"";width:11px;height:6px;margin-top:-3px;
+  border-left:2px solid var(--accent-deep);border-bottom:2px solid var(--accent-deep);
+  transform:rotate(-45deg) scale(0);transition:transform .12s ease-out}
+input[type=checkbox]:checked{border-color:var(--accent)}
+input[type=checkbox]:checked::before{transform:rotate(-45deg) scale(1)}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.masthead button:focus-visible{outline-color:var(--mast-fg)}
+.rec-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .9rem}
+.rec-time{font-size:.68rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);font-variant-numeric:tabular-nums}
+.rec-name{font-size:1.05rem;font-weight:700;letter-spacing:-.015em;line-height:1.4}
+.kind{display:inline-flex;align-items:center;gap:7px;font-size:.7rem;font-weight:700;
+  letter-spacing:.02em;white-space:nowrap;color:var(--accent-deep)}
+.kind::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.kind.k-food{color:var(--ok)} .kind.k-kid{color:var(--info)} .kind.k-move{color:var(--text-muted)}
+.rec-note{font-size:.88rem;color:var(--text-2);margin-top:.35rem;line-height:1.8}
+.rec-hours{font-size:.78rem;color:var(--text-muted);margin-top:.3rem;font-variant-numeric:tabular-nums}
+.callout{border-left:2px solid var(--accent);padding:.15rem 0 .15rem 1.1rem;margin:.7rem 0 .1rem;
+  font-size:.84rem;color:var(--danger);font-weight:600;line-height:1.8}
+.rec.done .rec-name,.rec.done .rec-note{color:var(--text-muted);text-decoration:line-through;
+  text-decoration-color:var(--rule-strong);text-decoration-thickness:1px}
+.rec.done .callout,.rec.done .kind,.rec.done .rec-hours{opacity:.45}
+
+.colophon{max-width:1180px;margin:0 auto;padding:2rem 3rem 3rem}
+.colophon > div{max-width:780px;padding-top:1.2rem;border-top:1px solid var(--rule);
+  font-size:.76rem;color:var(--text-muted);line-height:1.85}
+.colophon strong{color:var(--text-2);font-weight:700}
+
+@media print{body{background:#fff;color:#000}.no-print{display:none!important}.rec{break-inside:avoid}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+@media (max-width:1024px){
+  main > section{grid-template-columns:130px minmax(0,1fr);column-gap:2.25rem}
+  .hero{padding:3.5rem 2rem 2.5rem}
+  main{padding:0 2rem 5rem}
+  .masthead{padding:.8rem 2rem}
+  .daybar-inner{padding:.7rem 2rem}
+  .colophon{padding:2rem 2rem 3rem}
+}
+@media (max-width:768px){
+  body{line-height:1.7}
+  .hero{padding:2.5rem 1.25rem 2rem}
+  main{padding:0 1.25rem 4rem}
+  .masthead{padding:.75rem 1.25rem;gap:.7rem}
+  .daybar{top:56px}
+  .daybar-inner{padding:.6rem 1.25rem}
+  .mast-sub,.mast-divider{display:none}
+  .mast-title{font-size:.72rem;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mast-stat{white-space:nowrap;font-size:.64rem}
+  .mast-tools{gap:.4rem;flex-shrink:0}
+}
+@media (max-width:560px){
+  .mast-title{font-size:.66rem;letter-spacing:.08em}
+  .colophon{padding:1.5rem 1.25rem 2.5rem}
+  main > section{grid-template-columns:1fr;padding-top:2.25rem;margin-bottom:2.25rem;border-top-width:3px}
+  main > section > *:not(.section-label){grid-column:1}
+  .section-label{grid-column:1;grid-row:auto;position:static;margin:0 0 1rem;
+    display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap}
+  .section-label .bar{display:none}
+  .section-label .prog{margin-top:0}
+  .stays{display:block}
+  .stay{padding:1.2rem 0}
+  .stay + .stay{border-left:none;padding-left:0;border-top:1px solid var(--rule-soft)}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead no-print">
+  <div class="mast-title">Jeju Itinerary B</div>
+  <div class="mast-divider"></div>
+  <div class="mast-sub">바다와 오름</div>
+  <div class="mast-tools">
+    <span class="mast-stat" id="totalStat">0 / 0</span>
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="화면 밝기 전환">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="hero">
+  <span class="eyebrow">B안 · 2026년 9월 1일 – 9월 6일 · 5박 6일</span>
+  <h1>실내를 줄이고<br><em>바깥</em>으로 도는 코스</h1>
+  <p class="hero-sub">A안이 박물관과 실내 체험 위주였다면 이 버전은 해변, 폭포, 오름, 시장으로 채웠습니다. 숙소와 이동 순서는 그대로이고 하루 한 곳 원칙도 유지했습니다. 비 예보가 있는 날만 A안에서 실내 코스를 하나 꺼내 쓰면 됩니다.</p>
+  <div class="hero-meta">
+    <span>아이 2명 · 초등 5학년</span><span>물놀이·야외 위주</span><span>우천 시 A안과 교체</span>
+  </div>
+  <div class="stays">
+    <div class="stay">
+      <div class="stay-label">9/1 – 9/2</div>
+      <div class="stay-value">휘슬락</div>
+      <div class="stay-note">제주시 탑동 · 동문시장 도보권</div>
+    </div>
+    <div class="stay">
+      <div class="stay-label">9/2 – 9/4</div>
+      <div class="stay-value">WE호텔</div>
+      <div class="stay-note">서귀포 1100로 중산간</div>
+    </div>
+    <div class="stay">
+      <div class="stay-label">9/4 – 9/6</div>
+      <div class="stay-value">신화월드 랜딩관</div>
+      <div class="stay-note">안덕 · BIG 3 티켓 포함</div>
+    </div>
+  </div>
+</div>
+
+<nav class="daybar no-print" aria-label="날짜 이동">
+  <div class="daybar-inner">
+    <a href="#d1">1일차 9/1</a>
+    <a href="#d2">2일차 9/2</a>
+    <a href="#d3">3일차 9/3</a>
+    <a href="#d4">4일차 9/4</a>
+    <a href="#d5">5일차 9/5</a>
+    <a href="#d6">6일차 9/6</a>
+    <a href="#prep">준비물</a>
+  </div>
+</nav>
+
+<main id="plan"></main>
+
+<div class="colophon">
+  <div>
+    체크 표시는 이 기기에 저장되며 <strong>A안과 따로 관리</strong>됩니다.
+    영업시간과 휴무일은 방문 전 한 번 더 확인하세요.
+  </div>
+</div>
+
+<script>
+const DAYS = [
+  {
+    id:"d1", label:"1일차", date:"9월 1일 화요일",
+    desc:"공항에서 서쪽 해안도로를 타고 노을을 본 뒤 탑동으로 들어옵니다. 첫날은 짐 풀고 걷는 데까지만.",
+    items:[
+      {t:"도착", k:"이동", kc:"k-move", name:"공항 → 렌터카", n:"공항에서 이호테우까지 15분, 거기서 호텔까지 다시 15분."},
+      {t:"해질녘", k:"바다", kc:"k-kid", name:"이호테우 해변 · 말 등대", n:"빨강·하양 목마 등대가 서 있는 방파제. 도착 시간이 늦어도 노을만 보고 가면 되는 곳이라 첫날 부담이 없습니다.", w:"방파제는 난간이 낮습니다. 아이들 앞세우지 마세요"},
+      {t:"저녁", k:"시장", kc:"k-food", name:"동문시장 야시장", n:"호텔에서 도보권. 흑돼지 꼬치, 딱새우 튀김, 오메기떡을 조금씩 사서 돌아다니는 식으로. 아이들은 저녁 한 끼를 여기서 해결해도 충분합니다."},
+      {t:"밤", k:"산책", kc:"k-move", name:"탑동 해변공원", n:"시장에서 호텔로 돌아오는 길에 바다 쪽으로 한 바퀴."}
+    ]
+  },
+  {
+    id:"d2", label:"2일차", date:"9월 2일 수요일",
+    desc:"서쪽 해안을 따라 크게 돌아 WE호텔로 내려갑니다. 오늘의 중심은 물놀이.",
+    items:[
+      {t:"점심", k:"백반", kc:"k-food", name:"은빛식당 (서부두)", n:"체크아웃하고 나오는 길에. 1만 원 백반에 찌개·제육·반찬 6종. 오후 물놀이 전에 든든하게.", h:"10:00–21:00"},
+      {t:"오후", k:"바다", kc:"k-kid", name:"협재 · 금능해변", n:"수심이 얕고 완만해 초등생이 놀기 가장 편한 해변입니다. 비양도가 정면에 보이고, 협재보다 금능 쪽이 사람이 적습니다.", w:"9월은 공식 개장 기간이 끝나 안전요원이 없을 수 있습니다"},
+      {t:"해질녘", k:"드라이브", kc:"k-move", name:"신창 풍차해안도로", n:"금능에서 15분. 바다 위 풍력발전기 사이로 이어지는 짧은 해안 산책로. 노을 시간이 가장 좋습니다."},
+      {t:"저녁", k:"이동", kc:"k-move", name:"WE호텔 체크인", n:"신창에서 1100로 방향으로 50분. 도착이 늦어지니 저녁은 호텔에서 해결하는 편이 낫습니다."}
+    ]
+  },
+  {
+    id:"d3", label:"3일차", date:"9월 3일 목요일",
+    desc:"서귀포 남쪽 바다. 카약 한 번 타고 시내로 넘어옵니다.",
+    items:[
+      {t:"오전", k:"물놀이", kc:"k-kid", name:"쇠소깍 투명카약 · 테우", n:"WE호텔에서 40분. 민물과 바닷물이 만나는 협곡을 카약으로 거슬러 올라갑니다. 5학년이면 둘이 한 배를 저을 수 있어 반응이 좋습니다.", w:"바람이 세면 운항이 중단됩니다. 출발 전 전화 확인"},
+      {t:"점심", k:"백반", kc:"k-food", name:"소반 (서귀동)", n:"쇠소깍에서 15분. 메뉴가 하나뿐이고 주인이 직접 기른 채소로 한 상을 차려 냅니다.", h:"11:00–15:00 · 토·일 휴무"},
+      {t:"오후", k:"자연", kc:"k-kid", name:"정방폭포", n:"바다로 바로 떨어지는 폭포. 계단이 가파르지만 5분이면 내려갑니다. 시간이 남으면 서귀포 매일올레시장에서 간식."},
+      {t:"저녁", k:"빵집", kc:"k-food", name:"빵드밀 (중문상로)", n:"호텔 돌아가는 길. 소금빵과 크림빵을 사두면 내일 아침이 해결됩니다."}
+    ]
+  },
+  {
+    id:"d4", label:"4일차", date:"9월 4일 금요일",
+    desc:"WE호텔 체크아웃. 서남쪽 해안을 훑고 신화월드로 들어갑니다.",
+    items:[
+      {t:"오전", k:"자연", kc:"k-kid", name:"용머리해안 · 산방산", n:"용이 바다로 들어가는 형상의 퇴적층 사이를 걷는 코스. 20~30분이면 한 바퀴.", w:"만조·기상에 따라 수시로 통제됩니다. 당일 아침 전화로 개방 확인"},
+      {t:"점심", k:"백반", kc:"k-food", name:"미영이네 (모슬포)", n:"용머리에서 10분. 고등어회로 유명하지만 고등어구이와 조림도 함께 나와 아이들 먹을 것이 있습니다.", h:"11:30–21:00 · 수 휴무"},
+      {t:"오후", k:"이동", kc:"k-move", name:"신화월드 랜딩관 체크인", n:"모슬포에서 20분."},
+      {t:"이어서", k:"아이", kc:"k-kid", name:"신화테마파크", n:"랜딩관 투숙객 BIG 3 티켓 사용."},
+      {t:"20:10", k:"야경", kc:"k-kid", name:"원더라이트 불꽃쇼", n:"금·토·일 저녁 야외 공연장.", w:"일정 변동 가능 — 체크인 때 프런트 확인"}
+    ]
+  },
+  {
+    id:"d5", label:"5일차", date:"9월 5일 토요일",
+    desc:"오전은 물, 오후는 오름. 이동이 가장 적은 날이라 여유를 둡니다.",
+    items:[
+      {t:"오전", k:"물놀이", kc:"k-kid", name:"신화워터파크", n:"리조트 안에서 반나절. 실내존은 사계절 운영합니다.", w:"실외 성수기가 8/23 종료 — 9월 운영 여부 당일 확인"},
+      {t:"점심", k:"백반", kc:"k-food", name:"달팽이식당 (안덕 일주서로)", n:"신화월드에서 15분. 돼지불고기 한 상이 단일 메뉴이고 보리밥과 청국장이 같이 나옵니다. 손님 대부분이 현지인.", h:"11:00–15:30 · 금 휴무"},
+      {t:"오후", k:"오름", kc:"k-kid", name:"군산오름", n:"정상 근처까지 차로 올라간 뒤 7~10분 도보. 한라산·산방산·바다가 360도로 보입니다.", w:"진입로가 1차선이라 교행이 어렵습니다. 천천히"},
+      {t:"저녁", k:"휴식", kc:"k-move", name:"리조트 산책 · 불꽃쇼", n:"토요일도 원더라이트가 있어 어제 못 봤으면 오늘."}
+    ]
+  },
+  {
+    id:"d6", label:"6일차", date:"9월 6일 일요일",
+    desc:"체크아웃 후 서쪽 해안을 타고 공항으로. 비행 시간에 맞춰 하나만 고르세요.",
+    items:[
+      {t:"오전", k:"바다", kc:"k-kid", name:"곽지 또는 협재해변", n:"공항 가는 길에 마지막으로 발만 담그기. 곽지는 해변에 용천수 노천탕(과물노천탕)이 있어 모래를 씻고 갈 수 있습니다."},
+      {t:"간식", k:"빵집", kc:"k-food", name:"rnr (협재)", n:"제주 소금빵으로 가장 많이 언급되는 곳. 집에 가져갈 빵을 여기서.", h:"목–일 10:00–17:00", w:"오늘은 일요일이라 영업"},
+      {t:"마감", k:"이동", kc:"k-move", name:"렌터카 반납 · 공항", n:"협재에서 공항까지 40분. 반납 마감을 역산해서 출발."}
+    ]
+  }
+];
+
+const PREP = [
+  {name:"용머리해안 개방 확인", n:"9/4 아침 전화. 만조와 기상에 따라 자주 통제됩니다."},
+  {name:"쇠소깍 카약 운항 확인", n:"9/3 아침 전화. 바람이 세면 중단."},
+  {name:"신화월드 운영 확인", n:"워터파크 실외존, 원더라이트 불꽃쇼 일정."},
+  {name:"래시가드 · 아쿠아슈즈", n:"해변 두 곳과 워터파크. 9월 바닷물은 생각보다 찹니다."},
+  {name:"큰 수건과 갈아입을 옷", n:"차에 상시 비치. 해변 다음 일정이 실내인 날이 있습니다."},
+  {name:"방수팩 · 선크림 · 모자", n:"카약에서 휴대폰 젖는 사고가 흔합니다."},
+  {name:"운동화", n:"군산오름과 용머리해안 모두 슬리퍼는 곤란합니다."},
+  {name:"숙소 예약번호 캡처", n:"1744957106 / 1745243805 / 1744552130"}
+];
+
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function row(key,it){
+  return '<div class="rec" data-key="'+key+'">'
+    + '<input type="checkbox" id="cb-'+key+'" aria-label="'+esc(it.name)+'">'
+    + '<div><div class="rec-head">'
+    + (it.t ? '<span class="rec-time">'+esc(it.t)+'</span>' : '')
+    + '<span class="rec-name">'+esc(it.name)+'</span>'
+    + (it.k ? '<span class="kind '+(it.kc||'')+'">'+esc(it.k)+'</span>' : '')
+    + '</div>'
+    + (it.n ? '<div class="rec-note">'+esc(it.n)+'</div>' : '')
+    + (it.h ? '<div class="rec-hours">'+esc(it.h)+'</div>' : '')
+    + (it.w ? '<div class="callout">'+esc(it.w)+'</div>' : '')
+    + '</div></div>';
+}
+function section(id,label,date,desc,items){
+  return '<section id="'+id+'">'
+    + '<div class="section-label"><span class="bar"></span>'+esc(label)
+    + '<span class="prog" id="prog-'+id+'"></span></div>'
+    + '<h2>'+esc(date)+'</h2>'
+    + '<p class="section-desc">'+esc(desc)+'</p>'
+    + items.map((it,i)=>row(id+'-'+i,it)).join('')
+    + '</section>';
+}
+
+document.getElementById("plan").innerHTML =
+  DAYS.map(d=>section(d.id,d.label,d.date,d.desc,d.items)).join("")
+  + section("prep","준비물","출발 전 확인","야외 위주라 확인 전화가 두 건 있습니다.",PREP);
+
+const KEY = "jeju-2026-09-checks-b";
+let state = {};
+
+async function load(){
+  try{
+    const r = await window.storage.get(KEY);
+    if(r && r.value) state = JSON.parse(r.value);
+  }catch(e){ state = {}; }
+  document.querySelectorAll('.rec[data-key]').forEach(function(rec){
+    const cb = rec.querySelector('input');
+    cb.checked = !!state[rec.dataset.key];
+    rec.classList.toggle('done', cb.checked);
+  });
+  counts();
+}
+async function save(){
+  try{ await window.storage.set(KEY, JSON.stringify(state)); }catch(e){}
+}
+function counts(){
+  let all=0, hit=0;
+  DAYS.map(function(d){return d.id;}).concat(["prep"]).forEach(function(id){
+    const rows=[].slice.call(document.querySelectorAll('.rec[data-key^="'+id+'-"]'));
+    const done=rows.filter(function(r){return r.querySelector('input').checked;}).length;
+    all+=rows.length; hit+=done;
+    const el=document.getElementById('prog-'+id);
+    if(el) el.textContent = done+' / '+rows.length;
+  });
+  document.getElementById('totalStat').textContent = hit+' / '+all;
+}
+document.addEventListener('change', function(e){
+  if(e.target.type!=='checkbox') return;
+  const rec=e.target.closest('.rec');
+  state[rec.dataset.key]=e.target.checked;
+  rec.classList.toggle('done', e.target.checked);
+  counts(); save();
+});
+document.getElementById('themeBtn').addEventListener('click', function(){
+  const el=document.documentElement;
+  el.dataset.theme = el.dataset.theme==='dark' ? 'light' : 'dark';
+});
+load();
+</script>
+</body>
+</html>
