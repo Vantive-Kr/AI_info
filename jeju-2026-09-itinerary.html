@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="제주일정">
+<title>제주 가족여행 · Jeju Itinerary 2026.09 · 플랜 A</title>
+<style>
+:root{
+  --bg:#FAF9F5; --surface:#FFFFFF; --surface-2:#F0EEE6; --surface-hover:#F5F1E8;
+  --rule:rgba(25,25,25,.14); --rule-soft:rgba(25,25,25,.07); --rule-strong:rgba(25,25,25,.30);
+  --text:#191919; --text-2:#5C5A54; --text-muted:#6E6B64;
+  --accent:#D97757; --accent-deep:#B24E2C; --accent-soft:#D4A27F; --accent-pale:#EBDBBC;
+  --accent-wash:#F7EFE9;
+  --btn-bg:#B24E2C; --btn-bg-hover:#8F3A1A; --on-accent:#FFFFFF;
+  --ok:#3F6B4E; --info:#4E6288; --danger:#B24E2C;
+  --mast-bg:linear-gradient(100deg,#D97757 0%,#CC785C 34%,#D4A27F 70%,#EBDBBC 100%);
+  --mast-fg:#191919; --mast-fg-2:#3D1D0F;
+  --mast-line:rgba(25,25,25,.66); --mast-hover:rgba(255,255,255,.45);
+}
+html[data-theme="dark"]{
+  --bg:#262624; --surface:#30302E; --surface-2:#3A3A37; --surface-hover:#403F3C;
+  --rule:rgba(235,219,188,.18); --rule-soft:rgba(235,219,188,.09); --rule-strong:rgba(235,219,188,.36);
+  --text:#F5F4EF; --text-2:#C2BFB6; --text-muted:#A29E96;
+  --accent:#E08A6B; --accent-deep:#D97757; --accent-soft:#D4A27F; --accent-pale:#4A3E36;
+  --accent-wash:#3A322C;
+  --btn-bg:#E08A6B; --btn-bg-hover:#EC9C7F; --on-accent:#23160F;
+  --ok:#84B392; --info:#93A6C7; --danger:#E8886A;
+  --mast-bg:linear-gradient(100deg,#6E280F 0%,#8F3A1A 38%,#9E4019 72%,#A8461F 100%);
+  --mast-fg:#FDF6F2; --mast-fg-2:#F8E4D8;
+  --mast-line:rgba(255,255,255,.64); --mast-hover:rgba(0,0,0,.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR","Segoe UI",system-ui,sans-serif;
+  font-size:16px;line-height:1.75;letter-spacing:-.003em;
+  -webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+  overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom);
+}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+/* ---------- MASTHEAD ---------- */
+.masthead{
+  position:sticky;top:0;z-index:100;
+  background:var(--mast-bg);color:var(--mast-fg);
+  display:flex;align-items:center;gap:1rem;padding:.85rem 3rem;
+}
+.mast-title{font-size:.8125rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mast-fg)}
+.mast-divider{width:1px;height:20px;background:var(--mast-line)}
+.mast-sub{font-size:.78rem;color:var(--mast-fg-2);letter-spacing:.02em;font-weight:600}
+.mast-tools{margin-left:auto;display:flex;align-items:center;gap:.6rem}
+.mast-stat{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mast-fg-2);font-variant-numeric:tabular-nums}
+.icon-btn{width:44px;height:44px;border:1px solid var(--mast-line);background:none;color:var(--mast-fg);
+  display:grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s}
+.icon-btn:hover{border-color:var(--mast-fg);background:var(--mast-hover)}
+
+/* ---------- TYPE ---------- */
+h1{font-size:clamp(2.15rem,6vw,3.25rem);line-height:1.15;letter-spacing:-.03em;font-weight:800}
+h1 em{font-style:normal;color:var(--accent-deep)}
+h2{font-size:clamp(1.5rem,4vw,2rem);line-height:1.24;letter-spacing:-.025em;font-weight:700;margin-bottom:.8rem}
+
+/* ---------- HERO ---------- */
+.hero{max-width:1180px;margin:0 auto;padding:4.5rem 3rem 3rem}
+.eyebrow{display:block;max-width:780px;font-size:.7rem;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent-deep);margin-bottom:1.8rem;padding-bottom:.9rem;
+  border-bottom:1px solid var(--rule)}
+.hero-sub{font-size:1.1rem;color:var(--text-2);max-width:640px;margin:1.3rem 0 2.4rem;line-height:1.85}
+.hero-meta{display:flex;flex-wrap:wrap;align-items:baseline;max-width:780px;
+  padding-top:1.1rem;border-top:1px solid var(--rule);font-size:.78rem;color:var(--text-muted);letter-spacing:.02em}
+.hero-meta span + span::before{content:"·";margin:0 .85rem;color:var(--rule-strong);font-weight:700}
+
+/* ---------- STAY ROW ---------- */
+.stays{display:flex;flex-wrap:wrap;max-width:780px;margin-top:2.4rem;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.stay{flex:1 1 0;min-width:178px;padding:1.5rem 1.4rem 1.6rem 0}
+.stay + .stay{border-left:1px solid var(--rule-soft);padding-left:1.4rem}
+.stay-label{font-size:.68rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:.7rem;font-variant-numeric:tabular-nums}
+.stay-value{font-size:1.35rem;font-weight:800;letter-spacing:-.03em;line-height:1.2;color:var(--accent-deep)}
+.stay-note{font-size:.78rem;color:var(--text-2);margin-top:.6rem;line-height:1.6}
+
+/* ---------- DAY NAV ---------- */
+.daybar{position:sticky;top:60px;z-index:90;background:var(--bg);border-bottom:1px solid var(--rule)}
+.daybar-inner{max-width:1180px;margin:0 auto;padding:.7rem 3rem;display:flex;gap:.45rem;
+  overflow-x:auto;scrollbar-width:none}
+.daybar-inner::-webkit-scrollbar{display:none}
+.daybar a{flex:0 0 auto;text-decoration:none;font-size:.7rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text-2);border:1px solid var(--rule);padding:.5rem .85rem;
+  min-height:38px;display:inline-flex;align-items:center;transition:.15s}
+.daybar a:hover{border-color:var(--accent);color:var(--accent-deep)}
+
+/* ---------- EDITORIAL GRID ---------- */
+main{max-width:1180px;margin:0 auto;padding:0 3rem 6rem}
+main > section{display:grid;grid-template-columns:196px minmax(0,1fr);column-gap:3.5rem;
+  padding-top:3.25rem;margin-bottom:3.25rem;border-top:4px solid var(--accent);scroll-margin-top:120px}
+main > section:first-child{border-top:none;padding-top:1.5rem}
+main > section > *:not(.section-label){grid-column:2;max-width:780px}
+.section-label{grid-column:1;grid-row:1/200;align-self:start;position:sticky;top:9rem;
+  margin:.4rem 0 0;font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text-muted);line-height:1.65}
+.section-label .bar{display:block;width:26px;height:2px;background:var(--accent);margin-bottom:.7rem}
+.section-label .prog{display:block;margin-top:.5rem;font-size:.7rem;letter-spacing:.08em;
+  color:var(--accent-deep);font-variant-numeric:tabular-nums}
+.section-desc{font-size:.95rem;color:var(--text-2);margin-bottom:2rem;line-height:1.85}
+
+/* ---------- ROWS ---------- */
+.rec{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:1rem;align-items:start;
+  padding:1.15rem 0;border-bottom:1px solid var(--rule-soft)}
+.rec:first-of-type{border-top:1px solid var(--rule)}
+input[type=checkbox]{
+  -webkit-appearance:none;appearance:none;
+  width:20px;height:20px;margin-top:.42rem;flex-shrink:0;
+  background:var(--surface);border:1px solid var(--rule-strong);border-radius:0;
+  cursor:pointer;display:grid;place-content:center;transition:border-color .15s,background .15s}
+input[type=checkbox]:hover{border-color:var(--accent)}
+input[type=checkbox]::before{
+  content:"";width:11px;height:6px;margin-top:-3px;
+  border-left:2px solid var(--accent-deep);border-bottom:2px solid var(--accent-deep);
+  transform:rotate(-45deg) scale(0);transition:transform .12s ease-out}
+input[type=checkbox]:checked{border-color:var(--accent)}
+input[type=checkbox]:checked::before{transform:rotate(-45deg) scale(1)}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.masthead button:focus-visible{outline-color:var(--mast-fg)}
+.rec-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .9rem}
+.rec-time{font-size:.68rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);font-variant-numeric:tabular-nums}
+.rec-name{font-size:1.05rem;font-weight:700;letter-spacing:-.015em;line-height:1.4}
+.kind{display:inline-flex;align-items:center;gap:7px;font-size:.7rem;font-weight:700;
+  letter-spacing:.02em;white-space:nowrap;color:var(--accent-deep)}
+.kind::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.kind.k-food{color:var(--ok)} .kind.k-kid{color:var(--info)} .kind.k-move{color:var(--text-muted)}
+.rec-note{font-size:.88rem;color:var(--text-2);margin-top:.35rem;line-height:1.8}
+.rec-hours{font-size:.78rem;color:var(--text-muted);margin-top:.3rem;font-variant-numeric:tabular-nums}
+.callout{border-left:2px solid var(--accent);padding:.15rem 0 .15rem 1.1rem;margin:.7rem 0 .1rem;
+  font-size:.84rem;color:var(--danger);font-weight:600;line-height:1.8}
+.rec.done .rec-name,.rec.done .rec-note{color:var(--text-muted);text-decoration:line-through;
+  text-decoration-color:var(--rule-strong);text-decoration-thickness:1px}
+.rec.done .callout,.rec.done .kind,.rec.done .rec-hours{opacity:.45}
+
+/* ---------- FOOTER ---------- */
+.colophon{max-width:1180px;margin:0 auto;padding:2rem 3rem 3rem}
+.colophon > div{max-width:780px;padding-top:1.2rem;border-top:1px solid var(--rule);
+  font-size:.76rem;color:var(--text-muted);line-height:1.85}
+.colophon strong{color:var(--text-2);font-weight:700}
+
+/* ---------- ROUTE MAP ---------- */
+.mapcard{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:1.1rem 0 1.3rem}
+.mapstat{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem 1.4rem;margin-bottom:.9rem}
+.mapstat b{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;color:var(--accent-deep);
+  font-variant-numeric:tabular-nums;line-height:1}
+.mapstat b span{font-size:.85rem;font-weight:700;margin-left:.2rem;letter-spacing:0}
+.mapstat i{font-style:normal;font-size:.72rem;font-weight:700;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--text-muted)}
+.mapsvg{display:block;width:100%;height:auto;overflow:visible}
+.coast{fill:var(--surface);stroke:var(--rule-strong);stroke-width:1.2;stroke-linejoin:round}
+.halla{fill:none;stroke:var(--rule);stroke-width:1;stroke-dasharray:3 4}
+.pt{fill:var(--surface);stroke:var(--rule-strong);stroke-width:1.1}
+.pt.on{fill:var(--accent);stroke:var(--accent-deep);stroke-width:1.4}
+.leg{stroke:var(--accent);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.seglab{font-size:9px;font-weight:700;fill:var(--accent-deep);font-variant-numeric:tabular-nums}
+.ptlab{font-size:9.5px;font-weight:700;fill:var(--text-2)}
+.maphint{font-size:.76rem;color:var(--text-muted);margin-top:.8rem;line-height:1.75}
+@media (max-width:560px){
+  .mapstat b{font-size:1.35rem}
+  .seglab{font-size:11px}
+  .ptlab{display:none}
+}
+
+.syncbar{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.tbtn{font-size:.72rem;font-weight:700;letter-spacing:.06em;color:var(--text-2);
+  background:none;border:1px solid var(--rule);padding:.5rem .8rem;min-height:38px;cursor:pointer;
+  transition:.15s;font-family:inherit}
+.tbtn:hover{border-color:var(--accent);color:var(--accent-deep)}
+.syncmsg{font-size:.74rem;color:var(--accent-deep);margin-top:.6rem;min-height:1.2em}
+
+@media print{
+  body{background:#fff;color:#000}
+  .no-print{display:none!important}
+  .rec{break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:1024px){
+  main > section{grid-template-columns:130px minmax(0,1fr);column-gap:2.25rem}
+  .hero{padding:3.5rem 2rem 2.5rem}
+  main{padding:0 2rem 5rem}
+  .masthead{padding:.8rem 2rem}
+  .daybar-inner{padding:.7rem 2rem}
+  .colophon{padding:2rem 2rem 3rem}
+}
+@media (max-width:768px){
+  body{line-height:1.7}
+  .hero{padding:2.5rem 1.25rem 2rem}
+  main{padding:0 1.25rem 4rem}
+  .masthead{padding:.75rem 1.25rem;gap:.7rem}
+  .daybar{top:56px}
+  .daybar-inner{padding:.6rem 1.25rem}
+  .mast-sub,.mast-divider{display:none}
+  .mast-title{font-size:.72rem;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mast-stat{white-space:nowrap;font-size:.64rem}
+  .mast-tools{gap:.4rem;flex-shrink:0}
+}
+@media (max-width:560px){
+  .mast-title{font-size:.66rem;letter-spacing:.08em}
+  .colophon{padding:1.5rem 1.25rem 2.5rem}
+  main > section{grid-template-columns:1fr;padding-top:2.25rem;margin-bottom:2.25rem;border-top-width:3px}
+  main > section > *:not(.section-label){grid-column:1}
+  .section-label{grid-column:1;grid-row:auto;position:static;margin:0 0 1rem;
+    display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap}
+  .section-label .bar{display:none}
+  .section-label .prog{margin-top:0}
+  .stays{display:block}
+  .stay{padding:1.2rem 0}
+  .stay + .stay{border-left:none;padding-left:0;border-top:1px solid var(--rule-soft)}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead no-print">
+  <div class="mast-title">Jeju Itinerary</div>
+  <div class="mast-divider"></div>
+  <div class="mast-sub">제주 가족여행</div>
+  <div class="mast-tools">
+    <span class="mast-stat" id="totalStat">0 / 0</span>
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="화면 밝기 전환">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="hero">
+  <span class="eyebrow">2026년 9월 1일 – 9월 6일 · 5박 6일</span>
+  <h1>제주 서쪽을 따라<br><em>내려가는</em> 여섯 날 · 플랜 A</h1>
+  <p class="hero-sub">숙소 세 곳이 제주시 탑동에서 중산간을 거쳐 안덕으로 이어집니다. 하루에 한 곳만 제대로 보고, 끼니는 로컬 백반집과 빵집으로 채우는 일정입니다.</p>
+  <div class="hero-meta">
+    <span>아이 2명 · 초등 5학년</span><span>렌터카 이동</span><span>하루 한 곳</span>
+  </div>
+  <div class="stays">
+    <div class="stay">
+      <div class="stay-label">9/1 – 9/2</div>
+      <div class="stay-value">휘슬락</div>
+      <div class="stay-note">제주시 탑동 · 동문시장 도보권</div>
+    </div>
+    <div class="stay">
+      <div class="stay-label">9/2 – 9/4</div>
+      <div class="stay-value">WE호텔</div>
+      <div class="stay-note">서귀포 1100로 중산간</div>
+    </div>
+    <div class="stay">
+      <div class="stay-label">9/4 – 9/6</div>
+      <div class="stay-value">신화월드 랜딩관</div>
+      <div class="stay-note">안덕 · BIG 3 티켓 포함</div>
+    </div>
+  </div>
+</div>
+
+<nav class="daybar no-print" aria-label="날짜 이동">
+  <div class="daybar-inner">
+    <a href="#routemap">동선 지도</a>
+    <a href="#d1">1일차 9/1</a>
+    <a href="#d2">2일차 9/2</a>
+    <a href="#d3">3일차 9/3</a>
+    <a href="#d4">4일차 9/4</a>
+    <a href="#d5">5일차 9/5</a>
+    <a href="#d6">6일차 9/6</a>
+    <a href="#prep">준비물</a>
+  </div>
+</nav>
+
+<main id="plan"></main>
+
+<div class="colophon">
+  <div>
+    체크 표시는 이 기기에 저장되어 다시 열어도 유지됩니다.
+    영업시간과 휴무일은 <strong>방문 전 한 번 더 확인</strong>하세요.
+  </div>
+</div>
+
+<script>
+const DAYS = [
+  {
+    id:"d1", label:"1일차", date:"9월 1일 화요일",
+    desc:"휘슬락 체크인. 호텔이 서부두·흑돼지거리·동문시장 도보권이라 차는 세워두고 걷는 하루.",
+    items:[
+      {t:"도착", k:"이동", kc:"k-move", name:"공항 → 렌터카 → 탑동", n:"공항에서 호텔까지 20분."},
+      {t:"경유", k:"빵집", kc:"k-food", name:"베이커리 온유 (외도)", n:"46년 경력 호텔 제과 출신. 멜론빵과 현무암 쌀빵을 내일 아침용으로 사두면 좋습니다.", h:"09:00–21:00 · 주차 넓음"},
+      {t:"오후", k:"아이", kc:"k-kid", name:"국립제주박물관 어린이박물관", n:"호텔에서 차로 5분, 무료. 한 시간이면 충분해 도착이 늦어도 괜찮습니다.", h:"어린이관 09:30 개관 / 월 휴관", w:"오늘은 화요일이라 정상 운영"},
+      {t:"저녁", k:"백반", kc:"k-food", name:"은빛식당 (서부두)", n:"호텔에서 도보 5분. 1만 원에 찌개·제육·반찬 6종이 나오는 로컬 밥집.", h:"10:00–21:00 통영업"},
+      {t:"밤", k:"산책", kc:"k-move", name:"탑동 해변공원 · 동문시장", n:"둘 다 도보권. 시장 야시장이 서면 아이들이 좋아합니다."}
+    ]
+  },
+  {
+    id:"d2", label:"2일차", date:"9월 2일 수요일",
+    desc:"휘슬락 체크아웃. 늦은 아점으로 백반 한 상 먹고, 오후는 중산간 카페에서 쉬다가 WE호텔로 들어갑니다.",
+    items:[
+      {t:"10:00", k:"아점", kc:"k-food", name:"착한제주고등어 (동문로)", n:"고등어구이 6,000원, 조림 8,000원. 갈치도 구이와 조림 중에 고를 수 있고 반찬은 셀프바입니다. 호텔에서 도보 10분이라 체크아웃 전에 걸어갔다 와도 됩니다.", h:"09:00–14:30 · 월 휴무"},
+      {t:"오후", k:"빵집", kc:"k-food", name:"또빵 (Doughbbang, 오복5길)", n:"제주 재료를 쓰는 동네 베이커리. 고사리 치아바타와 명란 대파 바게트가 간판이고, 우도 땅콩 소보로와 먹물 크로켓도 있습니다. 작지만 안에서 먹고 갈 자리가 있습니다.", h:"08:00–21:00 · 월 휴무", w:"오후 늦게 가면 인기 품목이 빠집니다"},
+      {t:"선택", k:"실내", kc:"k-kid", name:"넥슨컴퓨터박물관", n:"1100로 초입에 있어 호텔 가는 길에 그대로 걸립니다. 2층에서 옛날 오락실 게임기와 콘솔을 직접 해볼 수 있어 5학년이면 두 시간은 붙어 있습니다. 어른은 8,000원.", h:"10:00–18:00 · 월 휴관"},
+      {t:"해질녘", k:"산책", kc:"k-kid", name:"서귀포자연휴양림", n:"1100로를 타고 내려오는 길에 있습니다. 호텔에서 차로 5분 거리라 짐 풀기 전에 잠깐 걷기 좋습니다. 가장 짧은 healing 코스는 30분이면 한 바퀴 돌고, 운 좋으면 노루를 만납니다. 어른 1,000원·어린이 300원 현금.", h:"09:00–18:00 · 현금만"},
+      {t:"저녁", k:"이동", kc:"k-move", name:"WE호텔 체크인", n:"휴양림에서 5분. 숲에 둘러싸인 곳이라 저녁은 호텔에서 쉬는 편이 낫습니다."}
+    ]
+  },
+  {
+    id:"d3", label:"3일차", date:"9월 3일 목요일",
+    desc:"WE호텔에 짐을 둔 채 중문 일대만 도는 날.",
+    items:[
+      {t:"오전", k:"아이", kc:"k-kid", name:"러닝맨 체험관 제주", n:"중문의 미션형 실내 체험관. 아이 둘이 경쟁하며 한 시간이 훌쩍 갑니다.", h:"09:00–19:00"},
+      {t:"이어서", k:"선택", kc:"k-kid", name:"얼라이브 카트", n:"바로 옆. 속도 제한 카트라 5학년이면 혼자 운전할 수 있습니다. 둘을 묶으면 반나절 코스."},
+      {t:"점심", k:"백반", kc:"k-food", name:"틈새식당 (중문)", n:"1인 12,000원 흑돼지 돔베고기 정식. 생선구이와 찌개가 함께 나와 아이들도 먹기 좋습니다.", h:"11:00–21:00"},
+      {t:"간식", k:"카페", kc:"k-food", name:"홀츠 애월 (Holz Aewol)", n:"독일식 빵을 굽는 애월 중산간의 작은 베이커리 카페. 프레첼과 사워도우, 카다멈롤이 간판입니다. WE호텔에서 1100로를 타고 북쪽으로 30분이라 중문 일정을 일찍 끝내야 갈 수 있습니다.", h:"10:30–18:00 · 목~일만 영업"},
+      {t:"대신", k:"빵집", kc:"k-food", name:"빵드밀 (중문상로)", n:"애월까지 올라가기 부담스러우면 이쪽으로. 소금빵과 크림빵이 간판입니다."},
+      {t:"오후", k:"산책", kc:"k-move", name:"주상절리 또는 중문색달해변", n:"체력이 남으면 하나만."}
+    ]
+  },
+  {
+    id:"d4", label:"4일차", date:"9월 4일 금요일",
+    desc:"WE호텔 체크아웃, 신화월드로 이동. 오후는 리조트 안에서 소화합니다.",
+    items:[
+      {t:"오전", k:"아이", kc:"k-kid", name:"군산오름 (안덕)", n:"정상 근처까지 차로 올라간 뒤 7~10분만 걸으면 한라산·산방산·바다가 360도로 보입니다.", w:"진입로가 1차선이라 교행이 어렵습니다. 천천히"},
+      {t:"선택", k:"카페", kc:"k-food", name:"홀츠 애월 (Holz Aewol)", n:"금요일도 영업합니다. 다만 군산오름에서 북쪽으로 30분이라 신화월드 체크인이 늦어집니다. 어제 못 갔고 오후가 통째로 비는 경우에만.", h:"10:30–18:00 · 목~일만 영업"},
+      {t:"오후", k:"이동", kc:"k-move", name:"신화월드 랜딩관 체크인", n:"군산오름에서 20분."},
+      {t:"이어서", k:"아이", kc:"k-kid", name:"신화테마파크", n:"랜딩관 투숙객에게 제공되는 BIG 3 티켓 사용."},
+      {t:"20:10", k:"야경", kc:"k-kid", name:"원더라이트 불꽃쇼", n:"금·토·일 저녁 야외 공연장.", w:"일정 변동 가능 — 체크인 때 프런트 확인"}
+    ]
+  },
+  {
+    id:"d5", label:"5일차", date:"9월 5일 토요일",
+    desc:"신화월드를 베이스로 안덕 일대. 이번 여행에서 아이들 반응이 가장 좋을 날.",
+    items:[
+      {t:"오전", k:"아이", kc:"k-kid", name:"제주항공우주박물관", n:"차로 7분. 퇴역 항공기 내부 진입, 비행 시뮬레이터, 4D 영상, 실내 놀이공간까지 2~3시간은 놉니다.", h:"09:00–18:00 · 월 휴관"},
+      {t:"대안", k:"선택", kc:"k-kid", name:"세계자동차&피아노박물관", n:"차로 10분. 5,000원 스탬프팩에 어린이 운전 코스가 포함되고 입구에 사슴 먹이주기가 있습니다."},
+      {t:"점심", k:"식사", kc:"k-food", name:"신화월드 식당가", n:"오전을 박물관에서 보내면 동선상 리조트 안에서 해결하는 편이 낫습니다."},
+      {t:"오후", k:"물놀이", kc:"k-kid", name:"신화워터파크", n:"실내존은 사계절 운영. 야외풀은 바람이 불면 체감온도가 낮으니 래시가드를 챙기세요.", w:"실외 성수기가 8/23 종료 — 9월 운영 여부 당일 확인"}
+    ]
+  },
+  {
+    id:"d6", label:"6일차", date:"9월 6일 일요일",
+    desc:"체크아웃 후 공항 방향으로. 두 갈래 중 하나만 고르면 됩니다.",
+    items:[
+      {t:"선택 A", k:"마무리", kc:"k-move", name:"오설록 티뮤지엄 · 이니스프리 제주하우스", n:"신화월드에서 5분. 짐을 싣고 가볍게 마무리."},
+      {t:"선택 B", k:"마무리", kc:"k-food", name:"협재해변 · rnr 빵집", n:"공항 가는 길. rnr은 제주 소금빵으로 가장 많이 언급되는 곳입니다.", h:"목–일 10:00–17:00", w:"오늘은 일요일이라 영업"},
+      {t:"마감", k:"이동", kc:"k-move", name:"렌터카 반납 · 공항", n:"반납 마감 시간을 역산해서 출발."}
+    ]
+  }
+];
+
+const PREP = [
+  {name:"렌터카 예약 확인", n:"차종과 반납 시간."},
+  {name:"신화월드 운영 확인", n:"워터파크 실외존, 원더라이트 불꽃쇼 일정."},
+  {name:"9/2 아점 시간", n:"착한제주고등어는 14:30에 브레이크타임에 들어갑니다."},
+  {name:"입장권 사전 예매", n:"넥슨컴퓨터박물관 · 러닝맨 체험관 · 항공우주박물관 온라인 할인 확인."},
+  {name:"숙소 예약번호 캡처", n:"1744957106 / 1745243805 / 1744552130"},
+  {name:"수영복과 래시가드", n:"야외풀은 바람 때문에 체감온도가 낮습니다."},
+  {name:"운동화와 모기기피제", n:"군산오름용."}
+];
+
+/* ---------- ROUTE MAP ---------- */
+const LOC = {
+  "공항 → 렌터카 → 탑동":[33.5155,126.5200],
+  "공항 → 렌터카":[33.5066,126.4930],
+  "베이커리 온유 (외도)":[33.4925,126.4500],
+  "국립제주박물관 어린이박물관":[33.5140,126.5560],
+  "은빛식당 (서부두)":[33.5175,126.5230],
+  "탑동 해변공원 · 동문시장":[33.5140,126.5250],
+  "탑동 해변공원":[33.5165,126.5200],
+  "동문시장 야시장":[33.5122,126.5270],
+  "이호테우 해변 · 말 등대":[33.4980,126.4530],
+  "착한제주고등어 (동문로)":[33.5136,126.5313],
+  "홀츠 애월 (Holz Aewol)":[33.4243,126.3965],
+  "또빵 (Doughbbang, 오복5길)":[33.4974,126.5362],
+  "서귀포자연휴양림":[33.3114,126.4589],
+  "넥슨컴퓨터박물관":[33.4718,126.4849],
+  "협재 · 금능해변":[33.3915,126.2380],
+  "신창 풍차해안도로":[33.3400,126.1730],
+  "WE호텔 체크인":[33.3080,126.4790],
+  "러닝맨 체험관 제주":[33.2530,126.4180],
+  "얼라이브 카트":[33.2540,126.4200],
+  "틈새식당 (중문)":[33.2530,126.4220],
+  "빵드밀 (중문상로)":[33.2510,126.4160],
+  "주상절리 또는 중문색달해변":[33.2378,126.4270],
+  "쇠소깍 투명카약 · 테우":[33.2540,126.6100],
+  "소반 (서귀동)":[33.2490,126.5650],
+  "정방폭포":[33.2450,126.5720],
+  "군산오름 (안덕)":[33.2560,126.3560],
+  "군산오름":[33.2560,126.3560],
+  "용머리해안 · 산방산":[33.2340,126.3130],
+  "미영이네 (모슬포)":[33.2130,126.2530],
+  "달팽이식당 (안덕 일주서로)":[33.2560,126.3350],
+  "신화월드 랜딩관 체크인":[33.3090,126.3110],
+  "신화테마파크":[33.3090,126.3110],
+  "원더라이트 불꽃쇼":[33.3090,126.3110],
+  "리조트 산책 · 불꽃쇼":[33.3090,126.3110],
+  "신화월드 식당가":[33.3090,126.3110],
+  "신화워터파크":[33.3090,126.3110],
+  "제주항공우주박물관":[33.2950,126.3240],
+  "세계자동차&피아노박물관":[33.3170,126.3480],
+  "오설록 티뮤지엄 · 이니스프리 제주하우스":[33.3060,126.2890],
+  "협재해변 · rnr 빵집":[33.3935,126.2410],
+  "곽지 또는 협재해변":[33.4510,126.3050],
+  "rnr (협재)":[33.3930,126.2420],
+  "렌터카 반납 · 공항":[33.5066,126.4930]
+};
+
+const COAST=[[126.150,33.290],[126.168,33.352],[126.232,33.402],[126.300,33.430],[126.380,33.452],
+[126.452,33.482],[126.492,33.513],[126.532,33.521],[126.600,33.541],[126.652,33.546],[126.722,33.546],
+[126.800,33.551],[126.870,33.521],[126.920,33.481],[126.940,33.431],[126.930,33.400],[126.900,33.350],
+[126.850,33.320],[126.780,33.290],[126.700,33.260],[126.620,33.245],[126.560,33.235],[126.480,33.226],
+[126.420,33.231],[126.350,33.216],[126.300,33.221],[126.250,33.196],[126.220,33.201],[126.190,33.231],
+[126.162,33.261]];
+
+const MW=880, MH=505, L0=126.125, L1=127.005, B0=33.170, B1=33.585;
+const px = lng => (lng-L0)/(L1-L0)*MW;
+const py = lat => (B1-lat)/(B1-B0)*MH;
+
+function km(a,b){
+  const R=6371, r=Math.PI/180;
+  const dLat=(b[0]-a[0])*r, dLng=(b[1]-a[1])*r;
+  const s=Math.sin(dLat/2)**2 + Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));
+}
+
+function mapSection(){
+  const coast = COAST.map(c=>px(c[0]).toFixed(1)+','+py(c[1]).toFixed(1)).join(' ');
+  return '<section id="routemap">'
+    + '<div class="section-label"><span class="bar"></span>동선'
+    + '<span class="prog" id="prog-map"></span></div>'
+    + '<h2>이동 경로</h2>'
+    + '<p class="section-desc">체크한 항목이 순서대로 이어지고 구간 거리가 표시됩니다. 직선거리 기준이라 실제 주행거리는 이보다 조금 더 나옵니다.</p>'
+    + '<div class="mapcard">'
+    + '<div class="mapstat"><i>누적</i><b id="kmTotal">0<span>km</span></b>'
+    + '<i>지점</i><b id="ptTotal">0<span>곳</span></b></div>'
+    + '<svg class="mapsvg" viewBox="-10 -10 '+(MW+20)+' '+(MH+20)+'" role="img" aria-label="제주도 이동 경로 지도">'
+    + '<polygon class="coast" points="'+coast+'"/>'
+    + '<circle class="halla" cx="'+px(126.533).toFixed(1)+'" cy="'+py(33.362).toFixed(1)+'" r="52"/>'
+    + '<g id="mapLayer"></g></svg>'
+    + '<p class="maphint">회색 점은 아직 들르지 않은 곳, 주황 점은 체크한 곳입니다.</p>'
+    + '<div class="syncbar no-print"><button class="tbtn" id="btnCopy" type="button">체크 상태 복사</button><button class="tbtn" id="btnPaste" type="button">다른 기기 코드 불러오기</button></div>'
+    + '<p class="syncmsg" id="syncMsg"></p>'
+    + '</div></section>';
+}
+
+function drawMap(){
+  const layer = document.getElementById('mapLayer');
+  if(!layer) return;
+  let out='', pts=[], total=0;
+
+  DAYS.forEach(function(d){
+    d.items.forEach(function(it,i){
+      const c = LOC[it.name];
+      if(!c) return;
+      const cb = document.getElementById('cb-'+d.id+'-'+i);
+      const on = cb && cb.checked;
+      if(on){
+        if(!pts.length || Math.abs(pts[pts.length-1].c[0]-c[0])>1e-6 || Math.abs(pts[pts.length-1].c[1]-c[1])>1e-6){
+          pts.push({c:c, name:it.name});
+        }
+      }
+      out += '<circle class="pt'+(on?' on':'')+'" cx="'+px(c[1]).toFixed(1)+'" cy="'+py(c[0]).toFixed(1)+'" r="'+(on?5:3.2)+'"/>';
+    });
+  });
+
+  if(pts.length>1){
+    out = '<polyline class="leg" points="'
+      + pts.map(function(p){return px(p.c[1]).toFixed(1)+','+py(p.c[0]).toFixed(1);}).join(' ')
+      + '"/>' + out;
+    for(let i=1;i<pts.length;i++){
+      const d = km(pts[i-1].c, pts[i].c);
+      total += d;
+      if(d>=4){
+        const mx=(px(pts[i-1].c[1])+px(pts[i].c[1]))/2;
+        const my=(py(pts[i-1].c[0])+py(pts[i].c[0]))/2;
+        out += '<text class="seglab" x="'+mx.toFixed(1)+'" y="'+(my-5).toFixed(1)+'" text-anchor="middle">'+d.toFixed(0)+'km</text>';
+      }
+    }
+  }
+  pts.forEach(function(p,i){
+    out += '<text class="ptlab" x="'+(px(p.c[1])+8).toFixed(1)+'" y="'+(py(p.c[0])+3.5).toFixed(1)+'">'+(i+1)+'</text>';
+  });
+
+  layer.innerHTML = out;
+  document.getElementById('kmTotal').innerHTML = total.toFixed(0)+'<span>km</span>';
+  document.getElementById('ptTotal').innerHTML = pts.length+'<span>곳</span>';
+  const pm=document.getElementById('prog-map');
+  if(pm) pm.textContent = pts.length ? pts.length+' 지점' : '';
+}
+
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function row(key, it){
+  return '<div class="rec" data-key="'+key+'">'
+    + '<input type="checkbox" id="cb-'+key+'" aria-label="'+esc(it.name)+'">'
+    + '<div>'
+    + '<div class="rec-head">'
+    + (it.t ? '<span class="rec-time">'+esc(it.t)+'</span>' : '')
+    + '<span class="rec-name">'+esc(it.name)+'</span>'
+    + (it.k ? '<span class="kind '+(it.kc||'')+'">'+esc(it.k)+'</span>' : '')
+    + '</div>'
+    + (it.n ? '<div class="rec-note">'+esc(it.n)+'</div>' : '')
+    + (it.h ? '<div class="rec-hours">'+esc(it.h)+'</div>' : '')
+    + (it.w ? '<div class="callout">'+esc(it.w)+'</div>' : '')
+    + '</div></div>';
+}
+
+function section(id,label,date,desc,items){
+  return '<section id="'+id+'">'
+    + '<div class="section-label"><span class="bar"></span>'+esc(label)
+    + '<span class="prog" id="prog-'+id+'"></span></div>'
+    + '<h2>'+esc(date)+'</h2>'
+    + '<p class="section-desc">'+esc(desc)+'</p>'
+    + items.map((it,i)=>row(id+'-'+i,it)).join('')
+    + '</section>';
+}
+
+document.getElementById("plan").innerHTML = mapSection() +
+  DAYS.map(d=>section(d.id,d.label,d.date,d.desc,d.items)).join("")
+  + section("prep","준비물","출발 전 확인","떠나기 전 한 번씩 짚고 넘어갈 것들.",PREP);
+
+const KEY = "jeju-2026-09-checks";
+let state = {};
+
+async function load(){
+  try{
+    const r = await window.storage.get(KEY);
+    if(r && r.value) state = JSON.parse(r.value);
+  }catch(e){
+    try{ const l = localStorage.getItem(KEY); if(l) state = JSON.parse(l); }catch(e2){ state = {}; }
+  }
+  document.querySelectorAll('.rec[data-key]').forEach(function(rec){
+    const cb = rec.querySelector('input');
+    cb.checked = !!state[rec.dataset.key];
+    rec.classList.toggle('done', cb.checked);
+  });
+  counts();
+}
+async function save(){
+  const j = JSON.stringify(state);
+  try{ await window.storage.set(KEY, j); }catch(e){}
+  try{ localStorage.setItem(KEY, j); }catch(e){}
+}
+function counts(){
+  let all=0, hit=0;
+  DAYS.map(function(d){return d.id;}).concat(["prep"]).forEach(function(id){
+    const rows=[].slice.call(document.querySelectorAll('.rec[data-key^="'+id+'-"]'));
+    const done=rows.filter(function(r){return r.querySelector('input').checked;}).length;
+    all+=rows.length; hit+=done;
+    const el=document.getElementById('prog-'+id);
+    if(el) el.textContent = done+' / '+rows.length;
+  });
+  document.getElementById('totalStat').textContent = hit+' / '+all;
+  drawMap();
+}
+
+document.addEventListener('change', function(e){
+  if(e.target.type!=='checkbox') return;
+  const rec=e.target.closest('.rec');
+  state[rec.dataset.key]=e.target.checked;
+  rec.classList.toggle('done', e.target.checked);
+  counts(); save();
+});
+
+document.getElementById('themeBtn').addEventListener('click', function(){
+  const el=document.documentElement;
+  el.dataset.theme = el.dataset.theme==='dark' ? 'light' : 'dark';
+});
+
+function codeOf(){
+  const on=[]; DAYS.concat([{id:'prep',items:PREP}]).forEach(function(d){
+    d.items.forEach(function(_,i){ if(state[d.id+'-'+i]) on.push(d.id+'-'+i); });
+  });
+  return btoa(unescape(encodeURIComponent(on.join(','))));
+}
+function applyCode(code){
+  let raw;
+  try{ raw=decodeURIComponent(escape(atob(code.trim()))); }catch(e){ return false; }
+  state={};
+  raw.split(',').filter(Boolean).forEach(function(k){ state[k]=true; });
+  document.querySelectorAll('.rec[data-key]').forEach(function(rec){
+    const cb=rec.querySelector('input');
+    cb.checked=!!state[rec.dataset.key];
+    rec.classList.toggle('done', cb.checked);
+  });
+  counts(); save();
+  return true;
+}
+function bindSync(){
+  const msg=document.getElementById('syncMsg');
+  const cp=document.getElementById('btnCopy');
+  const ps=document.getElementById('btnPaste');
+  if(!cp||!ps) return;
+  cp.addEventListener('click', function(){
+    const c=codeOf();
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(c).then(function(){ msg.textContent='코드를 복사했습니다. 다른 기기에서 붙여넣기 하세요.'; },
+        function(){ window.prompt('아래 코드를 복사하세요', c); });
+    } else { window.prompt('아래 코드를 복사하세요', c); }
+  });
+  ps.addEventListener('click', function(){
+    const v=window.prompt('다른 기기에서 복사한 코드를 붙여넣으세요');
+    if(v===null) return;
+    msg.textContent = applyCode(v) ? '체크 상태를 불러왔습니다.' : '코드를 읽지 못했습니다. 다시 복사해 주세요.';
+  });
+}
+
+bindSync();
+load();
+</script>
+</body>
+</html>
